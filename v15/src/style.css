@@ -555,7 +555,7 @@ span.delete-symbol {
     width: 100%;
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 2px;
     overflow-y: scroll;
     scrollbar-width: none;
     color: var(--cblack);
@@ -1212,7 +1212,14 @@ span.delete-symbol {
     /* gap: 6%; */
     border: 1px solid var(--cborderdark);
     box-shadow: var(--cborder);
-    padding: 1vw;
+    padding: 0.5vw;
+    aspect-ratio: 3.2/1;
+}
+
+.t-bfilter.t-baction-filter, .t-bfilter.t-baction-reset {
+    position: relative;
+    padding: 0.4vw;
+    aspect-ratio: 7/1;
 }
 
 .tbutton-group {
@@ -1239,7 +1246,7 @@ span.delete-symbol {
     overflow-y: scroll;
 }
 
-.inventory-card table thead tr td::after {
+.inventory-card table thead tr th::after {
     content: '';
     position: absolute;
     width: 20px;
@@ -1758,11 +1765,6 @@ color: hsl(357, 95%, 43%);
     font-size: var(--ficons);
 }
 
-.selector > select.opg-select {
-    border: 0;
-    /* min-width: 124px; */
-}
-
 .align-option-group > input.opg-date-select {
     border: 0;
     /* min-width: 115px; */
@@ -1837,33 +1839,9 @@ color: hsl(357, 95%, 43%);
     display: flex;
     flex-grow: 100;
     gap: 10px;
-    /* height: 40%; */
-    align-items: center;
-    justify-content: start;
-}
-
-.t-bfilter {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-wrap-mode: nowrap;
-    border-radius: 6px;
-    font-size: var(--fh4);
-    /* height: 40%; */
-    margin-top: 0%;
-    position: relative;
-    border: 1px solid var(--cborderdark);
-    box-shadow: var(--cborder);
-    padding: 1vw;
-    aspect-ratio: 15/4;
-}
-
-.tbutton-group {
-    display: flex;
     height: 100%;
-    /* flex-grow: 1; */
-    /* align-items: center; */
-    justify-content: flex-end;
+    align-items: flex-end;
+    justify-content: start;
 }
 
 .tbutton-group .t-bfilter {
@@ -1882,7 +1860,7 @@ color: hsl(357, 95%, 43%);
     overflow-y: scroll;
 }
 
-.inventory-card table thead tr td::after {
+.inventory-card table thead tr th::after {
     content: '';
     position: absolute;
     width: 12px;

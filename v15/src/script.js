@@ -627,44 +627,54 @@ const inventory = `<div class="inventory-content">
                                         <div class="option-group-name">Category</div>
                                         <div class="selector">
                                                 <span class="material-symbols-outlined menu-symbol">grid_view</span>
-                                                <select name="opg-select" id="opg-select" class="opg-select">
-                                                        <option value="opg-all">All Categories</option>
+                                                <select name="opg-select" id="opg-select-category" class="opg-select" required>
+                                                        <option value="all">All Categories</option>
+                                                        <option value="Beverage">Beverage</option>
+                                                        <option value="Steamed Bun">Steamed Bun</option>
+                                                        <option value="Steamed Timsum">Steamed Timsum</option>
+                                                        <option value="Deep Fry Timsum">Deep Fry Timsum</option>
+                                                        <option value="Bake">Bake</option>
+                                                        <option value="Noodle/Dumplings">Noodle/ Dumplings</option>
+                                                        <option value="Porridge">Porridge</option>
                                                 </select>
-                                        </div> 
+                                        </div>
                                 </div>
                                 <div class="align-option-group">
                                         <div class="option-group-name">Item Name</div>
                                         <div class="selector">
                                                 <span class="material-symbols-outlined menu-symbol">local_cafe</span>
-                                                <select name="opg-select" id="opg-select" class="opg-select">
-                                                        <option value="opg-all">All Items</option>
+                                                <select name="opg-select" id="opg-select-items" class="opg-select">
+                                                        <option value="all">All Items</option>
                                                 </select>
-                                        </div> 
+                                        </div>
                                 </div>
                                 <div class="align-option-group">
                                         <div class="option-group-name">Status</div>
                                         <div class="selector">
-                                                <select name="opg-select" id="opg-select" class="opg-select">
-                                                        <option value="opg-all">All Status</option>
+                                                <select name="opg-select" id="opg-select-status" class="opg-select">
+                                                        <option value="all">All Status</option>
+                                                        <option value="instock">In Stock</option>
+                                                        <option value="lowstock">Low Stock</option>
+                                                        <option value="outofstock">Out of Stock</option>
                                                 </select>
                                         </div> 
                                 </div>
                                 <div class="align-option-group">
                                         <div class="option-group-name">Date From</div>
-                                        <input class="opg-date-select" type="date" value="2024-05-20"></input>
+                                        <input class="opg-date-select" type="date" id="opg-select-dfrom" value="2024-05-20"></input>
                                 </div>
                                 <div class="align-option-group">
                                         <div class="option-group-name">Date To</div>
-                                        <input class="opg-date-select" type="date" value="2024-05-20"></input>
+                                        <input class="opg-date-select" type="date" id="opg-select-dto" value="2024-05-20"></input>
                                 </div>
                                 <div class="t-bfilter-group">
-                                        <div class="t-bfilter option-select">
+                                        <div class="t-bfilter t-baction-filter option-select" id="inventory-action-filter">
                                                 <span class="material-symbols-outlined calendar-symbol">
                                                         filter_alt
                                                 </span>
                                                 <span class="datename">Filter</span>
                                         </div>
-                                        <div class="t-bfilter">
+                                        <div class="t-bfilter t-baction-reset" id="inventory-action-reset">
                                                 <span class="material-symbols-outlined calendar-symbol">
                                                         refresh
                                                 </span>
@@ -704,15 +714,15 @@ const inventory = `<div class="inventory-content">
                                 <table>
                                         <thead>
                                                 <tr>
-                                                        <td>Item</td>
-                                                        <td>Category</td>
-                                                        <td>Price</td>
-                                                        <td>Unit</td>
-                                                        <td>Purchased</td>
-                                                        <td>Sold</td>
-                                                        <td>In Stock</td>
-                                                        <td>Status</td>
-                                                        <td>Last Updated</td>
+                                                        <th data-target="sort-table-by-name">Item</th>
+                                                        <th data-target="sort-table-by-category">Category</th>
+                                                        <th data-target="sort-table-by-price">Price</th>
+                                                        <th data-target="sort-table-by-unit">Unit</th>
+                                                        <th data-target="sort-table-by-purchased">Purchased</th>
+                                                        <th data-target="sort-table-by-sold">Sold</th>
+                                                        <th data-target="sort-table-by-instock">In Stock</th>
+                                                        <th data-target="sort-table-by-status">Status</th>
+                                                        <th data-target="sort-table-by-lastupdated">Last Updated</th>
                                                 </tr>
                                         </thead>
                                         <tbody>
@@ -1046,7 +1056,7 @@ const additem = `<div class="additem-content">
                                                         </div>
                                                         <div class="additem-instock">
                                                                 <div class="additem-title-text additem-important">In Stock</div>
-                                                                <input type="number" class="additem-instock-input" placeholder="Enter stock quantity"  id="additem-form-instock" min="1" max="1000" required>
+                                                                <input type="number" class="additem-instock-input" placeholder="Enter stock quantity"  id="additem-form-instock" min="0" max="1000" required>
                                                                 <div class="additem-desc-text hide-text">Auto-generated</div>
                                                         </div>
                                                         <div class="additem-supplier">
@@ -1166,12 +1176,6 @@ const request = `<div class="itemrequest-content">
                                                 <tr>
                                                         <td>Item</td>
                                                         <td>Quantity</td>
-                                                        <td>Price</td>
-                                                        <td>Unit</td>
-                                                        <td>Purchased</td>
-                                                        <td>Sold</td>
-                                                        <td>In Stock</td>
-                                                        <td>Status</td>
                                                         <td>Expected Date</td>
                                                 </tr>
                                         </thead>
@@ -1185,13 +1189,7 @@ const request = `<div class="itemrequest-content">
                                                                         <div class="bill-itemname">Soya Milk</div>
                                                                 </div>
                                                         </td>
-                                                        <td><div class="inv-category">50</div></td>
-                                                        <td><div class="inv-price">$3.00</div></td>
-                                                        <td><div class="inv-unit">Cup</div></td>
-                                                        <td><div class="inv-purchased">150</div></td>
-                                                        <td><div class="inv-sold">98</div></td>
                                                         <td><div class="inv-instock">52</div></td>
-                                                        <td><div class="inv-status">In Stock</div></td>
                                                         <td><div class="inv-lastupdated">20 May 2024, 10:30AM</div></td>
                                                 </tr>
                                                 <tr>
@@ -1201,13 +1199,7 @@ const request = `<div class="itemrequest-content">
                                                                         <div class="bill-itemname">Streamed Timsum</div>
                                                                 </div>
                                                         </td>
-                                                        <td><div class="inv-category">Steamed Timsum</div></td>
-                                                        <td><div class="inv-price">$7.30</div></td>
-                                                        <td><div class="inv-unit">Pcs</div></td>
-                                                        <td><div class="inv-purchased">120</div></td>
-                                                        <td><div class="inv-sold">80</div></td>
                                                         <td><div class="inv-instock">40</div></td>
-                                                        <td><div class="inv-status">In Stock</div></td>
                                                         <td><div class="inv-lastupdated">20 May 2024, 10:30AM</div></td>
                                                 </tr>
                                                 <tr>
@@ -1217,13 +1209,7 @@ const request = `<div class="itemrequest-content">
                                                                         <div class="bill-itemname">Porridge</div>
                                                                 </div>
                                                         </td>
-                                                        <td><div class="inv-category">Porridge</div></td>
-                                                        <td><div class="inv-price">$11.20</div></td>
-                                                        <td><div class="inv-unit">Bowl</div></td>
-                                                        <td><div class="inv-purchased">100</div></td>
-                                                        <td><div class="inv-sold">90</div></td>
                                                         <td><div class="inv-instock inv-instock-orange">10</div></td>
-                                                        <td><div class="inv-status inv-status-orange">Low Stock</div></td>
                                                         <td><div class="inv-lastupdated">20 May 2024, 10:30AM</div></td>
                                                 </tr>
                                                 <tr>
@@ -1235,13 +1221,7 @@ const request = `<div class="itemrequest-content">
                                                                         <div class="bill-itemname">Iced Coffee</div>
                                                                 </div>
                                                         </td>
-                                                        <td><div class="inv-category">Beverage</div></td>
-                                                        <td><div class="inv-price">$13.50</div></td>
-                                                        <td><div class="inv-unit">Glass</div></td>
-                                                        <td><div class="inv-purchased">160</div></td>
-                                                        <td><div class="inv-sold">160</div></td>
                                                         <td><div class="inv-instock inv-instock-red">0</div></td>
-                                                        <td><div class="inv-status inv-status-red">Out of Stock</div></td>
                                                         <td><div class="inv-lastupdated">20 May 2024, 10:30AM</div></td>
                                                 </tr>
                                         </tbody>
@@ -1716,9 +1696,8 @@ function option_activate() {
                 if(target == "billing") content.innerHTML = billing;
                 if (target == "inventory") {
                         content.innerHTML = inventory;
-                        generate_inventory_rows();
+                        generate_inventory_rows(read_inventory());
                 };
-                // if (target == "additem") content.innerHTML = additem;
                 if (target == "request") content.innerHTML = request;
                 if (target == "report") content.innerHTML = report;
                 if (target == "settings") content.innerHTML = settings;
@@ -1727,6 +1706,8 @@ function option_activate() {
         })
     });
 
+
+        // actions
         document.addEventListener("click", (e) => {
                 // page navigation
                 const handleadditems = e.target.closest("#additem");
@@ -1734,7 +1715,7 @@ function option_activate() {
                         let target = handleadditems.getAttribute("data-target");
                         if (target == "inventory") {
                                 content.innerHTML = inventory;
-                                generate_inventory_rows();
+                                generate_inventory_rows(read_inventory());
                         };
                         if (target == "additem") {
                                 content.innerHTML = additem;
@@ -1746,7 +1727,7 @@ function option_activate() {
                                 options[2].classList.add("option-select");
                         };
                 }
-                
+
                 // Button actions
                 // Add item to inventory
                 const save_item = e.target.closest("#additem-form-addinvitem");
@@ -1760,7 +1741,7 @@ function option_activate() {
                 const delete_item = e.target.closest("#additem-form-deleteinvitem");
                 if (delete_item) deleteitems_inventory(delete_item.getAttribute("data-deleteitem"));
 
-                //Table actions
+                // Table actions
                 const item_table_rows = e.target.closest("#inventory-table-rows");
                 if (item_table_rows) {
                         let itemcode = item_table_rows.getAttribute("data-itemcode");
@@ -1777,16 +1758,33 @@ function option_activate() {
                         document.querySelector("#additem-form-instock").value = table_item.instock;
                         document.querySelector("#additem-form-supplier").value = table_item.supplier;
                         document.querySelector("#additem-form-itemname").value = table_item.itemname;
-                        
-                        
                         const additem_option_delete = document.querySelector(".inv-baction-delete");
                         additem_option_delete.classList.remove("remove-all");
                         additem_option_delete.setAttribute("data-deleteitem", itemcode);
                         const additem_option_editsave = document.querySelector("#additem-form-addinvitem");
                         additem_option_editsave.setAttribute("id", "additem-form-editinvitem");
                         additem_option_editsave.setAttribute("data-edititem", itemcode);
-
                 }
+
+                // Table actions
+                const action_filter = e.target.closest("#inventory-action-filter");
+                if (action_filter) generate_filtered_inventory_rows(read_inventory());
+
+
+                // filter actions reset
+                const action_reset = e.target.closest("#inventory-action-reset");
+                if (action_reset) {
+                        document.querySelector("#opg-select-category").value = "all";
+                        document.querySelector("#opg-select-items").value = "all";
+                        document.querySelector("#opg-select-status").value = "all";
+                        document.querySelector("#opg-select-dfrom").value = "2024-05-20";
+                        document.querySelector("#opg-select-dto").value = "2024-05-20";
+                }
+
+
+                // sort tables in inventory page
+                const action_sort = e.target.closest(".inventory-card table thead th");
+                if (action_sort) generate_sorted_inventory_rows(read_inventory(), action_sort.getAttribute("data-target"));
         })
 }
 option_activate()
@@ -1794,8 +1792,8 @@ option_activate()
 
 function manage_localstorage() {
         if (!localStorage.getItem("inventory")) {
-                localStorage.inventory = JSON.stringify(init_inventory);
-                const test_inv = JSON.parse(localStorage.getItem("inventory"));
+                write_inventory(init_inventory);
+                const test_inv = read_inventory();
                 console.table(test_inv);
                 alert("Table Initialised");
         }
@@ -1804,36 +1802,31 @@ manage_localstorage()
 
 
 function generate_itemcode() {
-        let inventory_content = JSON.parse(localStorage.getItem("inventory"));
+        let inventory_content = read_inventory();
         let lastinv_number = inventory_content[inventory_content.length - 1].itemcode;
-        let newitemcode = "";
-        for (let index = lastinv_number.length - 1; index >= 0; index--) {
-                newitemcode = lastinv_number[index] + newitemcode;
-                if (lastinv_number[index] == 0) break;
-                if (lastinv_number[index] == "-") break;
-        }
-        newitemcode = Number.parseInt(newitemcode);
-        newitemcode = "" + newitemcode;
-        for (let index = 0; index < (6 - newitemcode.length); index++) {
+
+        let olditemcode = Number.parseInt(lastinv_number.replace("ITM-", ""));
+        olditemcode = olditemcode + 1;
+        olditemcode = "" + olditemcode;
+
+        let newitemcode = olditemcode;
+        for (let index = 0; index < (6 - olditemcode.length); index++) {
                 newitemcode = "0" + newitemcode;
         }
         newitemcode = "ITM-" + newitemcode;
         return newitemcode;
-
-
-        // let newitemnumber = JSON.parse(localStorage.getItem("inventory")).length - 1
-        // let newitemnumberstring = "" + newitemnumber;
-        // let newitemcode = newitemnumberstring;
-        // for (let index = 0; index < (6 - newitemnumberstring.length); index++) {
-        //         newitemcode = "0" + newitemcode;
-        // }
-        // newitemcode = "ITM-" + newitemcode;
-        // return newitemcode;
 }
 
 
-function generate_inventory_rows() {
-        const inventory = JSON.parse(localStorage.getItem("inventory"));
+function generate_inventory_rows(inventory) {
+        const form_items_select = document.querySelector("#opg-select-items");
+        const itemnames_array = Array.from(inventory, (element) => element.itemname);
+        let form_filter_items = `<option value="all">All Items</option>`;
+        itemnames_array.forEach(element => {
+                form_filter_items += `<option value="${element}">${element}</option>`
+        })
+        form_items_select.innerHTML = form_filter_items;
+        
         let inventory_content = "";
         inventory.forEach(element => {
                 let inventory_row = ""
@@ -1855,9 +1848,138 @@ function generate_inventory_rows() {
                 </tr>`
                 
                 inventory_content += inventory_row;
-        }); 
+        });
         document.querySelector(".inventory-content table tbody").innerHTML = inventory_content;
 }
+
+
+function generate_filtered_inventory_rows(inventory) {
+        const form_filter = document.querySelectorAll("#opg-select-category, #opg-select-items, #opg-select-status, #opg-select-dfrom, #opg-select-dto");
+        const form_filter_array = Array.from(form_filter, (element) => element.value);
+        const form_filter_category = form_filter_array[0];
+        const form_filter_items = form_filter_array[1];
+        const form_filter_status = form_filter_array[2];
+        const form_filter_dfrom = form_filter_array[3];
+        const form_filter_dto = form_filter_array[4];
+
+        if (form_filter_category != "all") {
+                inventory = inventory.filter((element) => element.category == form_filter_category);
+        }
+
+        if (form_filter_items != "all") {
+                inventory = inventory.filter((element) => element.itemname == form_filter_items);
+        }
+        
+        if (form_filter_status != "all") {
+                if (form_filter_status == "instock") {
+                        inventory = inventory.filter((element) => element.instock > 10);
+                }
+                if (form_filter_status == "lowstock") {
+                        inventory = inventory.filter((element) => 0 < element.instock && element.instock <= 10);
+                }
+                if (form_filter_status == "outofstock") {
+                        inventory = inventory.filter((element) => element.instock == 0);
+                }
+        }
+        generate_inventory_rows(inventory);
+}
+
+
+        let toggle_name = 0;
+        let toggle_category = 0;
+        let toggle_price = 0;
+        let toggle_unit = 0;
+        let toggle_purchased = 0;
+        let toggle_sold = 0;
+        let toggle_instock = 0;
+        let toggle_status = 0;
+        let toggle_lastupdated = 0;
+
+function generate_sorted_inventory_rows(inventory, target_data) {
+        if (target_data == "sort-table-by-name") {
+                if (toggle_name == 0) {
+                        inventory.sort((a, b) => (a.itemname > b.itemname) ? 1 : (b.itemname > a.itemname) ? -1 : 0);
+                        toggle_name = 1
+                } else {
+                        inventory.sort((a, b) => (a.itemname < b.itemname) ? 1 : (b.itemname < a.itemname) ? -1 : 0);
+                        toggle_name = 0
+                }
+        }
+        if (target_data == "sort-table-by-category") {
+                if (toggle_category == 0) {
+                        inventory.sort((a, b) => (a.category > b.category) ? 1 : (b.category > a.category) ? -1 : 0);
+                        toggle_category = 1
+                } else {
+                        inventory.sort((a, b) => (a.category < b.category) ? 1 : (b.category < a.category) ? -1 : 0);
+                        toggle_category = 0
+                }
+        }
+        if (target_data == "sort-table-by-price") {
+                if (toggle_price == 0) {
+                inventory.sort((a, b) => a.price - b.price);
+                        toggle_price = 1
+                } else {
+                        inventory.sort((a, b) => b.price - a.price);
+                        toggle_price = 0
+                }
+        }
+        if (target_data == "sort-table-by-unit") {
+               if (toggle_unit == 0) {
+                inventory.sort((a, b) => (a.unit > b.unit) ? 1 : (b.unit > a.unit) ? -1 : 0);
+                        toggle_unit = 1
+                } else {
+                        inventory.sort((a, b) => (a.unit < b.unit) ? 1 : (b.unit < a.unit) ? -1 : 0);
+                        toggle_unit = 0
+                }
+        }
+        if (target_data == "sort-table-by-purchased") {
+               if (toggle_purchased == 0) {
+                inventory.sort((a, b) => a.price - b.price);
+                        toggle_purchased = 1
+                } else {
+                        inventory.sort((a, b) => b.price - a.price);
+                        toggle_purchased = 0
+                }
+        }
+        if (target_data == "sort-table-by-sold") {
+               if (toggle_sold == 0) {
+                inventory.sort((a, b) => a.price - b.price);
+                        toggle_sold = 1
+                } else {
+                        inventory.sort((a, b) => b.price - a.price);
+                        toggle_sold = 0
+                }
+        }
+        if (target_data == "sort-table-by-instock") {
+               if (toggle_instock == 0) {
+                inventory.sort((a, b) => a.instock - b.instock);
+                        toggle_instock = 1
+                } else {
+                        inventory.sort((a, b) => b.instock - a.instock);
+                        toggle_instock = 0
+                }
+        }
+        if (target_data == "sort-table-by-status") {
+               if (toggle_status == 0) {
+                inventory.sort((a, b) => a.price - b.price);
+                        toggle_status = 1
+                } else {
+                        inventory.sort((a, b) => b.price - a.price);
+                        toggle_status = 0
+                }
+        }
+        if (target_data == "sort-table-by-lastupdated") {
+               if (toggle_lastupdated == 0) {
+                inventory.sort((a, b) => a.price - b.price);
+                        toggle_lastupdated = 1
+                } else {
+                        inventory.sort((a, b) => b.price - a.price);
+                        toggle_lastupdated = 0
+                }
+        }
+        generate_filtered_inventory_rows(inventory);
+}
+
 
 
 function generate_stock_status(instock) {
@@ -1873,17 +1995,19 @@ function generate_stock_status(instock) {
                 <td><div class="inv-status">In Stock</div></td>`
 }
 
-// insert rows
-function add_inventory(addinv) {
-        const manage_inventory = JSON.parse(localStorage.getItem("inventory"));
-        manage_inventory.push(addinv);
-        localStorage.inventory = JSON.stringify(manage_inventory);
-        alert("Inventory Updated");
+// get inventory (read)
+function read_inventory() {
+        return JSON.parse(localStorage.getItem("inventory"));
+}
+
+// set inventory (write)
+function write_inventory(inventory_content) {
+        localStorage.inventory = JSON.stringify(inventory_content);
 }
 
 // read rows
 function get_inventory_item(itemcode) {
-        let inventory_content = JSON.parse(localStorage.getItem("inventory"));
+        let inventory_content = read_inventory();
         return inventory_content.find((element) => element.itemcode == itemcode);
 }
 
@@ -1892,8 +2016,7 @@ function get_inventory_item(itemcode) {
 
 
 
-
-// Add items to inevntory function
+// Add items to inevntory function (write)
 function additems_inventory() {
         const additem_form_elements = document.querySelectorAll("#additem-form-itemcode, #additem-form-itemimage, #additem-form-category, #additem-form-unit, #additem-form-itemname, #additem-form-itemdesc, #additem-form-price, #additem-form-instock, #additem-form-supplier");
         if (additem_form_elements) {
@@ -1911,25 +2034,32 @@ function additems_inventory() {
                                 "price": additem_form_array[6],
                                 "instock": additem_form_array[7],
                                 "supplier": additem_form_array[8]
-                        }
-                        add_inventory(addinv);
+                        }        
+                        const manage_inventory = read_inventory();
+                        manage_inventory.push(addinv);
+                        write_inventory(manage_inventory);
+                        alert("Item Added");
                         document.querySelector("#additem-form-itemcode").value = generate_itemcode();
                 };
         }
 }
 
 
-// Edit items from inevntory function
+// Edit items from inevntory function (update)
 function edititems_inventory(edit_item_itemcode) {
         const additem_form_elements = document.querySelectorAll("#additem-form-itemcode, #additem-form-itemimage, #additem-form-category, #additem-form-unit, #additem-form-itemname, #additem-form-itemdesc, #additem-form-price, #additem-form-instock, #additem-form-supplier");
+        // const additem_form_elements_without_img = document.querySelectorAll("#additem-form-itemcode, #additem-form-category, #additem-form-unit, #additem-form-itemname, #additem-form-itemdesc, #additem-form-price, #additem-form-instock, #additem-form-supplier");
+        // const additem_form_array_without_img = Array.from(additem_form_elements_without_img, (element) => element.value);
         if (additem_form_elements) {
-                additem_form_array = Array.from(additem_form_elements, (elem) => elem.value);
-                if (additem_form_array.includes("")) {
+                additem_form_array = Array.from(additem_form_elements, (element) => element.value);
+                // if (additem_form_array_without_img.includes("")) {
+                if (additem_form_array.filter((element, index) => {if (index != 1) element}).includes("")) {
                         alert("All Fields are Required!")
                 } else {
-                        let addinv = {
+                        let addinv = get_inventory_item(edit_item_itemcode);
+                        let temp_invupdate = {
                                 "itemcode": edit_item_itemcode,
-                                "itemimage": additem_form_array[1],
+                                "itemimage": (additem_form_array[1]) ? additem_form_array[1] : addinv.itemimage,
                                 "category": additem_form_array[2],
                                 "unit": additem_form_array[3],
                                 "itemname": additem_form_array[4],
@@ -1938,10 +2068,12 @@ function edititems_inventory(edit_item_itemcode) {
                                 "instock": additem_form_array[7],
                                 "supplier": additem_form_array[8]
                         }
-                        const manage_inventory = JSON.parse(localStorage.getItem("inventory"));
+                        addinv = temp_invupdate;
+                        const manage_inventory = read_inventory();
                         const filtered_inventory = manage_inventory.filter((element) => element.itemcode != edit_item_itemcode);
                         filtered_inventory.push(addinv);
-                        localStorage.inventory = JSON.stringify(filtered_inventory);
+                        filtered_inventory.sort((a, b) => Number.parseInt(a.itemcode.replace("ITM-", "")) - Number.parseInt(b.itemcode.replace("ITM-", "")))
+                        write_inventory(filtered_inventory);
                         alert("Inventory Updated");
                         document.querySelector("#additem-form-itemcode").value = generate_itemcode();
                 };
@@ -1949,11 +2081,11 @@ function edititems_inventory(edit_item_itemcode) {
 }
 
 
-// Delete items from inevntory function
+// Delete items from inevntory function (delete)
 function deleteitems_inventory(delete_item_itemcode) {
-        const inventory_content = JSON.parse(localStorage.getItem("inventory"));
+        const inventory_content = read_inventory();
         const deleted_inventory = inventory_content.filter((element) => element.itemcode != delete_item_itemcode);
-        localStorage.inventory = JSON.stringify(deleted_inventory);
+        write_inventory(deleted_inventory);
         alert("Item Deleted");
-
 }
+
