@@ -976,16 +976,16 @@ const additem = `<div class="additem-content">
                                                 <div class="additem-card-left">
                                                         <div class="additem-itemcode">
                                                                 <div class="additem-title-text">Item Code</div>
-                                                                <input type="text" class="additem-itemcode-input" placeholder="ITM-000129">
+                                                                <input type="text" class="additem-itemcode-input" placeholder="ITM-000129" id="additem-form-itemcode">
                                                                 <div class="additem-desc-text">Auto-generated</div>
                                                         </div>
                                                         <div class="additem-itemimage">
                                                                 <div class="additem-title-text">Item Image</div>
-                                                                <!-- <input type="file" accept="image/png, image/jpg, image/jpeg" placeholder="Click to upload or drag and drop"> -->
                                                                 <div class="additem-itemimage-input">
                                                                         <span class="material-symbols-outlined cloud-symbol">
                                                                                 cloud_upload
                                                                         </span>
+                                                                        <input type="file" accept="image/png, image/jpg, image/jpeg" placeholder="Click to upload or drag and drop" id="additem-form-itemimage" required="required">
                                                                         <div class="additem-fileupload">
                                                                                 <div class="additem-fileupload-title">Click to upload or drag and drop</div>
                                                                                 <div class="additem-fileupload-desc">PNG, JPG or WEBP (Max. 2MB)</div>
@@ -995,22 +995,35 @@ const additem = `<div class="additem-content">
                                                         </div>
                                                         <div class="additem-category">
                                                                 <div class="additem-title-text additem-important">Category</div>
-                                                                <select name="category" id="additem-category-option">
-                                                                        <option value="select category">Select Category</option>
+                                                                <select name="category" id="additem-form-category" required>
+                                                                        <option value="" selected disabled hidden>Select Category</option>
+                                                                        <option value="Beverage">Beverage</option>
+                                                                        <option value="Steamed Bun">Steamed Bun</option>
+                                                                        <option value="Steamed Timsum">Steamed Timsum</option>
+                                                                        <option value="Deep Fry Timsum">Deep Fry Timsum</option>
+                                                                        <option value="Bake">Bake</option>
+                                                                        <option value="Noodle/Dumplings">Noodle/ Dumplings</option>
+                                                                        <option value="Porridge">Porridge</option>
                                                                 </select>
                                                                 <div class="additem-desc-text hide-text">Auto-generated</div>
                                                         </div>
                                                         <div class="additem-unit">
                                                                 <div class="additem-title-text additem-important">Unit</div>
-                                                                <select name="category" id="additem-unit-option">
-                                                                        <option value="select category">Select Unit</option>
+                                                                <select name="category" id="additem-form-unit" required>
+                                                                        <option value="" selected disabled hidden>Select Unit</option>
+                                                                        <option value="Bowl">Bowl</option>
+                                                                        <option value="Cup">Cup</option>
+                                                                        <option value="Pcs">Pcs</option>
+                                                                        <option value="Glass">Glass</option>
                                                                 </select>
                                                                 <div class="additem-desc-text hide-text">Auto-generated</div>
                                                         </div>
                                                         <div class="additem-status">
                                                                 <div class="additem-title-text">Status</div>
-                                                                <select name="category" id="additem-status-option">
-                                                                        <option value="instock">In Stock</option>
+                                                                <select name="category" id="additem-form-status">
+                                                                        <option value="instock" selected>In Stock</option>
+                                                                        <option value="lowstock">Low Stock</option>
+                                                                        <option value="outofstock">Out of Stock</option>
                                                                 </select>
                                                                 <div class="additem-desc-text">Status is auto-populated based on In Stock quantity.</div>
                                                         </div>
@@ -1018,28 +1031,29 @@ const additem = `<div class="additem-content">
                                                 <div class="additem-card-right">
                                                         <div class="additem-itemname">
                                                                 <div class="additem-title-text  additem-important">Item Name</div>
-                                                                <input type="text" class="additem-itemname-input" placeholder="Enter item name">
+                                                                <input type="text" class="additem-itemname-input" placeholder="Enter item name" id="additem-form-itemname" required>
                                                                 <div class="additem-desc-text hide-text">Auto-generated</div>
                                                         </div>
                                                         <div class="additem-itemdesc">
                                                                 <div class="additem-title-text">Item Description</div>
-                                                                <textarea name="additem-itemdesc" id="additem-itemdesc" class="additem-itemdesc-input" placeholder="Enter item description"></textarea>
+                                                                <textarea name="additem-itemdesc" class="additem-itemdesc-input" placeholder="Enter item description" id="additem-form-itemdesc"></textarea>
                                                                 <div class="additem-desc-text hide-text">Auto-generated</div>
                                                         </div>
                                                         <div class="additem-price">
                                                                 <div class="additem-title-text additem-important">Price</div>
-                                                                <input type="text" class="additem-price-input" placeholder="Enter price">
+                                                                <input type="number" class="additem-price-input" placeholder="Enter price" id="additem-form-price" min="1" max="1000" step="0.1" required>
                                                                 <div class="additem-desc-text hide-text">Auto-generated</div>
                                                         </div>
                                                         <div class="additem-instock">
                                                                 <div class="additem-title-text additem-important">In Stock</div>
-                                                                <input type="text" class="additem-instock-input" placeholder="Enter stock quantity">
+                                                                <input type="number" class="additem-instock-input" placeholder="Enter stock quantity"  id="additem-form-instock" min="1" max="1000" required>
                                                                 <div class="additem-desc-text hide-text">Auto-generated</div>
                                                         </div>
                                                         <div class="additem-supplier">
                                                                 <div class="additem-title-text">Supplier</div>
-                                                                <select name="additem-supplier-option" id="additem-supplier-option">
-                                                                        <option value="supplier">Select supplier</option>
+                                                                <select name="additem-supplier-option" id="additem-form-supplier">
+                                                                        <option value="" selected disabled hidden>Select supplier</option>
+                                                                        <option value="local">Local</option>
                                                                 </select>
                                                                 <div class="additem-desc-text hide-text">Status is auto-populated based on In Stock quantity.</div>
                                                         </div>
@@ -1049,7 +1063,7 @@ const additem = `<div class="additem-content">
                                                 <div class="additem-baction" id="additem" data-target="inventory">
                                                         <span class="datename">Cancel</span>
                                                 </div>
-                                                <div class="additem-baction option-select">
+                                                <div class="additem-baction option-select" id="additem-form-addinvitem">
                                                         <span class="material-symbols-outlined save-symbol">
                                                                 save
                                                         </span>
@@ -1569,17 +1583,138 @@ const users = `
 </div>
 `;
 
+const init_inventory = [
+        {
+                "itemcode": "ITM-000001",
+                "itemimage": "soyamilk.png",
+                "category": "Beverage",
+                "unit": "Cup",
+                "status": "In Stock",
+                "itemname": "Soya Milk",
+                "itemdesc": "Soya Milk",
+                "price": "3.00",
+                "instock": "52",
+                "supplier": "Local"
+        },
+        {
+                "itemcode": "ITM-000002",
+                "itemimage": "teac.png",
+                "category": "Beverage",
+                "unit": "Cup",
+                "status": "In Stock",
+                "itemname": "Tea C",
+                "itemdesc": "Tea C",
+                "price": "4.70",
+                "instock": "50",
+                "supplier": "Local",
+        },
+        {
+                "itemcode": "ITM-000003",
+                "itemimage": "steamedtimsum.png",
+                "category": "Steamed Timsum",
+                "unit": "Pcs",
+                "status": "In Stock",
+                "itemname": "Steamed Timsum",
+                "itemdesc": "Steamed Timsum",
+                "price": "7.30",
+                "instock": "40",
+                "supplier": "Local",
+        },
+        {
+                "itemcode": "ITM-000004",
+                "itemimage": "porridge.png",
+                "category": "Porridge",
+                "unit": "Bowl",
+                "status": "In Stock",
+                "itemname": "Porridge",
+                "itemdesc": "Porridge",
+                "price": "11.20",
+                "instock": "10",
+                "supplier": "Local",
+        },
+        {
+                "itemcode": "ITM-000005",
+                "itemimage": "icedtea.png",
+                "category": "Beverage",
+                "unit": "Glass",
+                "status": "In Stock",
+                "itemname": "Iced Coffee",
+                "itemdesc": "Iced Coffee",
+                "price": "11.70",
+                "instock": "10",
+                "supplier": "Local",
+        },
+        {
+                "itemcode": "ITM-000006",
+                "itemimage": "dumplings.png",
+                "category": "Noodle/Dumplings",
+                "unit": "Pcs",
+                "status": "In Stock",
+                "itemname": "Dumplings",
+                "itemdesc": "Dumplings",
+                "price": "16.10",
+                "instock": "10",
+                "supplier": "Local",
+        },
+        {
+                "itemcode": "ITM-000007",
+                "itemimage": "icedcoffee.png",
+                "category": "Beverage",
+                "unit": "Glass",
+                "status": "In Stock",
+                "itemname": "Iced Coffee",
+                "itemdesc": "Iced Coffee",
+                "price": "13.50",
+                "instock": "10",
+                "supplier": "Local",
+        },
+        {
+                "itemcode": "ITM-000008",
+                "itemimage": "coffeec.png",
+                "category": "Beverage",
+                "unit": "Cup",
+                "status": "In Stock",
+                "itemname": "Coffee C",
+                "itemdesc": "Coffee C",
+                "price": "16.50",
+                "instock": "10",
+                "supplier": "Local",
+        },
+        {
+                "itemcode": "ITM-000009",
+                "itemimage": "milo.png",
+                "category": "Beverage",
+                "unit": "Cup",
+                "status": "In Stock",
+                "itemname": "Milo",
+                "itemdesc": "Milo",
+                "price": "15.00",
+                "instock": "15",
+                "supplier": "Local",
+        },
+        {
+                "itemcode": "ITM-000015",
+                "itemimage": "chinesetea.png",
+                "category": "Beverage",
+                "unit": "Cup",
+                "status": "In Stock",
+                "itemname": "Chinese Tea",
+                "itemdesc": "Chinese Tea",
+                "price": "4.20",
+                "instock": "30",
+                "supplier": "Local",
+        }
+];
+
 function option_activate() {
-        let options = document.querySelectorAll(".option")
-        let canceladditems = document.querySelectorAll("#additem")
-        let content = document.querySelector(".content-area")
+        let options = document.querySelectorAll(".option");
+        let canceladditems = document.querySelectorAll("#additem");
+        let content = document.querySelector(".content-area");
 
 
                 options.forEach(element => {
                 element.addEventListener("click", () => {
-                        options.forEach(elm => {
-                                elm.classList.remove("option-select");
-                        })
+                        options.forEach(elm => elm.classList.remove("option-select"));
                         element.classList.add("option-select");
                         let target = element.getAttribute("data-target");
                         if(target == "billing") content.innerHTML = billing;
@@ -1590,38 +1725,115 @@ function option_activate() {
                         if (target == "settings") content.innerHTML = settings;
                         if (target == "users") content.innerHTML = users;
                         canceladditems = document.querySelectorAll("#additem")
-                        console.log("upperlevel", canceladditems);
-
-
         })
     });
 
         document.addEventListener("click", (e) => {
+                // page navigation
                 const handleadditems = e.target.closest("#additem");
-                if (!handleadditems) return
-
-                let target = handleadditems.getAttribute("data-target");
-                if (target == "inventory") content.innerHTML = inventory;
-                if (target == "additem") content.innerHTML = additem;
-
-                        // canceladditems.forEach(element => {
-                        //         element.addEventListener("click", () => {
-                        //                 let target = element.getAttribute("data-target");
-                        //                 if (target == "inventory") content.innerHTML = inventory;
-                        //                 if (target == "additem") content.innerHTML = additem;
-                        //                 canceladditems = document.querySelectorAll("#additem")
-                        //         })
-                        // });
+                if (handleadditems) {
+                        let target = handleadditems.getAttribute("data-target");
+                        if (target == "inventory") content.innerHTML = inventory;
+                        if (target == "additem") content.innerHTML = additem;
+                }
+                
+                // Button actions
+                const save_item = e.target.closest("#additem-form-addinvitem");
+                if (save_item) {
+                        const additem_form_elements = document.querySelectorAll("#additem-form-itemcode, #additem-form-itemimage, #additem-form-category, #additem-form-unit, #additem-form-status, #additem-form-itemname, #additem-form-itemdesc, #additem-form-price, #additem-form-instock, #additem-form-supplier");
+                        if (additem_form_elements) {
+                                additem_form_array = Array.from(additem_form_elements, (elem) => elem.value);
+                                if (additem_form_array.includes("")) alert("All Fields are Required!");
+                                let test_addinv = {
+                                        "itemcode": additem_form_array[0],
+                                        "itemimage": additem_form_array[1],
+                                        "category": additem_form_array[2],
+                                        "unit": additem_form_array[3],
+                                        "status": additem_form_array[4],
+                                        "itemname": additem_form_array[5],
+                                        "itemdesc": additem_form_array[6],
+                                        "price": additem_form_array[7],
+                                        "instock": additem_form_array[8],
+                                        "supplier": additem_form_array[9]
+                                }
+                                console.table(test_addinv);
+                                additem_form_elements.forEach(element => {
+                                        // console.log(element.value);
+                                });
+                        }
+                }
         })
 }
+option_activate()
+
+function manage_localstorage(test_addinv) {
+        if (!localStorage.getItem("inventory")) {
+                localStorage.inventory = JSON.stringify(init_inventory);
+                const test_inv = JSON.parse(localStorage.getItem("inventory"));
+                console.table(test_inv);
+                alert("Table Initialised");
+        } else {
+
+        }
+}
+manage_localstorage()
+
+
+// function option_activate() {
+//         let options = document.querySelectorAll(".option");
+//         let canceladditems = document.querySelectorAll("#additem");
+//         let content = document.querySelector(".content-area");
+
+
+//                 options.forEach(element => {
+//                 element.addEventListener("click", () => {
+//                         options.forEach(elm => {
+//                                 elm.classList.remove("option-select");
+//                         })
+//                         element.classList.add("option-select");
+//                         let target = element.getAttribute("data-target");
+//                         if(target == "billing") content.innerHTML = billing;
+//                         if (target == "inventory") content.innerHTML = inventory;
+//                         if (target == "additem") content.innerHTML = additem;
+//                         if (target == "request") content.innerHTML = request;
+//                         if (target == "report") content.innerHTML = report;
+//                         if (target == "settings") content.innerHTML = settings;
+//                         if (target == "users") content.innerHTML = users;
+//                         canceladditems = document.querySelectorAll("#additem")
+//                         console.log("upperlevel", canceladditems);
+
+
+//         })
+//     });
+
+//         document.addEventListener("click", (e) => {
+//                 const handleadditems = e.target.closest("#additem");
+//                 if (!handleadditems) return;
+
+//                 let target = handleadditems.getAttribute("data-target");
+//                 if (target == "inventory") content.innerHTML = inventory;
+//                 if (target == "additem") content.innerHTML = additem;
+
+//                         // canceladditems.forEach(element => {
+//                         //         element.addEventListener("click", () => {
+//                         //                 let target = element.getAttribute("data-target");
+//                         //                 if (target == "inventory") content.innerHTML = inventory;
+//                         //                 if (target == "additem") content.innerHTML = additem;
+//                         //                 canceladditems = document.querySelectorAll("#additem")
+//                         //         })
+//                         // });
+//         })
+// }
+// option_activate()
+
 
 // function option_activate() {
 //         let options = document.querySelectorAll(".option")
 //         let canceladditems = document.querySelectorAll("#additem")
 //         let content = document.querySelector(".content-area")
-        
 
-        
+
+
 //         options.forEach(element => {
 //                 element.addEventListener("click", () => {
 //                         options.forEach(elm => {
@@ -1678,5 +1890,3 @@ function option_activate() {
 // ]
 // }
 // fill_table_with_data()
-
-option_activate()

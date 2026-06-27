@@ -129,16 +129,16 @@
                                                 <div class="additem-card-left">
                                                         <div class="additem-itemcode">
                                                                 <div class="additem-title-text">Item Code</div>
-                                                                <input type="text" class="additem-itemcode-input" placeholder="ITM-000129">
+                                                                <input type="text" class="additem-itemcode-input" placeholder="ITM-000129" id="additem-form-itemcode">
                                                                 <div class="additem-desc-text">Auto-generated</div>
                                                         </div>
                                                         <div class="additem-itemimage">
                                                                 <div class="additem-title-text">Item Image</div>
-                                                                <!-- <input type="file" accept="image/png, image/jpg, image/jpeg" placeholder="Click to upload or drag and drop"> -->
                                                                 <div class="additem-itemimage-input">
                                                                         <span class="material-symbols-outlined cloud-symbol">
                                                                                 cloud_upload
                                                                         </span>
+                                                                        <input type="file" accept="image/png, image/jpg, image/jpeg" placeholder="Click to upload or drag and drop" id="additem-form-itemimage" required="required">
                                                                         <div class="additem-fileupload">
                                                                                 <div class="additem-fileupload-title">Click to upload or drag and drop</div>
                                                                                 <div class="additem-fileupload-desc">PNG, JPG or WEBP (Max. 2MB)</div>
@@ -148,22 +148,35 @@
                                                         </div>
                                                         <div class="additem-category">
                                                                 <div class="additem-title-text additem-important">Category</div>
-                                                                <select name="category" id="additem-category-option">
-                                                                        <option value="select category">Select Category</option>
+                                                                <select name="category" id="additem-form-category" required>
+                                                                        <option value="" selected disabled hidden>Select Category</option>
+                                                                        <option value="Beverage">Beverage</option>
+                                                                        <option value="Steamed Bun">Steamed Bun</option>
+                                                                        <option value="Steamed Timsum">Steamed Timsum</option>
+                                                                        <option value="Deep Fry Timsum">Deep Fry Timsum</option>
+                                                                        <option value="Bake">Bake</option>
+                                                                        <option value="Noodle/Dumplings">Noodle/ Dumplings</option>
+                                                                        <option value="Porridge">Porridge</option>
                                                                 </select>
                                                                 <div class="additem-desc-text hide-text">Auto-generated</div>
                                                         </div>
                                                         <div class="additem-unit">
                                                                 <div class="additem-title-text additem-important">Unit</div>
-                                                                <select name="category" id="additem-unit-option">
-                                                                        <option value="select category">Select Unit</option>
+                                                                <select name="category" id="additem-form-unit" required>
+                                                                        <option value="" selected disabled hidden>Select Unit</option>
+                                                                        <option value="Bowl">Bowl</option>
+                                                                        <option value="Cup">Cup</option>
+                                                                        <option value="Pcs">Pcs</option>
+                                                                        <option value="Glass">Glass</option>
                                                                 </select>
                                                                 <div class="additem-desc-text hide-text">Auto-generated</div>
                                                         </div>
                                                         <div class="additem-status">
                                                                 <div class="additem-title-text">Status</div>
-                                                                <select name="category" id="additem-status-option">
-                                                                        <option value="instock">In Stock</option>
+                                                                <select name="category" id="additem-form-status">
+                                                                        <option value="instock" selected>In Stock</option>
+                                                                        <option value="lowstock">Low Stock</option>
+                                                                        <option value="outofstock">Out of Stock</option>
                                                                 </select>
                                                                 <div class="additem-desc-text">Status is auto-populated based on In Stock quantity.</div>
                                                         </div>
@@ -171,28 +184,29 @@
                                                 <div class="additem-card-right">
                                                         <div class="additem-itemname">
                                                                 <div class="additem-title-text  additem-important">Item Name</div>
-                                                                <input type="text" class="additem-itemname-input" placeholder="Enter item name">
+                                                                <input type="text" class="additem-itemname-input" placeholder="Enter item name" id="additem-form-itemname" required>
                                                                 <div class="additem-desc-text hide-text">Auto-generated</div>
                                                         </div>
                                                         <div class="additem-itemdesc">
                                                                 <div class="additem-title-text">Item Description</div>
-                                                                <textarea name="additem-itemdesc" id="additem-itemdesc" class="additem-itemdesc-input" placeholder="Enter item description"></textarea>
+                                                                <textarea name="additem-itemdesc" class="additem-itemdesc-input" placeholder="Enter item description" id="additem-form-itemdesc"></textarea>
                                                                 <div class="additem-desc-text hide-text">Auto-generated</div>
                                                         </div>
                                                         <div class="additem-price">
                                                                 <div class="additem-title-text additem-important">Price</div>
-                                                                <input type="text" class="additem-price-input" placeholder="Enter price">
+                                                                <input type="number" class="additem-price-input" placeholder="Enter price" id="additem-form-price" min="1" max="1000" step="0.1" required>
                                                                 <div class="additem-desc-text hide-text">Auto-generated</div>
                                                         </div>
                                                         <div class="additem-instock">
                                                                 <div class="additem-title-text additem-important">In Stock</div>
-                                                                <input type="text" class="additem-instock-input" placeholder="Enter stock quantity">
+                                                                <input type="number" class="additem-instock-input" placeholder="Enter stock quantity"  id="additem-form-instock" min="1" max="1000" required>
                                                                 <div class="additem-desc-text hide-text">Auto-generated</div>
                                                         </div>
                                                         <div class="additem-supplier">
                                                                 <div class="additem-title-text">Supplier</div>
-                                                                <select name="additem-supplier-option" id="additem-supplier-option">
-                                                                        <option value="supplier">Select supplier</option>
+                                                                <select name="additem-supplier-option" id="additem-form-supplier">
+                                                                        <option value="" selected disabled hidden>Select supplier</option>
+                                                                        <option value="local">Local</option>
                                                                 </select>
                                                                 <div class="additem-desc-text hide-text">Status is auto-populated based on In Stock quantity.</div>
                                                         </div>
@@ -202,7 +216,7 @@
                                                 <div class="additem-baction" id="additem" data-target="inventory">
                                                         <span class="datename">Cancel</span>
                                                 </div>
-                                                <div class="additem-baction option-select">
+                                                <div class="additem-baction option-select" id="additem-form-addinvitem">
                                                         <span class="material-symbols-outlined save-symbol">
                                                                 save
                                                         </span>
