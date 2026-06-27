@@ -52,7 +52,13 @@
                                 </span>
                                 <span class="opname">Sales Report</span>
                         </div>
-                        <div class="option" data-target="settings">
+                        <div class="option" data-target="customerreport">
+                                <span class="material-symbols-outlined symbol">
+                                        person
+                                </span>
+                                <span class="opname">Customer Report</span>
+                        </div>
+                        <!-- <div class="option" data-target="settings">
                                 <span class="material-symbols-outlined symbol">
                                         settings
                                 </span>
@@ -63,7 +69,7 @@
                                         person
                                 </span>
                                 <span class="opname">Users</span>
-                        </div>
+                        </div> -->
                 </div>
                 <div class="appinfo userprof">
                         <!-- <img src="https://static.vecteezy.com/system/resources/previews/046/409/821/non_2x/avatar-profile-icon-in-flat-style-male-user-profile-illustration-on-isolated-background-man-profile-sign-business-concept-vector.jpg" alt="image" srcset="" class="img"> -->
@@ -78,7 +84,23 @@
                 </div>
         </div>
         <div class="content-area">
-        <div class="content">
+                <div class="popup remove-all" id="popup">
+                        <div class="align-popup">
+                                <span class="material-symbols-outlined success-symbol">calendar_month</span>
+                                <div class="popup-message">Bill Saved to the localstorage</div>
+                        </div>
+                </div>
+                <div class="save-bill remove-all"><div class="save-bill-menu">
+                        <div class="align-save-bill-menu">
+                                <div class="save-title">Save Bill</div>
+                                <div class="align-customer-date">
+                                        <div class="save-customer"><div class="save-customer-text">Customer Name</div><input type="text" id="customer-name" placeholder="Enter customer name"></div>
+                                        <div class="save-date"><div class="save-date-text">Billing Date</div><input type="date" name="bill-date" id="bill-date" placeholder="Bill Date"></div>
+                                </div>
+                                <div class="save-bill-action option-select" id="customer-bill-save">Save</div>
+                        </div>
+                </div></div>
+                <div class="content">
                 <div class="card one">
                         <div class="grid-total">
                                 <div class="billtitle">Current Bill<span
@@ -86,13 +108,13 @@
                                 <div class="totalamount">
                                         <div class="aligntotal">
                                                 <div class="amounttitle">Total Amount</div>
-                                                <div class="amount">$146.30</div>
+                                                <div class="amount" id="checkout-total-amount">$146.30</div>
                                         </div>
                                 </div>
                         </div>
                 </div>
                 <div class="search card two grid-search">
-                        <input type="text" class="bar" name="search" placeholder="Search menu items...">
+                        <input type="text" class="bar" name="search" placeholder="Search menu items..." autocomplete="off">
                         <div class="changelayout">
                                 <div class="layoutgrid option-select">
                                         <span class="material-symbols-outlined symbol">
@@ -506,7 +528,7 @@
                         <div class="crow-top">
                                 <div class="align-item-number">
                                         <div class="itemnumber-name">Item Number</div>
-                                        <input type="text" placeholder="Scan / Enter item Number" class="itemnumber-input cinput" name="itemnumber">
+                                        <input type="text" placeholder="Scan / Enter item Number" class="itemnumber-input cinput" name="itemnumber" id="calc-itemnumber-name">
                                 </div>
                                 <div class="align-quantity">
                                         <div class="quantity-name">Quantity</div>
@@ -558,7 +580,7 @@
                         </div>
                 </div>
                 <div class="card seven grid-seven">
-                        <div class="newbill">
+                        <div class="newbill" id="new-checkout-bill">
                                 <span class="material-symbols-outlined action-symbol">
                                         add_circle
                                 </span>
@@ -638,13 +660,15 @@
                                 </div>
                         </div>
                         <div class="arowtwo">
-                                <div class="restore">                                <div class="tdel">
+                                <div class="restore">
+                                        <div class="tdel">
                                         <span class="material-symbols-outlined transaction-symbol">
                                                 restart_alt
                                         </span>
                                         <div class="tdel-name">Restore</div>
                                 </div></div>
-                                <div class="mainmenu">                                <div class="tdel">
+                                <div class="mainmenu">
+                                        <div class="tdel">
                                         <span class="material-symbols-outlined transaction-symbol">
                                                 home
                                         </span>
@@ -652,7 +676,7 @@
                                 </div></div>
                         </div>
                 </div>
-        </div>
+                </div>
         </div>
         </div>
         <script src="script.js"></script>

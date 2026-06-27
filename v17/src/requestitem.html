@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="style.css">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=add_circle,app_registration,archive,backspace,bakery_dining,book_6,bookmark,calendar_month,cancel,change_history,cloud_upload,comic_bubble,contactless_off,delete,description,download,edit_calendar,featured_seasonal_and_gifts,filter_alt,grid_view,group,home,info,keyboard_arrow_down,keyboard_arrow_right,list,list_alt_check,local_cafe,menu,monitoring,more_vert,onsen,order_approve,oven,payment_card,person,point_of_sale,print,ramen_dining,rebase,receipt,refresh,restart_alt,save,schedule,settings,shopping_cart,shoppingmode,soup_kitchen,trip,work_update" />
+        <title>POS</title>
+</head>
+
+<body>
+        <img src="/templates/inventory.png" class="overlay"></img>
+        <div class="menu">
+                <div class="appinfo">
+                        <span class="material-symbols-outlined icon appicon">
+                                local_cafe
+                        </span>
+                        <div class="appname">
+                                POS Cafe
+                        </div>
+                </div>
+                <div class="options">
+                        <div class="option" data-target="billing">
+                                <span class="material-symbols-outlined symbol">
+                                        receipt
+                                </span>
+                                <span class="opname">Billing</span>
+                        </div>
+                        <div class="option option-select" data-target="inventory">
+                                <span class="material-symbols-outlined symbol">
+                                        work_update
+                                </span>
+                                <span class="opname">Inventory</span>
+                        </div>
+                        <div class="option" data-target="request">
+                                <span class="material-symbols-outlined symbol">
+                                        archive
+                                </span>
+                                <span class="opname">Item Request</span>
+                        </div>
+                        <div class="option" data-target="report">
+                                <span class="material-symbols-outlined symbol">
+                                        monitoring
+                                </span>
+                                <span class="opname">Sales Report</span>
+                        </div>
+                        <div class="option" data-target="settings">
+                                <span class="material-symbols-outlined symbol">
+                                        settings
+                                </span>
+                                <span class="opname">Settings</span>
+                        </div>
+                        <div class="option" data-target="users">
+                                <span class="material-symbols-outlined symbol">
+                                        person
+                                </span>
+                                <span class="opname">Users</span>
+                        </div>
+                </div>
+                <div class="appinfo userprof">
+                        <div class="usericon">A</div>
+                        <div class="names">
+                                <span class="appname">Admin</span>
+                                <span class="appname userrole">Administrator</span>
+                        </div>
+                        <span class="material-symbols-outlined userrole-symbol">
+                                keyboard_arrow_down
+                        </span>
+                </div>
+        </div>
+                <div class="content-area">
+<div class="popup remove-all" id="popup">
+        <div class="align-popup">
+                <span class="material-symbols-outlined success-symbol">calendar_month</span>
+                <div class="popup-message">Bill Saved to the localstorage</div>
+        </div>
+</div>
+<div class="additem-content requestitem-content">
+<div class="additem-statusbar">
+        <div class="additem-topbar">
+                <div class="additem-titlebar">
+                        <span class="material-symbols-outlined additem-menu-symbol">menu</span>
+                        <div class="additem-inventorytitle">Item Request</div>
+                </div>
+                <div class="search card two datetimegrid">
+                <div class="datetime">
+                        <div class="dategrid">
+                                <span class="material-symbols-outlined calendar-symbol">
+                                        calendar_month
+                                </span>
+                                <div class="date">
+                                        <div class="date-names">
+                                                <span class="datename">20 May 2024</span>
+                                                <span class="dayname">Monday</span>
+                                        </div>
+                                </div>
+                        </div>
+                        <div class="separator"></div>
+                        <div class="timegrid">
+                                <span class="material-symbols-outlined time-symbol">
+                                        schedule
+                                </span>
+                                <div class="time">
+                                        <span class="timename">10:30 AM</span>
+                                </div>
+                        </div>
+                </div>
+                </div>
+        </div>
+        <div class="additem-navbar">
+                <div class="additem-navbar-align">
+                        <div class="additem-navbar-inventory">Item Request</div>
+                        <span class="material-symbols-outlined additem-navbar-arrow">keyboard_arrow_right</span>
+                        <div class="additem-navbar-inventory">Request Items</div>
+                </div>
+        </div>
+</div>
+<div class="additem-card">
+        <div class="additem-card-title">
+                <div class="additem-itemtitle-text">Request Item</div>
+                <div class="additem-itemdescription-text">Request more items for your inventory</div>
+        </div>
+        <div class="additem-card-separator"></div>
+        <div class="additem-card-content">
+                <div class="additem-form">
+                        <div class="additem-card-left">
+                            <div class="additem-itemname">
+                                <div class="additem-title-text  additem-important">Item Name</div>
+                                <select name="additem-itemname-option" id="additem-form-itemname">
+                                        <option value="" selected disabled hidden>Select Item Name</option>
+                                </select>
+                                <div class="additem-desc-text hide-text">Auto-generated</div>
+                            </div>
+                            <div class="additem-supplier">
+                                <div class="additem-title-text  additem-important">Quantity</div>
+                                <input type="number" class="additem-quantity-input" placeholder="Quantity" id="additem-form-quantity" value="1" min="1" max="1000" step="1">
+                                <div class="additem-desc-text hide-text">Status is auto-populated based on In Stock quantity.</div>
+                            </div>
+                            <div class="additem-itemcode">
+                                <div class="additem-title-text  additem-important">Expected Date</div>
+                                <input type="datetime-local" class="additem-exdate-input" placeholder="ITM-000129" id="additem-form-exdate" value="2026-06-03T00:15">
+                                <div class="additem-desc-text hide-text">Auto-generated</div>
+                            </div>
+                            <div class="additem-instock">
+                                <div class="additem-title-text">In Stock</div>
+                                <input type="number" class="additem-instock-input" placeholder="Stock quantity"  id="additem-form-instock" min="0" max="1000" required disabled>
+                                <div class="additem-desc-text">Auto-generated</div>
+                            </div>
+                        </div>
+                </div>
+                <div class="additem-baction-group">
+                        <div class="additem-baction" id="additem" data-target="request">
+                                <span class="datename">Cancel</span>
+                        </div>
+                        <div class="additem-baction option-select" id="requestitem-action" >
+                                <span class="material-symbols-outlined save-symbol">
+                                        download
+                                </span>
+                                <span class="datename">Confirm Request</span>
+                        </div>
+                </div>
+        </div>
+</div>
+</div>
+                </div>
+        </div>
+        <script src="script.js"></script>
+</body>
+</html>
