@@ -715,7 +715,7 @@ span.delete-symbol {
 
 .grid-items {
     position: relative;
-    overflow-y: scroll;
+    overflow-y: hidden;
 }
 
 #items-nextpage {

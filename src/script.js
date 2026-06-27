@@ -2343,8 +2343,29 @@ function option_activate() {
                 if (customer_purchase_close) document.querySelector("#customerpurchase-content").classList.add("remove-all");
 
                 // billing page next page action
-                const items_nextpage = e.target.closest("#items-nextpage")
+                const items_nextpage = e.target.closest("#items-nextpage");
                 if (items_nextpage) hide_overflow("change");
+
+
+                // grid view switch
+                const gridview = e.target.closest(".layoutgrid");
+                if (gridview) {
+                        document.querySelector(".layoutlist").classList.remove("option-select");
+                        gridview.classList.add("option-select");
+                        hide_overflow("change");
+                        generate_billing_items_list(current_category);
+                        console.log("loaded list");
+                }
+
+                // list view switch
+                const listview = e.target.closest(".layoutlist");
+                if (listview) {
+                        document.querySelector(".layoutgrid").classList.remove("option-select");
+                        listview.classList.add("option-select");
+                        generate_billing_items_list(current_category);
+                        // if (target == "settings") content.innerHTML = settings;
+                        // if (target == "users") content.innerHTML = users;
+                }
         });
 
 
@@ -3157,41 +3178,41 @@ function add_requestitem() {
 // Edit items from inevntory function (update)
 function edititems_inventory(edit_item_itemcode) {
         const additem_form_elements = document.querySelectorAll("#additem-form-itemcode, #additem-form-itemimage, #additem-form-category, #additem-form-unit, #additem-form-itemname, #additem-form-itemdesc, #additem-form-price, #additem-form-instock, #additem-form-supplier");
-        if (additem_form_elements) {
-                additem_form_array = Array.from(additem_form_elements, (element) => element.value);
-                if (additem_form_array.filter((element, index) => (index != 1)).includes("")) {
-                        document.querySelector(".additem-content .additem-form").classList.add("additem-form-validate");
-                        // alert("All Fields are Required!");
-                        show_alert("All Fields are Required!", "error");
-                } else {
-                        let addinv = get_inventory_item(edit_item_itemcode);
-                        let temp_invupdate = {
-                                "itemcode": edit_item_itemcode,
-                                "itemimage": (additem_form_array[1]) ? additem_form_array[1].replace("C:\\fakepath\\", "/assets/") : addinv.itemimage,
-                                "category": additem_form_array[2],
-                                "unit": additem_form_array[3],
-                                "itemname": additem_form_array[4],
-                                "itemdesc": additem_form_array[5],
-                                "price": parseFloat(additem_form_array[6]),
-                                "instock": parseInt(additem_form_array[7]),
-                                "oldstock": parseInt(additem_form_array[7]),
-                                "supplier": additem_form_array[8]
-                        }
-                        addinv = temp_invupdate;
-                        const manage_inventory = read_inventory();
-                        const filtered_inventory = manage_inventory.filter((element) => element.itemcode != edit_item_itemcode);
-                        if (filtered_inventory.find(e => e.itemname == addinv.itemname)) {
-                                show_alert("ItemName Already Exists", "error");
+                if (additem_form_elements) {
+                        additem_form_array = Array.from(additem_form_elements, (element) => element.value);
+                        if (additem_form_array.filter((element, index) => (index != 1)).includes("")) {
+                                document.querySelector(".additem-content .additem-form").classList.add("additem-form-validate");
+                                // alert("All Fields are Required!");
+                                show_alert("All Fields are Required!", "error");
                         } else {
-                                filtered_inventory.push(addinv);
-                                filtered_inventory.sort((a, b) => Number.parseInt(a.itemcode.replace("ITM-", "")) - Number.parseInt(b.itemcode.replace("ITM-", "")))
-                                write_inventory(filtered_inventory);
-                                // alert("Inventory Updated");
-                                show_alert("Inventory Updated");
-                                document.querySelector("#additem-form-itemcode").value = generate_itemcode();
-                        }
-                };
-        }
+                                let addinv = get_inventory_item(edit_item_itemcode);
+                                let temp_invupdate = {
+                                        "itemcode": edit_item_itemcode,
+                                        "itemimage": (additem_form_array[1]) ? additem_form_array[1].replace("C:\\fakepath\\", "/assets/") : addinv.itemimage,
+                                        "category": additem_form_array[2],
+                                        "unit": additem_form_array[3],
+                                        "itemname": additem_form_array[4],
+                                        "itemdesc": additem_form_array[5],
+                                        "price": parseFloat(additem_form_array[6]),
+                                        "instock": parseInt(additem_form_array[7]),
+                                        "oldstock": parseInt(additem_form_array[7]),
+                                        "supplier": additem_form_array[8]
+                                }
+                                addinv = temp_invupdate;
+                                const manage_inventory = read_inventory();
+                                const filtered_inventory = manage_inventory.filter((element) => element.itemcode != edit_item_itemcode);
+                                if (filtered_inventory.find(e => e.itemname == addinv.itemname)) {
+                                        show_alert("ItemName Already Exists", "error");
+                                } else {
+                                        filtered_inventory.push(addinv);
+                                        filtered_inventory.sort((a, b) => Number.parseInt(a.itemcode.replace("ITM-", "")) - Number.parseInt(b.itemcode.replace("ITM-", "")))
+                                        write_inventory(filtered_inventory);
+                                        // alert("Inventory Updated");
+                                        show_alert("Inventory Updated");
+                                        document.querySelector("#additem-form-itemcode").value = generate_itemcode();
+                                }
+                        };
+                }
 }
 // Delete items from inevntory function (delete)
 function deleteitems_inventory(delete_item_itemcode) {
