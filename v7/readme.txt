@@ -1,1 +1,0 @@
-completed the entire billing page along with the images for each items

@@ -1,84 +1,16 @@
-<!DOCTYPE html>
-<html lang="en">
+function option_activate() {
+    let options = document.querySelectorAll(".option")
+    let content = document.querySelector(".content-area")
+    options.forEach(element => {
+        element.addEventListener("click", () => {
+            options.forEach(elm => {
+                elm.classList.remove("option-select");
+            })
+            element.classList.add("option-select");
 
-<head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" href="style.css">
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <!-- <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap" rel="stylesheet"> -->
-        <!-- <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap" rel="stylesheet"> -->
-        <!-- <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Nunito:ital,wght@0,200..1000;1,200..1000&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet"> -->
-        <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
-
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=add_circle,app_registration,archive,backspace,bakery_dining,bookmark,calendar_month,cancel,change_history,comic_bubble,contactless_off,delete,description,edit_calendar,featured_seasonal_and_gifts,grid_view,group,home,info,keyboard_arrow_down,list,list_alt_check,local_cafe,menu,monitoring,more_vert,onsen,order_approve,oven,payment_card,person,point_of_sale,print,ramen_dining,rebase,receipt,restart_alt,schedule,settings,shopping_cart,shoppingmode,soup_kitchen,trip,work_update" />
-        <title>POS</title>
-</head>
-
-<body>
-        <img src="overlay.png" class="overlay"></img>
-        <div class="menu">
-                <div class="appinfo">
-                        <span class="material-symbols-outlined icon appicon">
-                                local_cafe
-                        </span>
-                        <div class="appname">
-                                POS Cafe
-                        </div>
-                </div>
-                <div class="options">
-                        <div class="option option-select" data-target="billing">
-                                <span class="material-symbols-outlined symbol">
-                                        receipt
-                                </span>
-                                <span class="opname">Billing</span>
-                        </div>
-                        <div class="option" data-target="inventory">
-                                <span class="material-symbols-outlined symbol">
-                                        work_update
-                                </span>
-                                <span class="opname">Inventory</span>
-                        </div>
-                        <div class="option" data-target="request">
-                                <span class="material-symbols-outlined symbol">
-                                        archive
-                                </span>
-                                <span class="opname">Item Request</span>
-                        </div>
-                        <div class="option" data-target="report">
-                                <span class="material-symbols-outlined symbol">
-                                        monitoring
-                                </span>
-                                <span class="opname">Sales Report</span>
-                        </div>
-                        <div class="option" data-target="settings">
-                                <span class="material-symbols-outlined symbol">
-                                        settings
-                                </span>
-                                <span class="opname">Settings</span>
-                        </div>
-                        <div class="option" data-target="users">
-                                <span class="material-symbols-outlined symbol">
-                                        person
-                                </span>
-                                <span class="opname">Users</span>
-                        </div>
-                </div>
-                <div class="appinfo userprof">
-                        <!-- <img src="https://static.vecteezy.com/system/resources/previews/046/409/821/non_2x/avatar-profile-icon-in-flat-style-male-user-profile-illustration-on-isolated-background-man-profile-sign-business-concept-vector.jpg" alt="image" srcset="" class="img"> -->
-                        <div class="usericon">A</div>
-                        <div class="names">
-                                <span class="appname">Admin</span>
-                                <span class="appname userrole">Administrator</span>
-                        </div>
-                        <span class="material-symbols-outlined userrole-symbol">
-                                keyboard_arrow_down
-                        </span>
-                </div>
-        </div>
-        <div class="content-area">
-                        <div class="content">
+                let target = element.getAttribute("data-target");
+                if(target == "billing") {
+                    content.innerHTML = `<div class="content"> 
                 <div class="card one">
                         <div class="grid-total">
                                 <div class="billtitle">Current Bill<span
@@ -669,10 +601,417 @@
                                 </div></div>
                         </div>
                 </div>
-        </div>
-        </div>
-        </div>
-        <script src="script.js"></script>
-</body>
+                </div>`
+                }
 
-</html>
+                if (target == "inventory") {
+                    content.innerHTML = `
+                        <div class="inventory-content">
+                        <div class="statusbar">
+                                <div class="titlebar">
+                                        <span class="material-symbols-outlined menu-symbol">menu</span>
+                                        <div class="inventorytitle">Inventory</div>
+                                </div>
+                                <div class="search card two datetimegrid">
+                                <div class="datetime">
+                                        <div class="dategrid">
+                                                <span class="material-symbols-outlined calendar-symbol">
+                                                        calendar_month
+                                                </span>
+                                                <div class="date">
+                                                        <div class="date-names">
+                                                                <span class="datename">20 May 2024</span>
+                                                                <span class="dayname">Monday</span>
+                                                        </div>
+                                                </div>
+                                        </div>
+                                        <div class="separator"></div>
+                                        <div class="timegrid">
+                                                <span class="material-symbols-outlined time-symbol">
+                                                        schedule
+                                                </span>
+                                                <div class="time">
+                                                        <span class="timename">10:30 AM</span>
+                                                </div>
+                                        </div>
+                                </div>
+                        </div>
+                        </div>
+                        <div class="inventory-card grid-filter-card">
+                                <div class="align-option-group">
+                                        <div class="option-group-name">Category</div>
+                                        <div class="selector">
+                                                <span class="material-symbols-outlined menu-symbol">grid_view</span>
+                                                <select name="opg-select" id="opg-select" class="opg-select">
+                                                        <option value="opg-all">All Categories</option>
+                                                </select>
+                                        </div> 
+                                </div>
+                                <div class="align-option-group">
+                                        <div class="option-group-name">Item Name</div>
+                                        <div class="selector">
+                                                <span class="material-symbols-outlined menu-symbol">local_cafe</span>
+                                                <select name="opg-select" id="opg-select" class="opg-select">
+                                                        <option value="opg-all">All Items</option>
+                                                </select>
+                                        </div> 
+                                </div>
+                                <div class="align-option-group">
+                                        <div class="option-group-name">Status</div>
+                                        <div class="selector">
+                                                <select name="opg-select" id="opg-select" class="opg-select">
+                                                        <option value="opg-all">All Status</option>
+                                                </select>
+                                        </div> 
+                                </div>
+                                <div class="align-option-group">
+                                        <div class="option-group-name">Date From</div>
+                                        <input class="opg-date-select" type="date" value="2024-05-20"></input>
+                                </div>
+                                <div class="align-option-group">
+                                        <div class="option-group-name">Date To</div>
+                                        <input class="opg-date-select" type="date" value="2024-05-20"></input>
+                                </div>
+                                <div class="t-bfilter-group">
+                                        <div class="t-bfilter option-select">
+                                                <span class="material-symbols-outlined calendar-symbol">
+                                                        filter_alt
+                                                </span>
+                                                <span class="datename">Filter</span>
+                                        </div>
+                                        <div class="t-bfilter">
+                                                <span class="material-symbols-outlined calendar-symbol">
+                                                        refresh
+                                                </span>
+                                                <span class="datename">Reset</span>
+                                        </div>
+                                </div>
+                        </div>
+                        <div class="inventory-card grid-main-table-card">
+                                <div class="tablebar">
+                                <div class="align-ttitle">
+                                        <div class="tabletitle">Inventory List</div>
+                                        <div class="tableitems">Total 128 items found</div>
+                                </div>
+                                <div class="tbutton-group">
+                                        <div class="align-tbutton-group">
+                                                <div class="t-bfilter option-sudo-select" id="additem">
+                                                        <span class="material-symbols-outlined calendar-symbol">
+                                                                add_circle
+                                                        </span>
+                                                        <span class="datename">Add Item</span>
+                                                </div>
+                                                <div class="t-bfilter option-select">
+                                                        <span class="material-symbols-outlined calendar-symbol">
+                                                                download
+                                                        </span>
+                                                        <span class="datename">Request Item</span>
+                                                </div>
+                                                <div class="t-bfilter">
+                                                        <span class="material-symbols-outlined calendar-symbol">
+                                                                book_6
+                                                        </span>
+                                                        <span class="datename">Export to Excel</span>
+                                                </div>
+                                        </div>
+                                </div>
+                        </div>
+                                <table>
+                                        <thead>
+                                                <tr>
+                                                        <td>Item</td>
+                                                        <td>Category</td>
+                                                        <td>Price</td>
+                                                        <td>Unit</td>
+                                                        <td>Purchased</td>
+                                                        <td>Sold</td>
+                                                        <td>In Stock</td>
+                                                        <td>Status</td>
+                                                        <td>Last Updated</td>
+                                                </tr>
+                                        </thead>
+                                        <tbody>
+                                                <tr>
+                                                        <td>
+                                                                <div class="alignnames"><img
+                                                                                src="https://static.vecteezy.com/system/resources/previews/060/818/430/non_2x/a-glass-of-creamy-nutritious-soy-milk-surrounded-by-soybeans-png.png"
+                                                                                alt="coffee" srcset="" name="item"
+                                                                                class="item-symbol">
+                                                                        <div class="bill-itemname">Soya Milk</div>
+                                                                </div>
+                                                        </td>
+                                                        <td><div class="inv-category">Beverage</div></td>
+                                                        <td><div class="inv-price">$3.00</div></td>
+                                                        <td><div class="inv-unit">Cup</div></td>
+                                                        <td><div class="inv-purchased">150</div></td>
+                                                        <td><div class="inv-sold">98</div></td>
+                                                        <td><div class="inv-instock">52</div></td>
+                                                        <td><div class="inv-status">In Stock</div></td>
+                                                        <td><div class="inv-lastupdated">20 May 2024, 10:30AM</div></td>
+                                                </tr>
+                                                <tr>
+                                                        <td>
+                                                                <div class="alignnames"><img
+                                                                                src="https://png.pngtree.com/png-vector/20250429/ourmid/pngtree-iced-black-tea-in-clear-plastic-cup-with-ice-cubes-png-image_16041290.png"
+                                                                                alt="coffee" srcset="" name="item"
+                                                                                class="item-symbol">
+                                                                        <div class="bill-itemname">Tea C</div>
+                                                                </div>
+                                                        </td>
+                                                        <td><div class="inv-category">Beverage</div></td>
+                                                        <td><div class="inv-price">$4.70</div></td>
+                                                        <td><div class="inv-unit">Cup</div></td>
+                                                        <td><div class="inv-purchased">200</div></td>
+                                                        <td><div class="inv-sold">150</div></td>
+                                                        <td><div class="inv-instock">50</div></td>
+                                                        <td><div class="inv-status">In Stock</div></td>
+                                                        <td><div class="inv-lastupdated">20 May 2024, 10:30AM</div></td>
+                                                </tr>
+                                                <tr>
+                                                        <td>
+                                                                <div class="alignnames"><span
+                                                                                class="material-symbols-outlined item-symbol">local_cafe</span>
+                                                                        <div class="bill-itemname">Streamed Timsum</div>
+                                                                </div>
+                                                        </td>
+                                                        <td><div class="inv-category">Steamed Timsum</div></td>
+                                                        <td><div class="inv-price">$7.30</div></td>
+                                                        <td><div class="inv-unit">Pcs</div></td>
+                                                        <td><div class="inv-purchased">120</div></td>
+                                                        <td><div class="inv-sold">80</div></td>
+                                                        <td><div class="inv-instock">40</div></td>
+                                                        <td><div class="inv-status">In Stock</div></td>
+                                                        <td><div class="inv-lastupdated">20 May 2024, 10:30AM</div></td>
+                                                </tr>
+                                                <tr>
+                                                        <td>
+                                                                <div class="alignnames"><span
+                                                                                class="material-symbols-outlined item-symbol">local_cafe</span>
+                                                                        <div class="bill-itemname">Porridge</div>
+                                                                </div>
+                                                        </td>
+                                                        <td><div class="inv-category">Porridge</div></td>
+                                                        <td><div class="inv-price">$11.20</div></td>
+                                                        <td><div class="inv-unit">Bowl</div></td>
+                                                        <td><div class="inv-purchased">100</div></td>
+                                                        <td><div class="inv-sold">90</div></td>
+                                                        <td><div class="inv-instock inv-instock-orange">10</div></td>
+                                                        <td><div class="inv-status inv-status-orange">Low Stock</div></td>
+                                                        <td><div class="inv-lastupdated">20 May 2024, 10:30AM</div></td>
+                                                </tr>
+                                                <tr>
+                                                        <td>
+                                                                <div class="alignnames"><img
+                                                                                src="iced-coffee.png"
+                                                                                alt="coffee" srcset="" name="item"
+                                                                                class="item-symbol">
+                                                                        <div class="bill-itemname">Iced Tea</div>
+                                                                </div>
+                                                        </td>
+                                                        <td><div class="inv-category">Beverage</div></td>
+                                                        <td><div class="inv-price">$11.70</div></td>
+                                                        <td><div class="inv-unit">Glass</div></td>
+                                                        <td><div class="inv-purchased">180</div></td>
+                                                        <td><div class="inv-sold">170</div></td>
+                                                        <td><div class="inv-instock inv-instock-orange">10</div></td>
+                                                        <td><div class="inv-status inv-status-orange">Low Stock</div></td>
+                                                        <td><div class="inv-lastupdated">20 May 2024, 10:30AM</div></td>
+                                                </tr>
+                                                <tr>
+                                                        <td>
+                                                                <div class="alignnames"><span
+                                                                                class="material-symbols-outlined item-symbol">local_cafe</span>
+                                                                        <div class="bill-itemname">Dumplings</div>
+                                                                </div>
+                                                        </td>
+                                                        <td><div class="inv-category">Noodle/Dumplings</div></td>
+                                                        <td><div class="inv-price">$16.10</div></td>
+                                                        <td><div class="inv-unit">Pcs</div></td>
+                                                        <td><div class="inv-purchased">80</div></td>
+                                                        <td><div class="inv-sold">70</div></td>
+                                                        <td><div class="inv-instock inv-instock-orange">10</div></td>
+                                                        <td><div class="inv-status inv-status-orange">Low Stock</div></td>
+                                                        <td><div class="inv-lastupdated">20 May 2024, 10:30AM</div></td>
+                                                </tr>
+                                                <tr>
+                                                        <td>
+                                                                <div class="alignnames"><img
+                                                                                src="iced-coffee.png"
+                                                                                alt="coffee" srcset="" name="item"
+                                                                                class="item-symbol">
+                                                                        <div class="bill-itemname">Iced Coffee</div>
+                                                                </div>
+                                                        </td>
+                                                        <td><div class="inv-category">Beverage</div></td>
+                                                        <td><div class="inv-price">$13.50</div></td>
+                                                        <td><div class="inv-unit">Glass</div></td>
+                                                        <td><div class="inv-purchased">160</div></td>
+                                                        <td><div class="inv-sold">160</div></td>
+                                                        <td><div class="inv-instock inv-instock-red">0</div></td>
+                                                        <td><div class="inv-status inv-status-red">Out of Stock</div></td>
+                                                        <td><div class="inv-lastupdated">20 May 2024, 10:30AM</div></td>
+                                                </tr>
+                                                <tr>
+                                                        <td>
+                                                                <div class="alignnames"><img
+                                                                                src="https://static.vecteezy.com/system/resources/thumbnails/041/643/200/small/ai-generated-a-cup-of-coffee-and-a-piece-of-coffee-bean-perfect-for-food-and-beverage-related-designs-or-promoting-cozy-moments-png.png"
+                                                                                alt="coffee" srcset="" name="item"
+                                                                                class="item-symbol">
+                                                                        <div class="bill-itemname">Coffee C</div>
+                                                                </div>
+                                                        </td>
+                                                        <td><div class="inv-category">Beverage</div></td>
+                                                        <td><div class="inv-price">$16.50</div></td>
+                                                        <td><div class="inv-unit">Cup</div></td>
+                                                        <td><div class="inv-purchased">140</div></td>
+                                                        <td><div class="inv-sold">140</div></td>
+                                                        <td><div class="inv-instock inv-instock-red">0</div></td>
+                                                        <td><div class="inv-status inv-status-red">Out of Stock</div></td>
+                                                        <td><div class="inv-lastupdated">20 May 2024, 10:30AM</div></td>
+                                                </tr>
+                                                <tr>
+                                                        <td>
+                                                                <div class="alignnames"><img
+                                                                                src="https://static.vecteezy.com/system/resources/thumbnails/041/643/200/small/ai-generated-a-cup-of-coffee-and-a-piece-of-coffee-bean-perfect-for-food-and-beverage-related-designs-or-promoting-cozy-moments-png.png"
+                                                                                alt="coffee" srcset="" name="item"
+                                                                                class="item-symbol">
+                                                                        <div class="bill-itemname">Milo</div>
+                                                                </div>
+                                                        </td>
+                                                        <td><div class="inv-category">Beverage</div></td>
+                                                        <td><div class="inv-price">$15.00</div></td>
+                                                        <td><div class="inv-unit">Cup</div></td>
+                                                        <td><div class="inv-purchased">60</div></td>
+                                                        <td><div class="inv-sold">45</div></td>
+                                                        <td><div class="inv-instock">15</div></td>
+                                                        <td><div class="inv-status">In Stock</div></td>
+                                                        <td><div class="inv-lastupdated">20 May 2024, 10:30AM</div></td>
+                                                </tr>
+                                                <tr>
+                                                        <td>
+                                                                <div class="alignnames"><img
+                                                                                src="https://static.vecteezy.com/system/resources/thumbnails/041/643/200/small/ai-generated-a-cup-of-coffee-and-a-piece-of-coffee-bean-perfect-for-food-and-beverage-related-designs-or-promoting-cozy-moments-png.png"
+                                                                                alt="coffee" srcset="" name="item"
+                                                                                class="item-symbol">
+                                                                        <div class="bill-itemname">Chinese Tea</div>
+                                                                </div>
+                                                        </td>
+                                                        <td><div class="inv-category">Beverage</div></td>
+                                                        <td><div class="inv-price">$4.20</div></td>
+                                                        <td><div class="inv-unit">Cup</div></td>
+                                                        <td><div class="inv-purchased">90</div></td>
+                                                        <td><div class="inv-sold">60</div></td>
+                                                        <td><div class="inv-instock">30</div></td>
+                                                        <td><div class="inv-status">In Stock</div></td>
+                                                        <td><div class="inv-lastupdated">20 May 2024, 10:30AM</div></td>
+                                                </tr>
+                                        </tbody>
+                                </table>
+                                <div class="table-pages">
+                                        <div class="align-tshow">
+                                                <div class="entries">
+                                                        <div class="showtext">show</div> 
+                                                        <select name="entriescount" id="entriescount" class="entriescount">
+                                                                <option value="10">10</option>
+                                                                <option value="20">20</option>
+                                                                <option value="30">30</option>
+                                                        </select> 
+                                                        <div class="entriestext">entries</div>
+                                                </div>
+                                        </div>
+                                        <div class="align-tshow">
+                                                <div class="entries">
+                                                        <div class="t-pages option-select">1</div> 
+                                                        <div class="t-pages">2</div> 
+                                                        <div class="t-pages">3</div> 
+                                                        <div class="t-pages">4</div> 
+                                                        <div class="t-pages">5</div> 
+                                                        <div class="t-pages">...</div> 
+                                                        <div class="t-pages">13</div> 
+                                                </div>
+                                        </div>
+                                        <div class="align-tshow">
+                                                <div class="entries">
+                                                        <div class="showingtext">showing 1 to 10 of 128 entries</div> 
+                                                </div>
+                                        </div>
+                                </div>
+                        </div>
+
+                </div>`;
+                }
+
+                if (target == "request") {
+                    content.innerHTML = `
+                        <div class="card one grid-one">
+                            <div class="mainmenu">
+                                <span class="material-symbols-outlined symbol">
+                                        home
+                                </span>
+                                <div class="opname">Item Request</div>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                if (target == "report") {
+                    content.innerHTML = `
+                        <div class="card one grid-one">
+                            <div class="mainmenu">
+                                <span class="material-symbols-outlined symbol">
+                                        home
+                                </span>
+                                <div class="opname">Sales Report</div>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                if (target == "settings") {
+                    content.innerHTML = `
+                        <div class="card one grid-one">
+                            <div class="mainmenu">
+                                <span class="material-symbols-outlined symbol">
+                                        home
+                                </span>
+                                <div class="opname">Settings</div>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                if (target == "users") {
+                    content.innerHTML = `
+                        <div class="card one grid-one">
+                            <div class="mainmenu">
+                                <span class="material-symbols-outlined symbol">
+                                        home
+                                </span>
+                                <div class="opname">Users</div>
+                            </div>
+                        </div>
+                    `;
+                }
+        })
+    });
+}
+
+// function fill_table_with_data() {
+//     let table = document.querySelector("table")
+//     let data = [
+// ["James",            "James@gmail.com",      "Product designer",         "patricia",     "Product Team",     "Imaginer USA",     "Active"],
+// ["Michael",          "Michael@gmail.com",    "User interface designer",  "ennifer",      "Design Team",      "Imaginer AUS",     "Active"],
+// ["Robert",           "Robert@gmail.com",     "User experience designer", "Linda",        "Design Team",      "Imaginer India",   "Active"],
+// ["John",             "Jhon@gmail.com",       "Graphical designer",       "Elizabeth",    "Marketing Team",   "Imaginer SA",      "Active"],
+// ["David",            "David@gmail.com",      "CX Designer",              "Barbara",      "Product Team",     "Imaginer CH",      "Active"],
+// ["William",          "Richard@gmail.com",    "User experience designer", "Christopher",  "Design Team",      "Imaginer India",   "Active"],
+// ["Richard",          "David@gmail.com",      "CX Designer",              "Chorles",      "Product Team",     "Imaginer SA",      "Probation"],
+// ["Joseph",           "Joseph@gmail.com",     "User interface designer",  "Marv",         "Design Team",      "Imaginer CH",      "On Leave"],
+// ["Thomas",           "Thomas@gmail.com",     "User interface designer",  "Matthew",      "Marketing Taam",   "Imaginer AUS",     "On Leave"],
+// ["Shiva Chandru",    "Shiva@imaginers.com",   "Graphical designer",       "kennetl",      "Marketing Team",   "Imaginer India",  "On Leave"],
+// ["Andrew",           "Andrew@gmall.com",     "Graphical designer",       "kennetl",      "Marketing Team",   "Imaginer India",   "On Leave"],
+// ]
+// }
+// fill_table_with_data()
+
+option_activate()
