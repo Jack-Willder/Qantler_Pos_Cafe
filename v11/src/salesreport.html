@@ -34,7 +34,7 @@
                                 </span>
                                 <span class="opname">Billing</span>
                         </div>
-                        <div class="option option-select" data-target="inventory">
+                        <div class="option" data-target="inventory">
                                 <span class="material-symbols-outlined symbol">
                                         work_update
                                 </span>
@@ -46,7 +46,7 @@
                                 </span>
                                 <span class="opname">Item Request</span>
                         </div>
-                        <div class="option" data-target="report">
+                        <div class="option option-select" data-target="report">
                                 <span class="material-symbols-outlined symbol">
                                         monitoring
                                 </span>
@@ -66,7 +66,6 @@
                         </div>
                 </div>
                 <div class="appinfo userprof">
-                        <!-- <img src="https://static.vecteezy.com/system/resources/previews/046/409/821/non_2x/avatar-profile-icon-in-flat-style-male-user-profile-illustration-on-isolated-background-man-profile-sign-business-concept-vector.jpg" alt="image" srcset="" class="img"> -->
                         <div class="usericon">A</div>
                         <div class="names">
                                 <span class="appname">Admin</span>
@@ -82,7 +81,7 @@
                         <div class="statusbar">
                                 <div class="titlebar">
                                         <span class="material-symbols-outlined menu-symbol">menu</span>
-                                        <div class="inventorytitle">Inventory</div>
+                                        <div class="itemrequest-inventorytitle">Sales Report</div>
                                 </div>
                                 <div class="search card two datetimegrid">
                                 <div class="datetime">
@@ -111,25 +110,7 @@
                         </div>
                         <div class="inventory-card grid-filter-card">
                                 <div class="align-option-group">
-                                        <div class="option-group-name">Category</div>
-                                        <div class="selector">
-                                                <span class="material-symbols-outlined menu-symbol">grid_view</span>
-                                                <select name="opg-select" id="opg-select" class="opg-select">
-                                                        <option value="opg-all">All Categories</option>
-                                                </select>
-                                        </div> 
-                                </div>
-                                <div class="align-option-group">
-                                        <div class="option-group-name">Item Name</div>
-                                        <div class="selector">
-                                                <span class="material-symbols-outlined menu-symbol">local_cafe</span>
-                                                <select name="opg-select" id="opg-select" class="opg-select">
-                                                        <option value="opg-all">All Items</option>
-                                                </select>
-                                        </div> 
-                                </div>
-                                <div class="align-option-group">
-                                        <div class="option-group-name">Status</div>
+                                        <div class="option-group-name">Filter By</div>
                                         <div class="selector">
                                                 <select name="opg-select" id="opg-select" class="opg-select">
                                                         <option value="opg-all">All Status</option>
@@ -151,41 +132,13 @@
                                                 </span>
                                                 <span class="datename">Filter</span>
                                         </div>
-                                        <div class="t-bfilter">
-                                                <span class="material-symbols-outlined calendar-symbol">
-                                                        refresh
-                                                </span>
-                                                <span class="datename">Reset</span>
-                                        </div>
                                 </div>
                         </div>
                         <div class="inventory-card grid-main-table-card">
                                 <div class="tablebar">
-                                <div class="align-ttitle">
-                                        <div class="tabletitle">Inventory List</div>
+                                <div class="align-title">
+                                        <div class="tabletitle">Report List</div>
                                         <div class="tableitems">Total 128 items found</div>
-                                </div>
-                                <div class="tbutton-group">
-                                        <div class="align-tbutton-group">
-                                                <div class="t-bfilter option-sudo-select" id="additem" data-target="additem">
-                                                        <span class="material-symbols-outlined calendar-symbol">
-                                                                add_circle
-                                                        </span>
-                                                        <span class="datename">Add Item</span>
-                                                </div>
-                                                <div class="t-bfilter option-select">
-                                                        <span class="material-symbols-outlined calendar-symbol">
-                                                                download
-                                                        </span>
-                                                        <span class="datename">Request Item</span>
-                                                </div>
-                                                <div class="t-bfilter">
-                                                        <span class="material-symbols-outlined calendar-symbol">
-                                                                book_6
-                                                        </span>
-                                                        <span class="datename">Export to Excel</span>
-                                                </div>
-                                        </div>
                                 </div>
                         </div>
                                 <table>
