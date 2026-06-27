@@ -1,0 +1,1 @@
+completed the entire billing page, inventory page, additems page, along with the navigations and everything is working completely fine except for responsivenes on massive scales !!!

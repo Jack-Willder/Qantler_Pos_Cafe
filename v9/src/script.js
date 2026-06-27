@@ -1,16 +1,4 @@
-function option_activate() {
-    let options = document.querySelectorAll(".option")
-    let content = document.querySelector(".content-area")
-    options.forEach(element => {
-        element.addEventListener("click", () => {
-            options.forEach(elm => {
-                elm.classList.remove("option-select");
-            })
-            element.classList.add("option-select");
-
-                let target = element.getAttribute("data-target");
-                if(target == "billing") {
-                    content.innerHTML = `<div class="content"> 
+const billing = `<div class="content"> 
                 <div class="card one">
                         <div class="grid-total">
                                 <div class="billtitle">Current Bill<span
@@ -601,12 +589,9 @@ function option_activate() {
                                 </div></div>
                         </div>
                 </div>
-                </div>`
-                }
+                </div>`;
 
-                if (target == "inventory") {
-                    content.innerHTML = `
-                        <div class="inventory-content">
+const inventory = `<div class="inventory-content">
                         <div class="statusbar">
                                 <div class="titlebar">
                                         <span class="material-symbols-outlined menu-symbol">menu</span>
@@ -695,7 +680,7 @@ function option_activate() {
                                 </div>
                                 <div class="tbutton-group">
                                         <div class="align-tbutton-group">
-                                                <div class="t-bfilter option-sudo-select" id="additem">
+                                                <div class="t-bfilter option-sudo-select" id="additem" data-target="additem">
                                                         <span class="material-symbols-outlined calendar-symbol">
                                                                 add_circle
                                                         </span>
@@ -939,62 +924,265 @@ function option_activate() {
                         </div>
 
                 </div>`;
-                }
 
-                if (target == "request") {
-                    content.innerHTML = `
-                        <div class="card one grid-one">
-                            <div class="mainmenu">
-                                <span class="material-symbols-outlined symbol">
-                                        home
-                                </span>
-                                <div class="opname">Item Request</div>
-                            </div>
+const additem = `<div class="additem-content">
+                        <div class="additem-statusbar">
+                                <div class="additem-titlebar">
+                                        <span class="material-symbols-outlined additem-menu-symbol">menu</span>
+                                        <div class="additem-inventorytitle">Inventory</div>
+                                </div>
+                                <div class="search card two datetimegrid">
+                                <div class="datetime">
+                                        <div class="dategrid">
+                                                <span class="material-symbols-outlined calendar-symbol">
+                                                        calendar_month
+                                                </span>
+                                                <div class="date">
+                                                        <div class="date-names">
+                                                                <span class="datename">20 May 2024</span>
+                                                                <span class="dayname">Monday</span>
+                                                        </div>
+                                                </div>
+                                        </div>
+                                        <div class="separator"></div>
+                                        <div class="timegrid">
+                                                <span class="material-symbols-outlined time-symbol">
+                                                        schedule
+                                                </span>
+                                                <div class="time">
+                                                        <span class="timename">10:30 AM</span>
+                                                </div>
+                                        </div>
+                                </div>
                         </div>
-                    `;
-                }
+                        </div>
+                        <div class="additem-card">
+                                <div class="additem-card-title">
+                                        <div class="additem-itemtitle-text">Add New Item</div>
+                                        <div class="additem-itemdescription-text">Add a new item to your inventory</div>
+                                </div>
+                                <div class="additem-card-separator"></div>
+                                <div class="additem-card-content">
+                                        <div class="additem-form">
+                                                <div class="additem-card-left">
+                                                        <div class="additem-itemcode">
+                                                                <div class="additem-title-text">Item Code</div>
+                                                                <input type="text" class="additem-itemcode-input" placeholder="ITM-000129">
+                                                                <div class="additem-desc-text">Auto-generated</div>
+                                                        </div>
+                                                        <div class="additem-itemimage">
+                                                                <div class="additem-title-text">Item Image</div>
+                                                                <!-- <input type="file" accept="image/png, image/jpg, image/jpeg" placeholder="Click to upload or drag and drop"> -->
+                                                                <div class="additem-itemimage-input">
+                                                                        <span class="material-symbols-outlined cloud-symbol">
+                                                                                cloud_upload
+                                                                        </span>
+                                                                        <div class="additem-fileupload">
+                                                                                <div class="additem-fileupload-title">Click to upload or drag and drop</div>
+                                                                                <div class="additem-fileupload-desc">PNG, JPG or WEBP (Max. 2MB)</div>
+                                                                        </div>
+                                                                </div>
+                                                                <div class="additem-desc-text hide-text">Auto-Generated</div>
+                                                        </div>
+                                                        <div class="additem-category">
+                                                                <div class="additem-title-text additem-important">Category</div>
+                                                                <select name="category" id="additem-category-option">
+                                                                        <option value="select category">Select Category</option>
+                                                                </select>
+                                                                <div class="additem-desc-text hide-text">Auto-generated</div>
+                                                        </div>
+                                                        <div class="additem-unit">
+                                                                <div class="additem-title-text additem-important">Unit</div>
+                                                                <select name="category" id="additem-unit-option">
+                                                                        <option value="select category">Select Unit</option>
+                                                                </select>
+                                                                <div class="additem-desc-text hide-text">Auto-generated</div>
+                                                        </div>
+                                                        <div class="additem-status">
+                                                                <div class="additem-title-text">Status</div>
+                                                                <select name="category" id="additem-status-option">
+                                                                        <option value="instock">In Stock</option>
+                                                                </select>
+                                                                <div class="additem-desc-text">Status is auto-populated based on In Stock quantity.</div>
+                                                        </div>
+                                                </div>
+                                                <div class="additem-card-right">
+                                                        <div class="additem-itemname">
+                                                                <div class="additem-title-text  additem-important">Item Name</div>
+                                                                <input type="text" class="additem-itemname-input" placeholder="Enter item name">
+                                                                <div class="additem-desc-text hide-text">Auto-generated</div>
+                                                        </div>
+                                                        <div class="additem-itemdesc">
+                                                                <div class="additem-title-text">Item Description</div>
+                                                                <textarea name="additem-itemdesc" id="additem-itemdesc" class="additem-itemdesc-input" placeholder="Enter item description"></textarea>
+                                                                <div class="additem-desc-text hide-text">Auto-generated</div>
+                                                        </div>
+                                                        <div class="additem-price">
+                                                                <div class="additem-title-text additem-important">Price</div>
+                                                                <input type="text" class="additem-price-input" placeholder="Enter price">
+                                                                <div class="additem-desc-text hide-text">Auto-generated</div>
+                                                        </div>
+                                                        <div class="additem-instock">
+                                                                <div class="additem-title-text additem-important">In Stock</div>
+                                                                <input type="text" class="additem-instock-input" placeholder="Enter stock quantity">
+                                                                <div class="additem-desc-text hide-text">Auto-generated</div>
+                                                        </div>
+                                                        <div class="additem-supplier">
+                                                                <div class="additem-title-text">Supplier</div>
+                                                                <select name="additem-supplier-option" id="additem-supplier-option">
+                                                                        <option value="supplier">Select supplier</option>
+                                                                </select>
+                                                                <div class="additem-desc-text hide-text">Status is auto-populated based on In Stock quantity.</div>
+                                                        </div>
+                                                </div>
+                                        </div>
+                                        <div class="additem-baction-group">
+                                                <div class="additem-baction" id="additem" data-target="inventory">
+                                                        <span class="datename">Cancel</span>
+                                                </div>
+                                                <div class="additem-baction option-select">
+                                                        <span class="material-symbols-outlined save-symbol">
+                                                                save
+                                                        </span>
+                                                        <span class="datename">Save</span>
+                                                </div>
+                                        </div>
+                                </div>
+                        </div>
+                </div>`;
 
-                if (target == "report") {
-                    content.innerHTML = `
-                        <div class="card one grid-one">
-                            <div class="mainmenu">
-                                <span class="material-symbols-outlined symbol">
-                                        home
-                                </span>
-                                <div class="opname">Sales Report</div>
-                            </div>
-                        </div>
-                    `;
-                }
+const request = `
+<div class="card one grid-one">
+        <div class="mainmenu">
+        <span class="material-symbols-outlined symbol">
+                home
+        </span>
+        <div class="opname">Item Request</div>
+        </div>
+</div>
+`;
+const report = `
+<div class="card one grid-one">
+        <div class="mainmenu">
+        <span class="material-symbols-outlined symbol">
+                home
+        </span>
+        <div class="opname">Sales Report</div>
+        </div>
+</div>
+`;
+const settings = `
+<div class="card one grid-one">
+        <div class="mainmenu">
+        <span class="material-symbols-outlined symbol">
+                home
+        </span>
+        <div class="opname">Settings</div>
+        </div>
+</div>
+`;
+const users = `
+<div class="card one grid-one">
+        <div class="mainmenu">
+        <span class="material-symbols-outlined symbol">
+                home
+        </span>
+        <div class="opname">Users</div>
+        </div>
+</div>
+`;
+                
+function option_activate() {
+        let options = document.querySelectorAll(".option")
+        let canceladditems = document.querySelectorAll("#additem")
+        let content = document.querySelector(".content-area")
 
-                if (target == "settings") {
-                    content.innerHTML = `
-                        <div class="card one grid-one">
-                            <div class="mainmenu">
-                                <span class="material-symbols-outlined symbol">
-                                        home
-                                </span>
-                                <div class="opname">Settings</div>
-                            </div>
-                        </div>
-                    `;
-                }
 
-                if (target == "users") {
-                    content.innerHTML = `
-                        <div class="card one grid-one">
-                            <div class="mainmenu">
-                                <span class="material-symbols-outlined symbol">
-                                        home
-                                </span>
-                                <div class="opname">Users</div>
-                            </div>
-                        </div>
-                    `;
-                }
+                options.forEach(element => {
+                element.addEventListener("click", () => {
+                        options.forEach(elm => {
+                                elm.classList.remove("option-select");
+                        })
+                        element.classList.add("option-select");
+                        let target = element.getAttribute("data-target");
+                        if(target == "billing") content.innerHTML = billing;
+                        if (target == "inventory") content.innerHTML = inventory;
+                        if (target == "additem") content.innerHTML = additem;
+                        if (target == "request") content.innerHTML = request;
+                        if (target == "report") content.innerHTML = report;
+                        if (target == "settings") content.innerHTML = settings;
+                        if (target == "users") content.innerHTML = users;
+                        canceladditems = document.querySelectorAll("#additem")
+                        console.log("upperlevel", canceladditems);
+
+
         })
     });
+
+        document.addEventListener("click", (e) => {
+                const handleadditems = e.target.closest("#additem");
+                if (!handleadditems) return
+
+                let target = handleadditems.getAttribute("data-target");
+                if (target == "inventory") content.innerHTML = inventory;
+                if (target == "additem") content.innerHTML = additem;
+
+                        // canceladditems.forEach(element => {
+                        //         element.addEventListener("click", () => {
+                        //                 let target = element.getAttribute("data-target");
+                        //                 if (target == "inventory") content.innerHTML = inventory;
+                        //                 if (target == "additem") content.innerHTML = additem;
+                        //                 canceladditems = document.querySelectorAll("#additem")
+                        //         })
+                        // });
+        })
 }
+
+// function option_activate() {
+//         let options = document.querySelectorAll(".option")
+//         let canceladditems = document.querySelectorAll("#additem")
+//         let content = document.querySelector(".content-area")
+        
+
+        
+//         options.forEach(element => {
+//                 element.addEventListener("click", () => {
+//                         options.forEach(elm => {
+//                                 elm.classList.remove("option-select");
+//                         })
+//                         element.classList.add("option-select");
+//                         let target = element.getAttribute("data-target");
+//                         if(target == "billing") content.innerHTML = billing;
+//                         if (target == "inventory") content.innerHTML = inventory;
+//                         if (target == "additem") content.innerHTML = additem;
+//                         if (target == "request") content.innerHTML = request;
+//                         if (target == "report") content.innerHTML = report;
+//                         if (target == "settings") content.innerHTML = settings;
+//                         if (target == "users") content.innerHTML = users;
+//                         canceladditems = document.querySelectorAll("#additem")
+//                         console.log("upperlevel", canceladditems);
+
+//                         canceladditems.forEach(element => {
+//                                 element.addEventListener("click", () => {
+//                                         let target = element.getAttribute("data-target");
+//                                         if (target == "inventory") content.innerHTML = inventory;
+//                                         if (target == "additem") content.innerHTML = additem;
+//                                         canceladditems = document.querySelectorAll("#additem")
+//                                         console.log("lowerlevel", canceladditems);
+//                                         canceladditems.forEach(element => {
+//                                                 element.addEventListener("click", () => {
+//                                                         let target = element.getAttribute("data-target");
+//                                                         if (target == "inventory") content.innerHTML = inventory;
+//                                                         if (target == "additem") content.innerHTML = additem;
+//                                                         canceladditems = document.querySelectorAll("#additem")
+//                                                         console.log("groundlevel", canceladditems);
+//                                                 })
+//                                         });
+//                                 })
+//                         });
+//         })
+//     });
+// }
 
 // function fill_table_with_data() {
 //     let table = document.querySelector("table")

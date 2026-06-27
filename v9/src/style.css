@@ -11,6 +11,7 @@
     --cblack: #000000;
     --cgrey: hsl(226, 14%, 65%);
     --cgreydark: hsl(226, 14%, 55%);
+    --cgreydarkdark: hsl(226, 14%, 35%);
     --cwhite-pale: hsl(240, 71%, 99%);
     --cwhite-pale: hsl(240, 71%, 98.5%);
     --cvoilet: hsl(239, 66%, 54%);
@@ -34,6 +35,8 @@
     --big-font: clamp(0.5rem, 1vw, 0.9rem);
     --small-font: clamp(0.5rem, 1vw, 0.75rem);
     --tiny-font: clamp(0.9rem, var(--small-font), 0.65rem);
+    --fih0: clamp(1.67rem, 2.04vw, 2.05rem);
+    --fh0: clamp(1.27rem, 2.04vw, 1.95rem);
     --fh1: clamp(1.27rem, 1.34vw, 1.67rem);
     --fh2: clamp(0.85rem, 0.9vw, 1.25rem);
     --fh3: clamp(0.65rem, 0.82vw, 1.25rem);
@@ -76,6 +79,7 @@ body>* {
     font-style: normal;
     font-variation-settings: "wdth" 100;
     cursor: pointer;
+    user-select: none;
 }
 
 .overlay {
@@ -1214,7 +1218,7 @@ span.delete-symbol {
     background: var(--cwhite-pale);
 }
 
-.inventory-card table thead, .inventory-card table thead tr {background: hsl(249, 100%, 99%);overflow: hidden;}
+.inventory-card table thead, .inventory-card table thead tr {background: hsl(249, 100%, 99%);}
 
 .inventory-card table {
     overflow-y: scroll;
@@ -1313,3 +1317,228 @@ color: hsl(357, 95%, 43%);
     background-color: hsl(346, 100%, 93%);
 }
 
+.inventory-card table tbody {
+    position: relative;
+    z-index: 2;
+}
+
+
+/* ############################################################ */
+/* #######################Additem Page#######################*/
+/* ############################################################ */
+
+
+
+.additem-content {
+    background-color: var(--cwhite-pale);
+    display: flex;
+    flex-direction: column;
+    gap: 2.8%;
+    height: 100%;
+    width: 100%;
+    font-weight: 600;
+    /* margin: 1%; */
+    padding: 16px;
+}
+
+.additem-statusbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-height: 48px;
+}
+
+.additem-titlebar {
+    display: flex;
+    align-items: end;
+    justify-content: center;
+    padding: 20px;
+}
+
+.additem-inventorytitle {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    margin-left: 4%;
+    font-size: var(--fh1);
+    align-items: center;
+    justify-content: flex-start;
+    gap: 8px;
+}
+
+
+.additem-card {
+    background-color: var(--cwhite);
+    font-size: 1.2vw;
+    border-radius: var(--card-radius);
+    box-shadow: var(--smid);
+    /* overflow: hidden; */
+    /* height: 15%; */
+    /* max-height: 120px; */
+    scrollbar-width: none;
+    display: flex;
+    /* width: 100%; */
+    gap: 4%;
+    padding: 3% 7%;
+    /* align-items: center; */
+    flex-grow: 100;
+    flex-direction: column;
+}
+
+.additem-baction-group {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    justify-content: center;
+}
+
+.additem-baction {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* background-color: aquamarine; */
+    padding: 10px;
+    text-wrap-mode: nowrap;
+    border-radius: 6px;
+    font-size: var(--fh4);
+    height: 40%;
+    margin-top: 2%;
+    position: relative;
+    gap: 6%;
+    border: 1px solid var(--cborderdark);
+    box-shadow: var(--cborder);
+    height: 100%;
+    margin: 0px;
+    padding: 20px;
+    aspect-ratio: 5/1;
+}
+
+.additem-card-title {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.additem-card-separator {
+    background-color: var(--cborderdark);
+    height: 2px;
+    border-radius: 10px;
+}
+
+.additem-card-content {
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    flex-grow: 100;
+}
+
+.additem-itemtitle-text {
+    font-size: var(--fh1);
+}
+
+.additem-titlebar .additem-menu-symbol {
+    font-size: var(--fih0);
+}
+
+.additem-itemdescription-text {
+    font-size: var(--fh2);
+    color: var(--cgreydark);
+}
+
+.additem-form {
+    display: flex;
+    flex-grow: 100;
+    gap: 5%;
+}
+
+.additem-card-left, .additem-card-right {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 50;
+    padding: 10px;
+}
+
+.additem-card-left input, .additem-card-right input, .additem-card-left select, .additem-card-right select, .additem-card-right textarea {
+    width: 100%;
+    margin: 1% 0;
+}
+
+.hide-text {
+    color: transparent !important;
+}
+
+.additem-important::after {
+    content: '*';
+    color: red;
+    margin-left: 4px;
+}
+
+.additem-card-left > div, .additem-card-right > div {
+    flex-grow: 100;
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    justify-content: center;
+}
+
+.additem-desc-text {
+    font-size: var(--fh4);
+    color: var(--cgreydark);
+}
+
+.additem-form input, .additem-form select, .additem-form textarea {
+    height: 100%;
+    border-radius: 6px;
+    padding: 2%;
+    border: 1px solid var(--cborderdark);
+    font-size: var(--fh4);
+}
+
+.additem-itemcode input, .additem-status select {
+    background: var(--cwhite-pale);
+}
+
+.aditem-itemimage {
+    border: 0;
+}
+
+.additem-itemimage-input {
+    border: 1px solid var(--cborderdark);
+    border-style: dashed;
+    background: var(--cwhite-pale);
+    height: 100%;
+    width: 100%;
+    border-radius: 6px;
+    font-size: var(--fh4);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+.additem-itemimage, .additem-itemdesc {
+    height: 30%;
+}
+
+.additem-fileupload {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.additem-fileupload-title {
+    font-size: var(--fh3);
+}
+
+.additem-fileupload-desc {
+    color: var(--cgreydarkdark);
+    font-size: var(--fh4);
+}
+
+.additem-itemimage-input span {
+    color: var(--cpurple-dark);
+    font-size: var(--fih0);
+}

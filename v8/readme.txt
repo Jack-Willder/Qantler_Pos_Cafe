@@ -1,1 +1,0 @@
-completed the entire Inventory page along some major changes in the alignment
