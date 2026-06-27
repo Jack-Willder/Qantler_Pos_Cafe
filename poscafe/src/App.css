@@ -1,18 +1,38 @@
 @import url("https://googleapis.com");
 @import "tailwindcss";
 
-* {
-    /* @apply font-roboto; */
-    font-family: Arial;
+* {@apply font-roboto select-none;}
+
+html, body, #root {@apply h-full;}
+
+#root {@apply flex w-full bg-gray-100;}
+
+.content {
+    @apply grid h-full w-full p-3.5 gap-3.5;
+    grid-template-areas:
+        "one    .       two     two"
+        "three  four    five    five"
+        "six    four    five    five"
+        "seven  eight   eight   nine";
+    grid-template-rows: 5.5% 52.9% 26%;
+    grid-template-columns: 42.6% 13% 4.8%;
+    font-weight: 600;
 }
 
-html, body, #root {
-    @apply h-full;
+.content {
+    grid-template-rows: 4.3% 52% 25%;
+    grid-template-columns: 42.6% 12% 4.8%;
 }
 
-#root {
-    @apply flex w-full bg-gray-100;
-}
+.one {grid-area: one;}
+.two {grid-area: two;}
+.three {grid-area: three;}
+.four {grid-area: four;}
+.five {grid-area: five;}
+.six {grid-area: six;}
+.seven {grid-area: seven;}
+.eight {grid-area: eight;}
+.nine {grid-area: nine;}
 
 @theme {
     /* background  */
@@ -38,13 +58,23 @@ html, body, #root {
     --color-ibrown: #6c4625;
     --color-igrey: #c3c3c2;
     --color-iash: #b5b7b9;
+
+    --color-bviolet0: #aa9aed;
+    --color-bviolet1: #5d55bf;
+    --color-bviolet2: #795ed9;
+    --color-bviolet3: #8e56ed;
+    --color-bviolet4: #5d0ec0;
     
     
     /* gradients  */
     --background-image-gpurple: linear-gradient(90deg, hsla(240, 87%, 54%, 1) 0%, hsla(258, 81%, 59%, 1) 100%);
     --background-image-gpurple-reverse: linear-gradient(270deg, hsla(240, 87%, 54%, 1) 0%, hsla(258, 81%, 59%, 1) 100%);
+    --background-image-gviolet: linear-gradient(90deg, hsla(244, 46%, 54%, 1) 0%, hsla(264, 82%, 64%, 1) 100%);
     --background-image-ggreen: linear-gradient(90deg, hsla(175, 59%, 42%, 1) 0%, hsla(175, 77%, 35%, 1) 100%);
     --background-image-gorange: linear-gradient(90deg, hsla(33, 100%, 66%, 1) 0%, hsla(30, 100%, 58%, 1) 100%);
+    --background-image-gorange: linear-gradient(90deg, hsla(33, 100%, 66%, 1) 0%, hsla(30, 100%, 58%, 1) 100%);
+    --background-image-search: url(/public/assets/search.png);
+    --background-image-barcode: url(/public/assets/barcode.png);
 
     /* font */
     --font-roboto: "Roboto", sans-serif;

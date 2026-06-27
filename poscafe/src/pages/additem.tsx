@@ -1,136 +1,185 @@
-import { useState } from "react";
-import { IconPosCafe, BadgePosCafe } from "../icons";
+import { useContext, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { IconPosCafe } from "../icons";
+import { FormAction } from "../App";
 
-export default function AddItem() {
-    const [activeCategory, setActiveCategory] = useState("Beverage");
-    const handleCategory = (categoryname: string): void => {
-        setActiveCategory(categoryname || "Beverage");
+interface datetype {
+    date: {
+        date: string,
+        day: string,
+        time: string;
     };
+}
 
-    const categorylist = [
-        { name: "Beverage", icon: <IconPosCafe /> },
-        { name: "Steamed Bun", icon: <IconPosCafe /> },
-        { name: "Steamed Timsum", icon: <IconPosCafe /> },
-        { name: "Deep Fry Timsum", icon: <IconPosCafe /> },
-        { name: "Bake", icon: <IconPosCafe /> },
-        { name: "Noodle/ Dumplings", icon: <IconPosCafe /> },
-        { name: "Porridge", icon: <IconPosCafe /> },
-        { name: "All Items", icon: <IconPosCafe /> },
-    ];
+type invitemtype = {
+    "itemcode": string,
+    "itemimage": string,
+    "category": string,
+    "unit": string,
+    "itemname": string,
+    "itemdesc": string,
+    "price": number,
+    "instock": number,
+    "oldstock": number,
+    "supplier": string;
+};
+export default function AddItem({ date }: datetype) {
+    const navigate = useNavigate();
+    function handleChangeContent(path: string) {
+        navigate(path);
+    }
+    const { formAction } = useContext(FormAction);
+    const { state: item } = useLocation();
+    const [invitem, setInvItem] = useState<invitemtype>(item || {
+        itemcode: "",
+        itemimage: "",
+        category: "",
+        unit: "",
+        itemname: "",
+        itemdesc: "",
+        price: 0,
+        instock: 0,
+        oldstock: 0,
+        supplier: ""
+    });
 
-    const inventorylist = [
-        { imgpath: "./assets/item-images/coffee black.webp", itemname: "Coffee Black", chinesename: "咖啡黑" },
-        { imgpath: "./assets/item-images/tea black.webp", itemname: "Tea Black", chinesename: "茶黑" },
-        { imgpath: "./assets/item-images/coffee.webp", itemname: "Chrysanthemum Tea", chinesename: "菊花茶" },
-        { imgpath: "./assets/item-images/coffee.webp", itemname: "Coffee", chinesename: "咖啡" },
-        { imgpath: "./assets/item-images/tea.png", itemname: "Tea", chinesename: "茶" },
-        { imgpath: "./assets/item-images/chinese tea.webp", itemname: "Chinese Tea", chinesename: "中国茶" },
-        { imgpath: "./assets/item-images/iced coffee black.webp", itemname: "Iced Coffee Black", chinesename: "咖啡黑" },
-        { imgpath: "./assets/item-images/iced-tea-black.png", itemname: "Iced Tea Black", chinesename: "茶黑" },
-        { imgpath: "./assets/item-images/soya milk.webp", itemname: "soya Milk", chinesename: "牛奶" },
-        { imgpath: "./assets/item-images/iced-coffee.png", itemname: "Iced Coffee", chinesename: "冰咖啡" },
-        { imgpath: "./assets/item-images/iced tea.webp", itemname: "Iced Tea", chinesename: "冰茶" },
-        { imgpath: "./assets/item-images/grass jelly.png", itemname: "Grass Jelly", chinesename: "仙草" },
-        { imgpath: "./assets/item-images/coffee c.webp", itemname: "Coffee C", chinesename: "咖啡C" },
-        { imgpath: "./assets/item-images/tea c.png", itemname: "Tea C", chinesename: "茶C" },
-        { imgpath: "./assets/item-images/black and white.png", itemname: "Black & White", chinesename: "黑, 白" },
-        { imgpath: "./assets/item-images/milo.png", itemname: "Milo", chinesename: "米露" },
-        { imgpath: "./assets/item-images/iced-milo.png", itemname: "Iced Milo", chinesename: "冰 Milo" },
-        { imgpath: "./assets/item-images/takeaway water.webp", itemname: "Takeaway (Water)", chinesename: "外带 (水)" }
-    ];
+    function generate_itemcode(): string {
+        const data = localStorage.getItem("inventory");
+        const inventory_content = data ? JSON.parse(data) : [];
+        let lastinv_number = inventory_content[inventory_content.length - 1].itemcode;
+
+        let olditemcode: string | number = Number.parseInt(lastinv_number.replace("ITM-", ""));
+
+        olditemcode = olditemcode + 1;
+        olditemcode = "" + olditemcode;
+
+        let newitemcode = olditemcode;
+        for (let index = 0; index < (6 - olditemcode.length); index++) {
+            newitemcode = "0" + newitemcode;
+        }
+        newitemcode = "ITM-" + newitemcode;
+        return newitemcode;
+    }
 
 
-    const checkoutlist = [
-        { image: <BadgePosCafe color="purple" />, itemname: "Soya Milk", price: "$16.50", total: "$33.00" },
-        { image: <BadgePosCafe color="green" />, itemname: "Tea C", price: "$4.70", total: "$23.50" },
-        { image: <BadgePosCafe color="orange" />, itemname: "Streamed Timsum", price: "$7.30", total: "$7.30" },
-        { image: <BadgePosCafe color="blue" />, itemname: "Porridge", price: "$11.20", total: "$11.20" },
-        { image: <img src="./assets/item-images/iced-coffee.png" className="item-symbol"></img>, itemname: "Iced Tea", price: "$11.70", total: "$11.70" },
-        { image: <BadgePosCafe color="grey" />, itemname: "Dumplings", price: "$16.10", total: "$16.10" },
-        { image: <img src="./assets/item-images/iced-coffee.png" className="item-symbol"></img>, itemname: "Iced Coffee", price: "$13.50", total: "$27.00" },
-        { image: <img src="./assets/item-images/iced-coffee.png" className="item-symbol"></img>, itemname: "Coffee C", price: "$16.50", total: "$16.50" }
-    ];
+
+    function handlesave() {
+        const data = localStorage.getItem("inventory");
+        const inventory = data ? JSON.parse(data) : [];
+
+        if (formAction == "edit") {
+            const olddata = inventory.find((item: invitemtype) => item.itemcode == invitem.itemcode);
+            // olddata.itemimage = invitem.itemcode,
+            olddata.category = invitem.category;
+            olddata.unit = invitem.unit;
+            olddata.itemname = invitem.itemname;
+            olddata.itemdesc = invitem.itemdesc;
+            olddata.price = invitem.price;
+            olddata.instock = invitem.instock;
+            olddata.oldstock = invitem.instock;
+            olddata.supplier = invitem.supplier;
+        } else {
+            invitem.itemcode = generate_itemcode();
+            invitem.supplier = "Local";
+            invitem.oldstock = invitem.instock;
+            const newitem : invitemtype = {
+                "itemcode": invitem.itemcode,
+                "itemimage": invitem.itemimage,
+                "category": invitem.category,
+                "unit": invitem.unit,
+                "itemname": invitem.itemname,
+                "itemdesc": invitem.itemdesc,
+                "price": invitem.price,
+                "instock": invitem.instock,
+                "oldstock": invitem.instock,
+                "supplier": invitem.supplier
+            }
+            const additem_form_array = Object.values(newitem);
+
+            if (additem_form_array.includes("")) {
+                alert("All Fields are Required!");
+                console.log(additem_form_array)
+            } else {
+
+                if (inventory.find((element : invitemtype) => element.itemname == invitem.itemname)) {
+                    alert("ItemName Already Exists");
+                } else {
+                    inventory.push(invitem);
+                    localStorage.inventory = JSON.stringify(inventory);
+                    alert("Item Added");
+                }
+            };
+        }
+    }
 
 
+    function handleFormChange(e: any) {
+        const { name, value } = e.target;
+        setInvItem((prev: invitemtype) => ({
+            ...prev,
+            [name]: value,
+        }));
+    };
 
 
 
     return (
-    
-    
-        <div className="content-area">
-            <div className="popup remove-all" id="popup">
-                <div className="align-popup">
-                    <span className="material-symbols-outlined success-symbol">calendar_month</span>
-                    <div className="popup-message">Bill Saved to the localstorage</div>
-                </div>
-            </div>
-            <div className="additem-content">
-                <div className="additem-statusbar">
-                    <div className="additem-topbar">
-                        <div className="additem-titlebar">
-                            <IconPosCafe color="black" />
-              <div className="additem-inventorytitle">Inventory</div>
-                        </div>
-                        <div className="search card two datetimegrid">
-                            <div className="datetime">
-                                <div className="dategrid">
-                                    <IconPosCafe color="black" />
-              <div className="date">
-                                        <div className="date-names">
-                                            <span className="datename">20 May 2024</span>
-                                            <span className="dayname">Monday</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="separator"></div>
-                                <div className="timegrid">
-                                    <IconPosCafe color="black" />
-              <div className="time">
-                                        <span className="timename">10:30 AM</span>
+        <div className="w-full p-4">
+            <div className="flex flex-col w-full h-full gap-3">
+                <div className="flex">
+                    <div className="flex items-center justify-center gap-3">
+                        <IconPosCafe color="black" icon="menu" size={24} />
+                        <div className="text-md font-bold">Inventory</div>
+                    </div>
+                    <div className="two p-0 grow flex justify-end">
+                        <div className="flex bg-white h-full w-max p-2 gap-2 rounded-sm items-center justify-center">
+                            <div className="flex items-center justify-center gap-1">
+                                <IconPosCafe color="purple" icon="calendar" size={18} />
+                                <div className="">
+                                    <div className="flex flex-col ">
+                                        <span className="text-ss-50">{date.date}</span>
+                                        <span className="text-ss-40 text-gray-500">{date.day}</span>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                    <div className="additem-navbar">
-                        <div className="additem-navbar-align">
-                            <div className="additem-navbar-inventory">Inventory</div>
-                            <IconPosCafe color="black" />
-              <div className="additem-navbar-inventory">Add Inventory</div>
+                            <div className="w-px h-full bg-gray-100 "></div>
+                            <div className="flex items-center justify-center gap-1">
+                                <IconPosCafe color="purple" icon="schedule" size={18} />
+                                <span className="text-ss-60">{date.time}</span>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div className="additem-card">
-                    <div className="additem-card-title">
-                        <div className="additem-itemtitle-text">Add New Item</div>
-                        <div className="additem-itemdescription-text">Add a new item to your inventory</div>
+                <div className="bg-white text-ss-55 h-full p-3.5 px-10 flex flex-col justify-center items-center w-full gap-3">
+                    <div className="text-center">
+                        <div className="text-sm font-bold">{(formAction == "edit") ? "Edit Inventory" : "Add New Item"}</div>
+                        <div className="text-ss-65 font-medium">{(formAction == "edit") ? "Update the details of the inventory item" : "Add a new item to your inventory"}</div>
                     </div>
-                    <div className="additem-card-separator"></div>
-                    <div className="additem-card-content">
-                        <div className="additem-form">
-                            <div className="additem-card-left">
-                                <div className="additem-itemcode">
-                                    <div className="additem-title-text">Item Code</div>
-                                    <input type="text" className="additem-itemcode-input" placeholder="ITM-000129" id="additem-form-itemcode" disabled></input>
-                                        <div className="additem-desc-text">Auto-generated</div>
+                    <div className="h-px bg-gray-200 w-full"></div>
+                    <div className="grow w-full flex flex-col items-center">
+                        <div className="flex grow w-full gap-3.5 pb-3">
+                            <div className="grow flex flex-col gap-2">
+                                <div className="w-full flex flex-col gap-1">
+                                    <div className="text-ss-55 font-bold after:content-['*'] after:text-ss-50 after:ml-1 after:text-transparent">Item Code</div>
+                                    <input type="text" name="itemcode" className="border border-gray-200 rounded-sm p-1.5 w-full bg-gray-50 select-none caret-transparent" placeholder="ITM-000129" id="additem-form-itemcode" value={formAction == "edit" ? invitem.itemcode : generate_itemcode()} disabled></input>
+                                    <div className="text-ss-45 text-gray-500">Auto-generated</div>
                                 </div>
-                                <div className="additem-itemimage">
-                                    <div className="additem-title-text">Item Image</div>
-                                    <div className="additem-itemimage-input">
-                                        <IconPosCafe color="black" />
-              <input type="file" accept="image/png, image/jpg, image/jpeg" placeholder="Click to upload or drag and drop" id="additem-form-itemimage" required></input>
-                                            <div className="additem-fileupload">
-                                                <div className="additem-fileupload-title">Click to upload or drag and drop</div>
-                                                <div className="additem-fileupload-desc">PNG, JPG or WEBP (Max. 2MB)</div>
-                                            </div>
+                                <div className="w-full flex flex-col grow gap-1">
+                                    <div className="text-ss-55 font-bold after:content-['*'] after:text-ss-50 after:ml-1 after:text-transparent">Item Image</div>
+                                    <div className="border border-gray-200 rounded-sm p-1.5 flex flex-col items-center justify-center relative grow border-dashed bg-gray-50">
+                                        <IconPosCafe color="purple" icon="cloud" size={24} />
+                                        <input type="file" name="itemimage" accept="image/png, image/jpg, image/jpeg" placeholder="Click to upload or drag and drop" className="absolute h-full w-full opacity-0 z-10" onChange={handleFormChange} required></input>
+                                        <div className="p-1.5 flex flex-col items-center justify-center">
+                                            <div className="text-ss-55 font-bold">Click to upload or drag and drop</div>
+                                            <div className="text-ss-45">PNG, JPG or WEBP (Max. 2MB)</div>
+                                        </div>
                                     </div>
-                                    <div className="additem-desc-text hide-text">Auto-Generated</div>
+                                    <div className="text-ss-45 text-transparent">Auto-Generated</div>
                                 </div>
-                                <div className="additem-category">
-                                    <div className="additem-title-text additem-important">Category</div>
-                                    <select name="category" id="additem-form-category" required>
-                                        <option value="" selected disabled hidden>Select Category</option>
+                                <div className="w-full flex flex-col gap-1">
+                                    <div className="text-ss-55 font-bold after:content-['*'] after:text-ss-50 after:ml-1 after:text-red-500">Category</div>
+                                    <select name="category" id="additem-form-category" className="border border-gray-200 rounded-sm p-1.5 w-full" value={invitem.category} onChange={handleFormChange} required>
+                                        <option value="" disabled hidden>Select Category</option>
                                         <option value="Beverage">Beverage</option>
                                         <option value="Steamed Bun">Steamed Bun</option>
                                         <option value="Steamed Timsum">Steamed Timsum</option>
@@ -139,81 +188,83 @@ export default function AddItem() {
                                         <option value="Noodle/Dumplings">Noodle/ Dumplings</option>
                                         <option value="Porridge">Porridge</option>
                                     </select>
-                                    <div className="additem-desc-text hide-text">Auto-generated</div>
+                                    <div className="text-ss-45 text-transparent">Auto-generated</div>
                                 </div>
-                                <div className="additem-unit">
-                                    <div className="additem-title-text additem-important">Unit</div>
-                                    <select name="category" id="additem-form-unit" required>
-                                        <option value="" selected disabled hidden>Select Unit</option>
+                                <div className="w-full flex flex-col gap-1">
+                                    <div className="text-ss-55 font-bold after:content-['*'] after:text-ss-50 after:ml-1 after:text-red-500">Unit</div>
+                                    <select name="unit" id="additem-form-unit" className="border border-gray-200 rounded-sm p-1.5 w-full" value={invitem.unit} onChange={handleFormChange} required>
+                                        <option value="" disabled hidden>Select Unit</option>
                                         <option value="Bowl">Bowl</option>
                                         <option value="Cup">Cup</option>
                                         <option value="Pcs">Pcs</option>
                                         <option value="Glass">Glass</option>
                                     </select>
-                                    <div className="additem-desc-text hide-text">Auto-generated</div>
+                                    <div className="text-ss-45 text-transparent">Auto-generated</div>
                                 </div>
-                                <div className="additem-status hide-all">
-                                    <div className="additem-title-text">Status</div>
-                                    <select name="category" id="additem-form-status" required>
+                                <div className="w-full flex flex-col gap-1">
+                                    <div className="text-ss-55 font-bold after:content-['*'] after:text-ss-50 after:ml-1 after:text-transparent">Status</div>
+                                    <select name="" id="additem-form-status" className="border border-gray-200 rounded-sm p-1.5 w-full bg-gray-50" value={(invitem.instock > 0) ? "In Stock" : "Low Stock"} required disabled>
                                         <option value="instock" selected>In Stock</option>
                                         <option value="lowstock">Low Stock</option>
                                         <option value="outofstock">Out of Stock</option>
                                     </select>
-                                    <div className="additem-desc-text">Status is auto-populated based on In Stock quantity.</div>
+                                    <div className="text-ss-45 text-gray-500">Status is auto-populated based on In Stock quantity.</div>
                                 </div>
                             </div>
-                            <div className="additem-card-right">
-                                <div className="additem-itemname">
-                                    <div className="additem-title-text  additem-important">Item Name</div>
-                                    <input type="text" className="additem-itemname-input" placeholder="Enter item name" id="additem-form-itemname" required></input>
-                                        <div className="additem-desc-text hide-text">Auto-generated</div>
+                            <div className="grow flex flex-col gap-2">
+                                <div className="w-full flex flex-col gap-1">
+                                    <div className="text-ss-55 font-bold after:content-['*'] after:text-ss-50 after:ml-1 after:text-red-500">Item Name</div>
+                                    <input type="text" className="border border-gray-200 rounded-sm p-1.5 w-full" placeholder="Enter item name" id="additem-form-itemname" name="itemname" value={invitem.itemname} onChange={handleFormChange} required></input>
+                                    <div className="text-ss-45 text-transparent">Auto-generated</div>
                                 </div>
-                                <div className="additem-itemdesc">
-                                    <div className="additem-title-text">Item Description</div>
-                                    <textarea name="additem-itemdesc" className="additem-itemdesc-input" placeholder="Enter item description" id="additem-form-itemdesc"></textarea>
-                                    <div className="additem-desc-text hide-text">Auto-generated</div>
+                                <div className="w-full grow flex flex-col gap-1">
+                                    <div className="text-ss-55 font-bold after:content-['*'] after:text-ss-50 after:ml-1 after:text-transparent">Item Description</div>
+                                    <textarea name="itemdesc" className="border border-gray-200 rounded-sm p-1.5 w-full grow" placeholder="Enter item description" value={invitem.itemdesc} onChange={handleFormChange} id="additem-form-itemdesc"></textarea>
+                                    <div className="text-ss-45 text-transparent">Auto-generated</div>
                                 </div>
-                                <div className="additem-price">
-                                    <div className="additem-title-text additem-important">Price</div>
-                                    <input type="number" className="additem-price-input" placeholder="Enter price" id="additem-form-price" min="1" max="1000" step="0.1" required></input>
-                                        <div className="additem-desc-text hide-text">Auto-generated</div>
+                                <div className="w-full flex flex-col gap-1">
+                                    <div className="text-ss-55 font-bold after:content-['*'] after:text-ss-50 after:ml-1 after:text-red-500">Price</div>
+                                    <input type="number" className="border border-gray-200 rounded-sm p-1.5 w-full" placeholder="Enter price" name="price" value={invitem.price} onChange={handleFormChange} id="additem-form-price" min="1" max="1000" step="0.1" required></input>
+                                    <div className="text-ss-45 text-transparent">Auto-generated</div>
                                 </div>
-                                <div className="additem-instock">
-                                    <div className="additem-title-text additem-important">In Stock</div>
-                                    <input type="number" className="additem-instock-input" placeholder="Enter stock quantity" id="additem-form-instock" min="0" max="1000" required></input>
-                                        <div className="additem-desc-text hide-text">Auto-generated</div>
+                                <div className="w-full flex flex-col gap-1">
+                                    <div className="text-ss-55 font-bold after:content-['*'] after:text-ss-50 after:ml-1 after:text-red-500">In Stock</div>
+                                    <input type="number" className="border border-gray-200 rounded-sm p-1.5 w-full" placeholder="Enter stock quantity" name="instock" value={invitem.instock} onChange={handleFormChange} id="additem-form-instock" min="0" max="1000" required></input>
+                                    <div className="text-ss-45 text-transparent">Auto-generated</div>
                                 </div>
-                                <div className="additem-supplier">
-                                    <div className="additem-title-text">Supplier</div>
-                                    <select name="additem-supplier-option" id="additem-form-supplier">
+                                <div className=" w-full flex flex-col gap-1">
+                                    <div className="text-ss-55 font-bold after:content-['*'] after:text-ss-50 after:ml-1 after:text-transparent">Supplier</div>
+                                    <select name="additem-supplier-option" className="border border-gray-200 rounded-sm p-1.5 w-full" id="additem-form-supplier" value={"Local"} onChange={handleFormChange}>
                                         <option value="" selected disabled hidden>Select supplier</option>
                                         <option value="Local">Local</option>
                                     </select>
-                                    <div className="additem-desc-text hide-text">Status is auto-populated based on In Stock quantity.</div>
+                                    <div className="text-ss-45 text-transparent">Status is auto-populated based on In Stock quantity.</div>
                                 </div>
                             </div>
                         </div>
-                        <div className="additem-baction-group">
-                            <div className="additem-baction" id="additem" data-target="inventory">
-                                <span className="datename">Cancel</span>
+                        <div className="flex w-full items-center justify-center gap-2">
+                            <div className="p-2 rounded-sm border border-gray-200 flex items-center justify-center aspect-6/1" id="additem" data-target="inventory" onClick={() => handleChangeContent("/inventory")}>
+                                <span className="text-center">Cancel</span>
                             </div>
-                            <div className="additem-baction option-select" id="additem-form-addinvitem" >
-                                <IconPosCafe color="black" />
-              <span className="datename">Save</span>
+                            <div className="p-2 bg-gpurple rounded-sm flex items-center justify-center aspect-6/1 gap-1" id="additem-form-addinvitem" onClick={handlesave} >
+                                <IconPosCafe color="white" icon="save" />
+                                <span className="text-ss-50 text-white">Save</span>
                             </div>
-                            <div className="additem-baction option-select inv-baction-delete remove-all" id="additem-form-deleteinvitem">
-                                <span className="material-symbols-outlined save-symbol">
-                                    delete
-                                </span>
-                                <span className="datename">Delete</span>
-                            </div>
+                            {
+                                (formAction == "edit") ? (
+                                    <div className="p-2 bg-red-100 text-red-500 rounded-sm flex items-center justify-center aspect-6/1" id="additem-form-deleteinvitem">
+                                        <IconPosCafe icon="delete" color="red" />
+                                        <span className="text-ss-50">Delete</span>
+                                    </div>
+                                ) : null
+                            }
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-   
 
 
-);
+
+    );
 }

@@ -1,146 +1,160 @@
-import { useState } from "react";
-import { IconPosCafe, BadgePosCafe } from "../icons";
+import { useContext } from "react";
+import { useNavigate } from "react-router-dom";
+import { IconPosCafe } from "../icons";
+import { FormAction } from "../App";
 
-export default function RequestItem() {
-    const [activeCategory, setActiveCategory] = useState("Beverage");
-    const handleCategory = (categoryname: string): void => {
-        setActiveCategory(categoryname || "Beverage");
+interface datetype {
+    date: {
+        date: string,
+        day: string,
+        time: string;
     };
-
-    const categorylist = [
-        { name: "Beverage", icon: <IconPosCafe /> },
-        { name: "Steamed Bun", icon: <IconPosCafe /> },
-        { name: "Steamed Timsum", icon: <IconPosCafe /> },
-        { name: "Deep Fry Timsum", icon: <IconPosCafe /> },
-        { name: "Bake", icon: <IconPosCafe /> },
-        { name: "Noodle/ Dumplings", icon: <IconPosCafe /> },
-        { name: "Porridge", icon: <IconPosCafe /> },
-        { name: "All Items", icon: <IconPosCafe /> },
-    ];
-
+}
+export default function AddItem({ date }: datetype) {
+    const { formAction } = useContext(FormAction);
+    const navigate = useNavigate();
+    function handleChangeContent(path: string) {
+        navigate(path);
+    }
     const inventorylist = [
-        { imgpath: "./assets/item-images/coffee black.webp", itemname: "Coffee Black", chinesename: "咖啡黑" },
-        { imgpath: "./assets/item-images/tea black.webp", itemname: "Tea Black", chinesename: "茶黑" },
-        { imgpath: "./assets/item-images/coffee.webp", itemname: "Chrysanthemum Tea", chinesename: "菊花茶" },
-        { imgpath: "./assets/item-images/coffee.webp", itemname: "Coffee", chinesename: "咖啡" },
-        { imgpath: "./assets/item-images/tea.png", itemname: "Tea", chinesename: "茶" },
-        { imgpath: "./assets/item-images/chinese tea.webp", itemname: "Chinese Tea", chinesename: "中国茶" },
-        { imgpath: "./assets/item-images/iced coffee black.webp", itemname: "Iced Coffee Black", chinesename: "咖啡黑" },
-        { imgpath: "./assets/item-images/iced-tea-black.png", itemname: "Iced Tea Black", chinesename: "茶黑" },
-        { imgpath: "./assets/item-images/soya milk.webp", itemname: "soya Milk", chinesename: "牛奶" },
-        { imgpath: "./assets/item-images/iced-coffee.png", itemname: "Iced Coffee", chinesename: "冰咖啡" },
-        { imgpath: "./assets/item-images/iced tea.webp", itemname: "Iced Tea", chinesename: "冰茶" },
-        { imgpath: "./assets/item-images/grass jelly.png", itemname: "Grass Jelly", chinesename: "仙草" },
-        { imgpath: "./assets/item-images/coffee c.webp", itemname: "Coffee C", chinesename: "咖啡C" },
-        { imgpath: "./assets/item-images/tea c.png", itemname: "Tea C", chinesename: "茶C" },
-        { imgpath: "./assets/item-images/black and white.png", itemname: "Black & White", chinesename: "黑, 白" },
-        { imgpath: "./assets/item-images/milo.png", itemname: "Milo", chinesename: "米露" },
-        { imgpath: "./assets/item-images/iced-milo.png", itemname: "Iced Milo", chinesename: "冰 Milo" },
-        { imgpath: "./assets/item-images/takeaway water.webp", itemname: "Takeaway (Water)", chinesename: "外带 (水)" }
+        { itemname: "Coffee Beans Bag", quantity: 5, expecteddate: "2024-05-23" },
+        { itemname: "Milk 1L", quantity: 10, expecteddate: "2024-05-23" },
+        { itemname: "Sugar 1kg", quantity: 3, expecteddate: "2024-05-23" },
     ];
-
-
-    const checkoutlist = [
-        { image: <BadgePosCafe color="purple" />, itemname: "Soya Milk", price: "$16.50", total: "$33.00" },
-        { image: <BadgePosCafe color="green" />, itemname: "Tea C", price: "$4.70", total: "$23.50" },
-        { image: <BadgePosCafe color="orange" />, itemname: "Streamed Timsum", price: "$7.30", total: "$7.30" },
-        { image: <BadgePosCafe color="blue" />, itemname: "Porridge", price: "$11.20", total: "$11.20" },
-        { image: <img src="./assets/item-images/iced-coffee.png" className="item-symbol"></img>, itemname: "Iced Tea", price: "$11.70", total: "$11.70" },
-        { image: <BadgePosCafe color="grey" />, itemname: "Dumplings", price: "$16.10", total: "$16.10" },
-        { image: <img src="./assets/item-images/iced-coffee.png" className="item-symbol"></img>, itemname: "Iced Coffee", price: "$13.50", total: "$27.00" },
-        { image: <img src="./assets/item-images/iced-coffee.png" className="item-symbol"></img>, itemname: "Coffee C", price: "$16.50", total: "$16.50" }
-    ];
-
-
-
-
-
     return (
-
-
-        <div className="content-area">
-            <div className="popup remove-all" id="popup">
-                <div className="align-popup">
-                    <span className="material-symbols-outlined success-symbol">calendar_month</span>
-                    <div className="popup-message">Bill Saved to the localstorage</div>
-                </div>
-            </div>
-            <div className="additem-content requestitem-content">
-                <div className="additem-statusbar">
-                    <div className="additem-topbar">
-                        <div className="additem-titlebar">
-                            <IconPosCafe color="black" />
-                            <div className="additem-inventorytitle">Item Request</div>
-                        </div>
-                        <div className="search card two datetimegrid">
-                            <div className="datetime">
-                                <div className="dategrid">
-                                    <IconPosCafe color="black" />
-                                    <div className="date">
-                                        <div className="date-names">
-                                            <span className="datename">20 May 2024</span>
-                                            <span className="dayname">Monday</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="separator"></div>
-                                <div className="timegrid">
-                                    <IconPosCafe color="black" />
-                                    <div className="time">
-                                        <span className="timename">10:30 AM</span>
+        <div className="w-full p-4">
+            <div className="flex flex-col w-full h-full gap-3">
+                <div className="flex">
+                    <div className="flex items-center justify-center gap-3">
+                        <IconPosCafe color="black" icon="menu" size={24} />
+                        <div className="text-md font-bold">{(formAction == "edit") ? "Edit  Item Request" : "Item Request"}</div>
+                    </div>
+                    <div className="two p-0 grow flex justify-end">
+                        <div className="flex bg-white h-full w-max p-2 gap-2 rounded-sm items-center justify-center">
+                            <div className="flex items-center justify-center gap-1">
+                                <IconPosCafe color="purple" icon="calendar" size={18} />
+                                <div className="">
+                                    <div className="flex flex-col ">
+                                        <span className="text-ss-50">{date.date}</span>
+                                        <span className="text-ss-40 text-gray-500">{date.day}</span>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                    <div className="additem-navbar">
-                        <div className="additem-navbar-align">
-                            <div className="additem-navbar-inventory">Item Request</div>
-                            <span className="material-symbols-outlined additem-navbar-arrow">keyboard_arrow_right</span>
-                            <div className="additem-navbar-inventory">Request Items</div>
+                            <div className="w-px h-full bg-gray-100 "></div>
+                            <div className="flex items-center justify-center gap-1">
+                                <IconPosCafe color="purple" icon="schedule" size={18} />
+                                <span className="text-ss-60">{date.time}</span>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div className="additem-card">
-                    <div className="additem-card-title">
-                        <div className="additem-itemtitle-text">Request Item</div>
-                        <div className="additem-itemdescription-text">Request more items for your inventory</div>
-                    </div>
-                    <div className="additem-card-separator"></div>
-                    <div className="additem-card-content">
-                        <div className="additem-form">
-                            <div className="additem-card-left">
-                                <div className="additem-itemname">
-                                    <div className="additem-title-text  additem-important">Item Name</div>
-                                    <select name="additem-itemname-option" id="additem-form-itemname">
-                                        <option value="" selected disabled hidden>Select Item Name</option>
-                                    </select>
-                                    <div className="additem-desc-text hide-text">Auto-generated</div>
+                <div className="bg-white text-ss-55 h-fit p-3.5 px-6 flex flex-col justify-center items-center w-full gap-3 rounded-sm">
+                    <div className="text-sm font-bold text-left w-full">Request Information</div>
+                    <div className="grow w-full flex flex-col items-center">
+                        <div className="flex grow w-full gap-3.5">
+                            <div className="grow flex flex-col gap-2">
+                                <div className="w-full flex flex-col gap-1">
+                                    <div className="text-ss-55 font-bold after:content-['*'] after:text-ss-50 after:ml-1 after:text-transparent">Request ID</div>
+                                    <input type="text" className="border border-gray-200 rounded-sm p-1.5 w-full bg-gray-50" placeholder="ITM-000129" id="additem-form-itemcode" disabled></input>
+                                    <div className="text-ss-45 text-gray-500">Auto-generated</div>
                                 </div>
-                                <div className="additem-supplier">
-                                    <div className="additem-title-text  additem-important">Quantity</div>
-                                    <input type="number" className="additem-quantity-input" placeholder="Quantity" id="additem-form-quantity" value="1" min="1" max="1000" step="1"></input>
-                                    <div className="additem-desc-text hide-text">Status is auto-populated based on In Stock quantity.</div>
+                                <div className="w-full flex flex-col gap-1">
+                                    <div className="text-ss-55 font-bold after:content-['*'] after:text-ss-50 after:ml-1 after:text-transparent">Request Date</div>
+                                    <input type="text" className="border border-gray-200 rounded-sm p-1.5 w-full bg-gray-50" placeholder="20 May 2024" id="additem-form-itemcode" disabled></input>
+                                    <div className="text-ss-45 text-transparent">Auto-generated</div>
                                 </div>
-                                <div className="additem-itemcode">
-                                    <div className="additem-title-text  additem-important">Expected Date</div>
-                                    <input type="datetime-local" className="additem-exdate-input" placeholder="ITM-000129" id="additem-form-exdate" value="2026-06-03T00:15"></input>
-                                    <div className="additem-desc-text hide-text">Auto-generated</div>
+                            </div>
+                            <div className="grow flex flex-col gap-2">
+                                <div className="w-full flex flex-col gap-1">
+                                    <div className="text-ss-55 font-bold after:content-['*'] after:text-ss-50 after:ml-1 after:text-red-500">Subject</div>
+                                    <input type="text" className="border border-gray-200 rounded-sm p-1.5 w-full" placeholder="Request for Coffee Beans" id="additem-form-itemname" required></input>
+                                    <div className="text-ss-45 text-transparent">Auto-generated</div>
                                 </div>
-                                <div className="additem-instock">
-                                    <div className="additem-title-text">In Stock</div>
-                                    <input type="number" className="additem-instock-input" placeholder="Stock quantity" id="additem-form-instock" min="0" max="1000" required disabled></input>
-                                    <div className="additem-desc-text">Auto-generated</div>
+                                <div className="w-full flex flex-col gap-1">
+                                    <div className="text-ss-55 font-bold after:content-['*'] after:text-ss-50 after:ml-1 after:text-red-500">Expecting Delivery</div>
+                                    <input type="date" className="border border-gray-200 rounded-sm p-1.5 w-full" value="2024-05-23" required></input>
+                                    <div className="text-ss-45 text-transparent">Auto-generated</div>
+                                </div>
+                            </div>
+                            <div className="grow flex flex-col gap-2">
+                                <div className="w-full flex flex-col gap-1">
+                                    <div className="text-ss-55 font-bold after:content-['*'] after:text-ss-50 after:ml-1 after:text-transparent">Requesteed By</div>
+                                    <input type="text" className="border border-gray-200 rounded-sm p-1.5 w-full bg-gray-50" placeholder="Admin" id="additem-form-itemcode" disabled></input>
+                                    <div className="text-ss-45 text-transparent">Auto-generated</div>
+                                </div>
+                                <div className="w-full flex flex-col gap-1">
+                                    <div className="text-ss-55 font-bold after:content-['*'] after:text-ss-50 after:ml-1 after:text-transparent">Status</div>
+                                    <input type="text" className="border border-gray-200 rounded-sm p-1.5 w-full bg-gray-50" placeholder="Pending" id="additem-form-itemcode" disabled></input>
+                                    <div className="text-ss-45 text-transparent">Auto-generated</div>
                                 </div>
                             </div>
                         </div>
-                        <div className="additem-baction-group">
-                            <div className="additem-baction" id="additem" data-target="request">
-                                <span className="datename">Cancel</span>
+                    </div>
+                </div>
+                <div className="bg-white text-ss-55 h-full p-3.5 px-6 flex flex-col items-center justify-between w-full gap-3 rounded-sm">
+                    <div className="flex justify-between w-full">
+                        <div className="text-left w-full">
+                            <div className="text-sm font-bold">Items</div>
+                            <div className="text-ss-65 font-medium">Total 3 items</div>
+                        </div>
+                        <div className="flex items-center justify-center text-ss-55 rounded-sm p-1.5 gap-1.5 px-3 bg-gpurple">
+                            <IconPosCafe color="white" icon="plus" />
+                            <span className="text-white text-ss-50 text-nowrap">Add Item</span>
+                        </div>
+                    </div>
+                    <div className="w-full min-h-0 grow overflow-scroll scrollbar-none">
+                        <table className="border-collapse w-full border border-gray-200 rounded-sm m-0">
+                            <thead className="sticky top-0">
+                                <tr>
+                                    <th className="bg-gray-100 p-2 text-ss-50 min-[780px]:text-ss-55 font-bold text-left">Item Name</th>
+                                    <th className="bg-gray-100 p-2 text-ss-50 min-[780px]:text-ss-55 font-bold text-left after:content-['*'] after:text-ss-70 after:text-red-500 after:ml-1">Quantity</th>
+                                    <th className="bg-gray-100 p-2 text-ss-50 min-[780px]:text-ss-55 font-bold text-left after:content-['*'] after:text-ss-70 after:text-red-500 after:ml-1">Expected Date</th>
+                                    <th className="bg-gray-100 p-2 text-ss-50 min-[780px]:text-ss-55 font-bold text-left">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {
+                                    (formAction == "edit") ? (
+                                        inventorylist.map((item, index) => (
+                                            <tr className="border border-gray-100" key={index}>
+                                                <td><div className="p-2 text-ss-50 text-left min-[780px]:text-ss-55"><select name="opg-select" id="opg-select-category" className="p-1 border border-gray-200 w-full rounded-sm" required><option value={item.itemname}>{item.itemname}</option></select></div></td>
+                                                <td><div className="p-2 text-ss-50 text-left min-[780px]:text-ss-55"><input className="border border-gray-200 rounded-md w-full p-2 max-[820px]:p-1 max-[820px]:text-ss-50" type="number" id="opg-select-dfrom" value={item.quantity} onChange={() => { }} /></div></td>
+                                                <td><div className="p-2 text-ss-50 text-left min-[780px]:text-ss-55"><input className="border border-gray-200 rounded-md w-full p-2 max-[820px]:p-1 max-[820px]:text-ss-50" type="date" id="opg-select-dfrom" value={item.expecteddate} onChange={() => { }} /></div></td>
+                                                <td><div className="p-2 flex justify-start"><IconPosCafe icon="delete" color="red" size={14} /></div></td>
+                                            </tr>
+                                        ))
+                                    ) : (
+                                        <tr className="border border-gray-100">
+                                            <td><div className="p-2 text-ss-50 text-left min-[780px]:text-ss-55"><select name="opg-select" id="opg-select-category" className="p-1 border border-gray-200 w-full rounded-sm" required><option value="Select Item">Select Item</option></select></div></td>
+                                            <td><div className="p-2 text-ss-50 text-left min-[780px]:text-ss-55"><input className="border border-gray-200 rounded-md w-full p-2 max-[820px]:p-1 max-[820px]:text-ss-50" type="number" id="opg-select-dfrom" value="" placeholder="Enter Quantity" onChange={() => { }} /></div></td>
+                                            <td><div className="p-2 text-ss-50 text-left min-[780px]:text-ss-55"><input className="border border-gray-200 rounded-md w-full p-2 max-[820px]:p-1 max-[820px]:text-ss-50" type="date" id="opg-select-dfrom" value="" placeholder="Select date" onChange={() => { }} /></div></td>
+                                            <td><div className="p-2 flex justify-start"><IconPosCafe icon="delete" color="red" size={14} /></div></td>
+                                        </tr>
+                                    )
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div className="w-full flex flex-col items-center">
+                        <div className="flex w-full items-center justify-center gap-2 border-t border-gray-200 pt-4">
+                            <div className="p-2 rounded-sm border border-gray-200 flex items-center justify-center aspect-6/1" id="additem" data-target="inventory" onClick={() => handleChangeContent("/itemrequest")}>
+                                <span className="text-center">Cancel</span>
                             </div>
-                            <div className="additem-baction option-select" id="requestitem-action" >
-                                <IconPosCafe color="black" />
-                                <span className="datename">Confirm Request</span>
+                            {
+                                (formAction == "edit") ? (
+                                    <div className="p-2 bg-gpurple rounded-sm flex items-center justify-center aspect-6/1 gap-1" id="additem-form-addinvitem" >
+                                        <span className="text-ss-50 text-white">Update</span>
+                                    </div>
+                                ) : (
+                                    <div className="p-2 bg-gpurple rounded-sm flex items-center justify-center aspect-6/1 gap-1" id="additem-form-addinvitem" >
+                                        <IconPosCafe icon="save" color="white" size={14} />
+                                        <span className="text-ss-50 text-white">Save</span>
+                                    </div>
+                                )
+                            }
+                            <div className="p-2 bg-green-700 text-white rounded-sm flex items-center justify-center aspect-7/1 gap-1" id="additem-form-deleteinvitem">
+                                <IconPosCafe icon="send" color="white" size={14} />
+                                <span className="text-ss-50">Submit Request</span>
                             </div>
                         </div>
                     </div>

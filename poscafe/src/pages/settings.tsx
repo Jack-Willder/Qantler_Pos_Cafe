@@ -1,21 +1,28 @@
 import { useState } from "react";
 import { IconPosCafe, BadgePosCafe } from "../icons";
 
-export default function Billing() {
-  const [activeCategory, setActiveCategory] = useState("Beverage");
-  const handleCategory = (categoryname: string): void => {
-    setActiveCategory(categoryname || "Beverage");
+interface datetype {
+  date: {
+    date: string,
+    day: string,
+    time: string;
   };
+}
+export default function Billing({date}:datetype) {
+  const [activeCategory, setActiveCategory] = useState("Beverage");
+  const [activeView, setActiveView] = useState("grid");
+  const handleCategory = (categoryname: string): void => { setActiveCategory(categoryname || "Beverage"); };
+  const handleView = (viewname: string): void => { setActiveView(viewname || "Beverage"); };
 
   const categorylist = [
-    { name: "Beverage", icon: <IconPosCafe /> },
-    { name: "Steamed Bun", icon: <IconPosCafe /> },
-    { name: "Steamed Timsum", icon: <IconPosCafe /> },
-    { name: "Deep Fry Timsum", icon: <IconPosCafe /> },
-    { name: "Bake", icon: <IconPosCafe /> },
-    { name: "Noodle/ Dumplings", icon: <IconPosCafe /> },
-    { name: "Porridge", icon: <IconPosCafe /> },
-    { name: "All Items", icon: <IconPosCafe /> },
+    { name: "Beverage", icon: "cafe" },
+    { name: "Steamed Bun", icon: "steamedbun" },
+    { name: "Steamed Timsum", icon: "steamedtimsum" },
+    { name: "Deep Fry Timsum", icon: "deepfrytimsum" },
+    { name: "Bake", icon: "bake" },
+    { name: "Noodle/ Dumplings", icon: "noodledumplings" },
+    { name: "Porridge", icon: "porridge" },
+    { name: "All Items", icon: "allitems" },
   ];
 
   const inventorylist = [
@@ -41,14 +48,14 @@ export default function Billing() {
 
 
   const checkoutlist = [
-    { image: <BadgePosCafe color="purple"/>, itemname: "Soya Milk", price: "$16.50", total: "$33.00" },
-    { image: <BadgePosCafe color="green"/>, itemname: "Tea C", price: "$4.70", total: "$23.50" },
-    { image: <BadgePosCafe color="orange"/>, itemname: "Streamed Timsum", price: "$7.30", total: "$7.30" },
-    { image: <BadgePosCafe color="blue"/>, itemname: "Porridge", price: "$11.20", total: "$11.20" },
-    { image: <img src="./assets/item-images/iced-coffee.png" className="item-symbol"></img>, itemname: "Iced Tea", price: "$11.70", total: "$11.70" },
-    { image: <BadgePosCafe color="grey"/>, itemname: "Dumplings", price: "$16.10", total: "$16.10" },
-    { image: <img src="./assets/item-images/iced-coffee.png" className="item-symbol"></img>, itemname: "Iced Coffee", price: "$13.50", total: "$27.00" },
-    { image: <img src="./assets/item-images/iced-coffee.png" className="item-symbol"></img>, itemname: "Coffee C", price: "$16.50", total: "$16.50" }
+    { image: <BadgePosCafe color="purple" size={12} />, itemname: "Soya Milk", price: "$16.50", total: "$33.00" },
+    { image: <BadgePosCafe color="green" size={12} />, itemname: "Tea C", price: "$4.70", total: "$23.50" },
+    { image: <BadgePosCafe color="orange" size={12} />, itemname: "Streamed Timsum", price: "$7.30", total: "$7.30" },
+    { image: <BadgePosCafe color="blue" size={12} />, itemname: "Porridge", price: "$11.20", total: "$11.20" },
+    { image: <img src="./assets/item-images/iced-coffee.png" className="bg-ired-light p-1.5 rounded-sm h-6 overflow-hidden"></img>, itemname: "Iced Tea", price: "$11.70", total: "$11.70" },
+    { image: <BadgePosCafe color="brown" size={12} />, itemname: "Dumplings", price: "$16.10", total: "$16.10" },
+    { image: <img src="./assets/item-images/iced-coffee.png" className="bg-igrey-light p-1.5 rounded-sm h-6 overflow-hidden"></img>, itemname: "Iced Coffee", price: "$13.50", total: "$27.00" },
+    { image: <img src="./assets/item-images/iced-coffee.png" className="bg-iash-light p-1.5 rounded-sm h-6 overflow-hidden"></img>, itemname: "Coffee C", price: "$16.50", total: "$16.50" }
   ];
 
 
@@ -56,70 +63,71 @@ export default function Billing() {
 
 
   return (<div className="content">
-    <div className="card one">
-      <div className="grid-total">
-        <div className="billtitle">Current Bill<IconPosCafe /></div>
-        <div className="totalamount">
-          <div className="aligntotal">
-            <div className="amounttitle">Total Amount</div>
-            <div className="text-violet-800 font-bold" id="checkout-total-amount">$146.30</div>
+    <div className="overflow-hidden scrollbar-none w-full one">
+      <div className="flex items-center justify-between h-full w-full">
+        <div className="flex gap-2 text-nowrap text-md"><IconPosCafe icon="menu" color="black" size={24} />Current Bill</div>
+        <div className="h-full flex flex-col">
+          <div className="flex flex-col items-end">
+            <div className="text-ss-45 h-min">Total Amount</div>
+            <div className="text-violet-800 font-bold h-min" id="checkout-total-amount">$146.30</div>
           </div>
         </div>
       </div>
     </div>
-    <div className="search card two grid-search">
-      <input type="text" className="bar" name="search" placeholder="Search menu items..." autoComplete="off"></input>
-      <div className="changelayout">
-        <div className="layoutgrid option-select">
-          <svg xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 -960 960 960" width="18px" fill="#ffffff"><path d="M120-520v-320h320v320H120Zm0 400v-320h320v320H120Zm400-400v-320h320v320H520Zm0 400v-320h320v320H520ZM200-600h160v-160H200v160Zm400 0h160v-160H600v160Zm0 400h160v-160H600v160Zm-400 0h160v-160H200v160Zm400-400Zm0 240Zm-240 0Zm0-240Z" /></svg>
+    <div className="overflow-hidden scrollbar-none flex w-full h-full items-center justify-end gap-2 two">
+      <input type="text" className="bg-white w-10/12 border border-gray-100 shadow-sm shadow-gray-200 text-gray-800 p-2.5 bg-position-[8px] pl-7 rounded-md font-roboto text-ss-45 bg-search bg-no-repeat bg-size-[1rem]" name="search" placeholder="Search menu items..." autoComplete="off"></input>
+      <div className="h-full w-fit flex items-center justify-center">
+        <div className={`w-auto h-10/12 flex items-center justify-center aspect-square rounded-sm shadow-sm ${(activeView == "grid") ? "bg-gpurple-reverse" : ""}`} onClick={() => handleView("grid")}>
+          <IconPosCafe icon="grid" color={(activeView == "grid") ? "white" : "black"} />
         </div>
-        <div className="layoutlist">
-          <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="M280-600v-80h560v80H280Zm0 160v-80h560v80H280Zm0 160v-80h560v80H280ZM160-600q-17 0-28.5-11.5T120-640q0-17 11.5-28.5T160-680q17 0 28.5 11.5T200-640q0 17-11.5 28.5T160-600Zm0 160q-17 0-28.5-11.5T120-480q0-17 11.5-28.5T160-520q17 0 28.5 11.5T200-480q0 17-11.5 28.5T160-440Zm0 160q-17 0-28.5-11.5T120-320q0-17 11.5-28.5T160-360q17 0 28.5 11.5T200-320q0 17-11.5 28.5T160-280Z" /></svg>
+        <div className={`bg-white w-auto h-10/12 flex items-center justify-center aspect-square rounded-sm shadow-sm  ${(activeView == "list") ? "bg-gpurple-reverse" : ""}`} onClick={() => handleView("list")}>
+          <IconPosCafe icon="list" color={(activeView == "list") ? "white" : "black"} />
         </div>
       </div>
     </div>
-    <div className="card three grid-bill relative">
+    <div className="bg-white rounded-sm shadow-sm overflow-hidden scrollbar-none p-3.5 relative three">
       <table className="border-collapse text-center w-[98%]">
         <thead>
           <tr>
             <th>
-              <div className="flex items-center ml-3 text-ss-55">Item</div>
+              <div className="flex items-center ml-3 text-ss-45 w-1/4">Item</div>
             </th>
-            <th className="text-ss-55">Qty</th>
-            <th className="text-ss-55">Unit Price</th>
-            <th className="text-ss-55">Total</th>
+            <th className="text-ss-45 w-[20%]">Qty</th>
+            <th className="text-ss-45 w-[20%]">Unit Price</th>
+            <th className="text-ss-45 w-[20%]">Total</th>
             <th></th>
           </tr>
         </thead>
-        <tbody className="border-t-2 border-gray-100">
+        <tbody className="border-t border-gray-100">
           {
             checkoutlist.map((item, index) => (
               <tr key={index}>
-                <td className="pt-2.5">
-                  <div className="alignnames">{item.image}
-                    <div className="text-ss-55 font-bold">{item.itemname}</div>
+                <td className="pt-1 text-center">
+                  <div className="flex items-center justify-start gap-1">
+                    {item.image}
+                    <div className="text-ss-45 font-bold">{item.itemname}</div>
                   </div>
                 </td>
                 <td>
                   <div className="aligncount"><input type="number" placeholder="2"
-                    className="[&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none text-ss-55 border-2 border-gray-200 rounded-sm text-center p-1 w-10" name="count" value="2" onChange={() => {}}></input>
+                    className="[&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none text-ss-45 border border-gray-200 rounded-sm text-center p-0.5 w-7" name="count" value="2" onChange={() => { }}></input>
                   </div>
                 </td>
                 <td>
-                  <div className="text-ss-55 font-bold">{item.price}</div>
+                  <div className="text-ss-45 font-bold">{item.price}</div>
                 </td>
                 <td>
-                  <div className="text-ss-55 font-bold">{item.total}</div>
+                  <div className="text-ss-45 font-bold">{item.total}</div>
                 </td>
-                <td><svg xmlns="http://www.w3.org/2000/svg" height="12px" viewBox="0 -960 960 960" width="12px" fill="#505050"><path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z" /></svg>
+                <td><IconPosCafe icon="delete" size={10} color="black" />
                 </td>
               </tr>
             ))
           }
         </tbody>
       </table>
-      <div className="bg-info flex justify-start align-top gap-2 p-2 rounded-sm relative bottom-0">
-        <svg xmlns="http://www.w3.org/2000/svg" height="16px" viewBox="0 -960 960 960" width="16px" fill="#0e08f6"><path d="M440-280h80v-240h-80v240Zm68.5-331.5Q520-623 520-640t-11.5-28.5Q497-680 480-680t-28.5 11.5Q440-657 440-640t11.5 28.5Q463-600 480-600t28.5-11.5ZM480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z" /></svg>
+      <div className="bg-info flex justify-start align-top gap-1 p-1 px-2 mt-1 rounded-sm relative bottom-0">
+        <svg xmlns="http://www.w3.org/2000/svg" height="12px" viewBox="0 -960 960 960" width="12px" fill="#0e08f6"><path d="M440-280h80v-240h-80v240Zm68.5-331.5Q520-623 520-640t-11.5-28.5Q497-680 480-680t-28.5 11.5Q440-657 440-640t11.5 28.5Q463-600 480-600t28.5-11.5ZM480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z" /></svg>
         <div className=" text-black font-thin text-ss-50">
           <p>Click item to create billing entry. If item alreadyexists, quantity will increase.</p>
           <p>Cancel item removes the last billed item. Delete All clears local data.</p>
@@ -127,154 +135,153 @@ export default function Billing() {
         </div>
       </div>
     </div>
-    <div className="card four grid-types">
-      <div className="types-options">
+    <div className="bg-white rounded-sm shadow-sm overflow-hidden scrollbar-none four">
+      <div className="w-full flex flex-col overflow-hidden scrollbar-none text-black p-3.5 relative h-full gap-2">
         {
           categorylist.map((category, index) => (
-            <div key={index} className={(activeCategory == category.name) ? "option-type bg-gpurple text-white" : "option-type"} onClick={() => handleCategory(category.name)}>
-              {(activeCategory == category.name) ? <IconPosCafe /> : <IconPosCafe color="black"/>}
-              <span className="text-ss-55">{category.name}</span>
+            <div key={index} className={`flex items-center gap-2 px-2 py-2 rounded-sm ${(activeCategory == category.name) ? "bg-gpurple text-white" : ""}`} onClick={() => handleCategory(category.name)}>
+              {(activeCategory == category.name) ? <IconPosCafe icon={category.icon} size={16} /> : <IconPosCafe icon={category.icon} size={14} color="black" />}
+              <span className="text-ss-45">{category.name}</span>
             </div>
           ))
         }
       </div>
     </div>
-    <div className="card five grid-items">
-      <div className="items-options">
+    <div className="bg-white rounded-sm shadow-sm overflow-hidden scrollbar-none relative five">
+      <div className="grid grid-cols-4 gap-2.5 overflow-y-scroll scrollbar-none p-3.5">
         {
           inventorylist.map((item, index) => (
-            <div key={index} className="option-item option-item-select">
-              <img src={item.imgpath} className="item-img"></img>
-              <span className="opname">{item.itemname}</span>
-              <span className="opname-chinese">{item.chinesename}</span>
+            <div key={index} className="flex flex-col rounded-sm items-center aspect-square p-2 relative shadow-sm shadow-gray-100 border border-gray-100 option-item-select">
+              <img src={item.imgpath} className="absolute h-9/12"></img>
+              <div className="absolute flex flex-col w-full h-7 items-center justify-center bottom-0 bg-white rounded-sm">
+                <span className="text-ss-40 relative w-full text-center">{item.itemname}</span>
+                <span className="font-noto text-ss-40 text-gray-700 text-thin relative">{item.chinesename}</span>
+              </div>
             </div>
           ))
         }
       </div>
     </div>
-    <div className="card six grid-calc">
-      <div className="crow-top">
-        <div className="align-item-number">
-          <div className="itemnumber-name">Item Number</div>
-          <input type="text" placeholder="Scan / Enter item Number" className="itemnumber-input cinput" name="itemnumber" id="calc-itemnumber-name"></input>
+    <div className="bg-white rounded-sm shadow-sm overflow-hidden scrollbar-none flex flex-col items-center w-full p-3.5 gap-1 six">
+      <div className="flex w-full gap-2 grow items-end">
+        <div className="grow w-1/3">
+          <div className="text-ss-45">Item Number</div>
+          <input type="text" placeholder="Scan / Enter item Number" className="w-full p-1 items-center justify-center rounded-sm text-black bg-gray-50 border border-gray-200 text-ss-45 pl-1.5 bg-barcode bg-no-repeat bg-right bg-size-[12px]" name="itemnumber" id="calc-itemnumber-name"></input>
         </div>
-        <div className="align-quantity">
-          <div className="quantity-name">Quantity</div>
-          <div className="align-quantity-input">
-            <div className="minus">-</div>
-            <input type="text" placeholder="1" className="quantity-input cinput" name="quantity" value="1" onChange={() => { }}></input>
-            <div className="plus">+</div>
+        <div className="grow w-1/5">
+          <div className="text-ss-45">Quantity</div>
+          <div className="flex w-full items-center justify-center text-center rounded-sm text-black bg-gray-50 border border-gray-200 text-ss-45">
+            <div className="px-2.5 text-ss-50">-</div>
+            <input type="text" placeholder="1" className="w-full p-1 items-center justify-center text-center text-black bg-white text-ss-50" name="quantity" value="1" onChange={() => { }}></input>
+            <div className="px-2.5 text-ss-50">+</div>
           </div>
         </div>
-        <div className="calc-add">
-          <div className="text-transparent">Add</div>
-          <div className="bg-gpurple text-white text-center rounded-sm p-2 aspect-4/1">Add</div>
-        </div>
+        <div className="bg-gpurple text-white text-center text-ss-45 rounded-sm p-1 py-1.5 aspect-16/4">Add</div>
       </div>
-      <div className="crow-separator"></div>
-      <div className="crow-bottom">
-        <div className="calc-table">
-          <div className="crow-align-tablename">
-            <div className="align-tablename">
-              <div className="tableno-name">Table No</div>
-              <input type="text" placeholder="Enter table no" className="tableno-input cinput" name="tableno"></input>
+      <div className="w-1/6 h-2 bg-black"></div>
+      <div className="flex w-full gap-2 grow">
+        <div className="flex flex-col gap-2">
+          <div className="">
+            <div>
+              <div className="text-ss-45">Table No</div>
+              <input type="text" placeholder="Enter table no" className="w-full p-1 items-center justify-center rounded-sm text-black bg-gray-50 border border-gray-200 text-ss-45 pl-1.5" name="tableno"></input>
             </div>
           </div>
-          <div className="crow-align-cover">
-            <div className="align-cover">
-              <div className="cover-name">No of Cover</div>
-              <input type="text" placeholder="Enter no of cover" className="cover-input cinput" name="cover"></input>
+          <div className="">
+            <div>
+              <div className="text-ss-45">No of Cover</div>
+              <input type="text" placeholder="Enter no of cover" className="w-full p-1 items-center justify-center rounded-sm text-black bg-gray-50 border border-gray-200 text-ss-45 pl-1.5" name="cover"></input>
             </div>
           </div>
         </div>
-        <div className="calc-calc">
-          <div className="cb-7 cb">7</div>
-          <div className="cb-8 cb">8</div>
-          <div className="cb-9 cb">9</div>
-          <div className="cb-4 cb">4</div>
-          <div className="cb-5 cb">5</div>
-          <div className="cb-6 cb">6</div>
-          <div className="cb-1 cb">1</div>
-          <div className="cb-2 cb">2</div>
-          <div className="cb-3 cb">3</div>
-          <div className="cb-0 cb">0</div>
-          <div className="cb-dot cb">.</div>
-          <div className="cb-del cb"><IconPosCafe /></div>
+        <div className="grid grid-cols-3 gap-1 grow">
+          <div className="flex items-center justify-center bg-grey-100 border border-gray-100 rounded-sm text-black shadow-sm text-ss-50">7</div>
+          <div className="flex items-center justify-center bg-grey-100 border border-gray-100 rounded-sm text-black shadow-sm text-ss-50">8</div>
+          <div className="flex items-center justify-center bg-grey-100 border border-gray-100 rounded-sm text-black shadow-sm text-ss-50">9</div>
+          <div className="flex items-center justify-center bg-grey-100 border border-gray-100 rounded-sm text-black shadow-sm text-ss-50">4</div>
+          <div className="flex items-center justify-center bg-grey-100 border border-gray-100 rounded-sm text-black shadow-sm text-ss-50">5</div>
+          <div className="flex items-center justify-center bg-grey-100 border border-gray-100 rounded-sm text-black shadow-sm text-ss-50">6</div>
+          <div className="flex items-center justify-center bg-grey-100 border border-gray-100 rounded-sm text-black shadow-sm text-ss-50">1</div>
+          <div className="flex items-center justify-center bg-grey-100 border border-gray-100 rounded-sm text-black shadow-sm text-ss-50">2</div>
+          <div className="flex items-center justify-center bg-grey-100 border border-gray-100 rounded-sm text-black shadow-sm text-ss-50">3</div>
+          <div className="flex items-center justify-center bg-grey-100 border border-gray-100 rounded-sm text-black shadow-sm text-ss-50">0</div>
+          <div className="flex items-center justify-center bg-grey-100 border border-gray-100 rounded-sm text-black shadow-sm text-ss-50">.</div>
+          <div className="flex items-center justify-center bg-grey-100 border border-gray-100 rounded-sm text-black shadow-sm"><IconPosCafe icon="backspace" color="black" size={10} /></div>
         </div>
-        <div className="crow-button">
-          <div className="bg-gpurple text-white text-center rounded-sm p-2 aspect-4/1 mb-1">AC</div>
-          <div className="bg-gpurple text-white text-center rounded-sm p-2 aspect-4/1">Clear</div>
-        </div>
-      </div>
-    </div>
-    <div className="card seven grid-seven">
-      <div className="newbill" id="new-checkout-bill">
-        <IconPosCafe />
-        <div className="bill-name">New Bill</div>
-      </div>
-      <div className="price">
-        <IconPosCafe />
-        <div className="price-name">Price Amendment</div>
-      </div>
-      <div className="pricegroup">
-        <div className="ptwo pgroup">$2</div>
-        <div className="pfive pgroup">$5</div>
-        <div className="pten pgroup">$10</div>
-        <div className="ptnty pgroup">$20</div>
-        <div className="pfity pgroup">$50</div>
-        <div className="pgift pgroup">
-          <IconPosCafe />
-          <div className="price-name">Gift Voucher</div>
+        <div className="">
+          <div className="bg-gpurple text-white text-center rounded-sm  p-1 py-1.5 text-ss-45 aspect-16/4 mb-1">AC</div>
+          <div className="bg-gpurple text-white text-center rounded-sm  p-1 py-1.5 text-ss-45 aspect-16/4">Clear</div>
         </div>
       </div>
     </div>
-    <div className="card eight grid-eight">
-      <div className="cashbox">
-        <IconPosCafe />
-        <div className="cashbox-name">Open Cash Box</div>
+    <div className="overflow-hidden rounded-sm seven bg-bviolet0 flex gap-px mt-2 grid-cols-[repeat(3, 60px)]">
+      <div className="bg-bviolet1 flex items-center justify-center flex-col rounded-sm aspect-square gap-1">
+        <IconPosCafe icon="add" />
+        <div className="text-white text-ss-45 font-thin">New Bill</div>
       </div>
-      <div className="goodsreturn">
-        <IconPosCafe />
-        <div className="goodsreturn-name">Goods Return</div>
+      <div className="bg-bviolet2 flex items-center justify-center flex-col  rounded-sm aspect-4/3 gap-1">
+        <IconPosCafe icon="tag" />
+        <div className="text-white text-ss-45 font-thin">Price Amendment</div>
       </div>
-      <div className="cancelitem">
-        <IconPosCafe />
-        <div className="cancelitem-name">Cancel Item</div>
-      </div>
-      <div className="additem">
-        <IconPosCafe />
-        <div className="additem-name">Add Item</div>
+      <div className="grid gap-px grid-cols-[repeat(3,1fr)] grow">
+        <div className="bg-bviolet3 flex flex-col justify-center items-center rounded-sm text-white text-ss-55 font-thin">$2</div>
+        <div className="bg-bviolet3 flex flex-col justify-center items-center rounded-sm text-white text-ss-55 font-thin">$5</div>
+        <div className="bg-bviolet3 flex flex-col justify-center items-center rounded-sm text-white text-ss-55 font-thin">$10</div>
+        <div className="bg-bviolet3 flex flex-col justify-center items-center rounded-sm text-white text-ss-55 font-thin">$20</div>
+        <div className="bg-bviolet3 flex flex-col justify-center items-center rounded-sm text-white text-ss-55 font-thin">$50</div>
+        <div className="bg-bviolet3 flex flex-col items-center justify-center rounded-sm">
+          <IconPosCafe icon="gift" size={14} />
+          <div className="text-white text-ss-45 font-thin">Gift Voucher</div>
+        </div>
       </div>
     </div>
-    <div className="card nine grid-nine bg-gorange text-sm">
-      <div className="arowone">
-        <div className="tcan bg-gorange">
-          <IconPosCafe />
-          <div className="tcan-name">Terminate Transaction</div>
+    <div className="overflow-hidden rounded-sm bg-ggreen gap-0.5 grid mt-2 grid-cols-2 grid-rows-2 eight grid-eight">
+      <div className="flex flex-col justify-center items-center rounded-sm font-thin bg-ggreen">
+        <IconPosCafe icon="cashbox" size={14} />
+        <div className="text-white text-ss-45">Open Cash Box</div>
+      </div>
+      <div className="flex flex-col justify-center items-center rounded-sm font-thin bg-ggreen">
+        <IconPosCafe icon="star" size={14} />
+        <div className="text-white text-ss-45">Goods Return</div>
+      </div>
+      <div className="flex flex-col justify-center items-center rounded-sm font-thin bg-ggreen">
+        <IconPosCafe icon="reset" size={14} />
+        <div className="text-white text-ss-45">Cancel Item</div>
+      </div>
+      <div className="flex flex-col justify-center items-center rounded-sm font-thin bg-ggreen">
+        <IconPosCafe icon="cart" size={14} />
+        <div className="text-white text-ss-45">Add Item</div>
+      </div>
+    </div>
+    <div className="overflow-hidden rounded-sm nine grid-nine bg-gorange text-sm mt-2">
+      <div className="grid grid-cols-4 gap-0.5 rounded-sm h-1/2">
+        <div className="flex text-wrap justify-center items-center rounded-sm text-center h-full bg-gorange">
+          <IconPosCafe icon="disable" size={14} />
+          <div className="text-white text-ss-45 w-min">Terminate Transaction</div>
         </div>
-        <div className="print bg-gorange">
-          <IconPosCafe />
-          <div className="print-name">Print</div>
+        <div className="flex text-wrap justify-center items-center rounded-sm text-center h-full bg-gorange">
+          <IconPosCafe icon="print" size={14} />
+          <div className="text-white text-ss-45 w-min">Print</div>
         </div>
-        <div className="tres bg-gorange">
-          <IconPosCafe />
-          <div className="tres-name">Reserved Transaction</div>
+        <div className="flex text-wrap justify-center items-center rounded-sm text-center h-full bg-gorange">
+          <IconPosCafe icon="bookmark" size={14} />
+          <div className="text-white text-ss-45 w-min">Reserved Transaction</div>
         </div>
-        <div className="tdel bg-gorange">
-          <IconPosCafe />
-          <div className="tdel-name">Delete All Transaction</div>
+        <div className="flex text-wrap justify-center items-center rounded-sm text-center h-full bg-gorange">
+          <IconPosCafe icon="delete" size={14} />
+          <div className="text-white text-ss-45 w-min">Delete All Transaction</div>
         </div>
       </div>
-      <div className="arowtwo">
-        <div className="restore">
-          <div className="tdel bg-gorange">
-            <IconPosCafe />
-            <div className="tdel-name">Restore</div>
+      <div className="grid grid-cols-2 gap-0.5 rounded-sm h-1/2">
+        <div className="w-full h-full rounded-sm">
+          <div className="h-full w-full bg-gorange flex items-center justify-center  rounded-sm">
+            <IconPosCafe icon="reset" size={14} />
+            <div className="text-white text-ss-45">Restore</div>
           </div></div>
-        <div className="mainmenu">
-          <div className="tdel bg-gorange">
-            <IconPosCafe />
-            <div className="tdel-name">Main Menu</div>
+        <div className="w-full h-full rounded-sm">
+          <div className="h-full w-full flex items-center justify-center rounded-sm">
+            <IconPosCafe icon="home" size={14} />
+            <div className="text-white text-ss-45">Main Menu</div>
           </div></div>
       </div>
     </div>
