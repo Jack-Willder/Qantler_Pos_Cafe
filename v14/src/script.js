@@ -1053,7 +1053,7 @@ const additem = `<div class="additem-content">
                                                                 <div class="additem-title-text">Supplier</div>
                                                                 <select name="additem-supplier-option" id="additem-form-supplier">
                                                                         <option value="" selected disabled hidden>Select supplier</option>
-                                                                        <option value="local">Local</option>
+                                                                        <option value="Local">Local</option>
                                                                 </select>
                                                                 <div class="additem-desc-text hide-text">Status is auto-populated based on In Stock quantity.</div>
                                                         </div>
@@ -1063,11 +1063,17 @@ const additem = `<div class="additem-content">
                                                 <div class="additem-baction" id="additem" data-target="inventory">
                                                         <span class="datename">Cancel</span>
                                                 </div>
-                                                <div class="additem-baction option-select" id="additem-form-addinvitem">
+                                                <div class="additem-baction option-select" id="additem-form-addinvitem" >
                                                         <span class="material-symbols-outlined save-symbol">
                                                                 save
                                                         </span>
                                                         <span class="datename">Save</span>
+                                                </div>
+                                                <div class="additem-baction option-select inv-baction-delete remove-all" id="additem-form-deleteinvitem">
+                                                        <span class="material-symbols-outlined save-symbol">
+                                                                delete
+                                                        </span>
+                                                        <span class="datename">Delete</span>
                                                 </div>
                                         </div>
                                 </div>
@@ -1696,6 +1702,7 @@ const init_inventory = [
         }
 ];
 
+
 function option_activate() {
         let options = document.querySelectorAll(".option");
         let content = document.querySelector(".content-area");
@@ -1707,7 +1714,10 @@ function option_activate() {
                 element.classList.add("option-select");
                 let target = element.getAttribute("data-target");
                 if(target == "billing") content.innerHTML = billing;
-                if (target == "inventory") content.innerHTML = inventory;
+                if (target == "inventory") {
+                        content.innerHTML = inventory;
+                        generate_inventory_rows();
+                };
                 // if (target == "additem") content.innerHTML = additem;
                 if (target == "request") content.innerHTML = request;
                 if (target == "report") content.innerHTML = report;
@@ -1722,7 +1732,10 @@ function option_activate() {
                 const handleadditems = e.target.closest("#additem");
                 if (handleadditems) {
                         let target = handleadditems.getAttribute("data-target");
-                        if (target == "inventory") content.innerHTML = inventory;
+                        if (target == "inventory") {
+                                content.innerHTML = inventory;
+                                generate_inventory_rows();
+                        };
                         if (target == "additem") {
                                 content.innerHTML = additem;
                                 document.querySelector(".additem-itemcode-input").value = generate_itemcode();
@@ -1735,34 +1748,49 @@ function option_activate() {
                 }
                 
                 // Button actions
+                // Add item to inventory
                 const save_item = e.target.closest("#additem-form-addinvitem");
-                if (save_item) {
-                        const additem_form_elements = document.querySelectorAll("#additem-form-itemcode, #additem-form-itemimage, #additem-form-category, #additem-form-unit, #additem-form-itemname, #additem-form-itemdesc, #additem-form-price, #additem-form-instock, #additem-form-supplier");
-                        if (additem_form_elements) {
-                                additem_form_array = Array.from(additem_form_elements, (elem) => elem.value);
-                                if (additem_form_array.includes("")) alert("All Fields are Required!");
-                                let addinv = {
-                                        "itemcode": additem_form_array[0],
-                                        "itemimage": additem_form_array[1],
-                                        "category": additem_form_array[2],
-                                        "unit": additem_form_array[3],
-                                        "itemname": additem_form_array[4],
-                                        "itemdesc": additem_form_array[5],
-                                        "price": additem_form_array[6],
-                                        "instock": additem_form_array[7],
-                                        "supplier": additem_form_array[8]
-                                }
-                                console.table(addinv);
-                                add_inventory(addinv);
-                                document.querySelector(".additem-itemcode-input").value = generate_itemcode();
-                                // additem_form_elements.forEach(element => {
-                                //         // console.log(element.value);
-                                // });
-                        }
+                if (save_item) additems_inventory();
+
+                // Edit item from inventory
+                const edit_item = e.target.closest("#additem-form-editinvitem");
+                if (edit_item) edititems_inventory(edit_item.getAttribute("data-edititem"));
+
+                // Delete item from inventory
+                const delete_item = e.target.closest("#additem-form-deleteinvitem");
+                if (delete_item) deleteitems_inventory(delete_item.getAttribute("data-deleteitem"));
+
+                //Table actions
+                const item_table_rows = e.target.closest("#inventory-table-rows");
+                if (item_table_rows) {
+                        let itemcode = item_table_rows.getAttribute("data-itemcode");
+                        const table_item = get_inventory_item(itemcode);
+                        content.innerHTML = additem;
+                        document.querySelector(".additem-content .additem-itemtitle-text").innerText = "Edit Item";
+                        document.querySelector(".additem-content .additem-itemdescription-text").innerText = "Edit item from your inventory";
+                        document.querySelector("#additem-form-itemcode").value = table_item.itemcode;
+                        document.querySelector("#additem-form-category").value = table_item.category;
+                        document.querySelector("#additem-form-unit").value = table_item.unit;
+                        document.querySelector("#additem-form-itemname").value = table_item.itemname;
+                        document.querySelector("#additem-form-itemdesc").value = table_item.itemdesc;
+                        document.querySelector("#additem-form-price").value = table_item.price;
+                        document.querySelector("#additem-form-instock").value = table_item.instock;
+                        document.querySelector("#additem-form-supplier").value = table_item.supplier;
+                        document.querySelector("#additem-form-itemname").value = table_item.itemname;
+                        
+                        
+                        const additem_option_delete = document.querySelector(".inv-baction-delete");
+                        additem_option_delete.classList.remove("remove-all");
+                        additem_option_delete.setAttribute("data-deleteitem", itemcode);
+                        const additem_option_editsave = document.querySelector("#additem-form-addinvitem");
+                        additem_option_editsave.setAttribute("id", "additem-form-editinvitem");
+                        additem_option_editsave.setAttribute("data-edititem", itemcode);
+
                 }
         })
 }
 option_activate()
+
 
 function manage_localstorage() {
         if (!localStorage.getItem("inventory")) {
@@ -1774,23 +1802,42 @@ function manage_localstorage() {
 }
 manage_localstorage()
 
+
 function generate_itemcode() {
-        let newitemnumber = JSON.parse(localStorage.getItem("inventory")).length - 1
-        let newitemnumberstring = "" + newitemnumber;
-        let newitemcode = newitemnumberstring;
-        for (let index = 0; index < (6 - newitemnumberstring.length); index++) {
+        let inventory_content = JSON.parse(localStorage.getItem("inventory"));
+        let lastinv_number = inventory_content[inventory_content.length - 1].itemcode;
+        let newitemcode = "";
+        for (let index = lastinv_number.length - 1; index >= 0; index--) {
+                newitemcode = lastinv_number[index] + newitemcode;
+                if (lastinv_number[index] == 0) break;
+                if (lastinv_number[index] == "-") break;
+        }
+        newitemcode = Number.parseInt(newitemcode);
+        newitemcode = "" + newitemcode;
+        for (let index = 0; index < (6 - newitemcode.length); index++) {
                 newitemcode = "0" + newitemcode;
         }
         newitemcode = "ITM-" + newitemcode;
         return newitemcode;
+
+
+        // let newitemnumber = JSON.parse(localStorage.getItem("inventory")).length - 1
+        // let newitemnumberstring = "" + newitemnumber;
+        // let newitemcode = newitemnumberstring;
+        // for (let index = 0; index < (6 - newitemnumberstring.length); index++) {
+        //         newitemcode = "0" + newitemcode;
+        // }
+        // newitemcode = "ITM-" + newitemcode;
+        // return newitemcode;
 }
+
 
 function generate_inventory_rows() {
         const inventory = JSON.parse(localStorage.getItem("inventory"));
         let inventory_content = "";
         inventory.forEach(element => {
                 let inventory_row = ""
-                inventory_row += `<tr>
+                inventory_row += `<tr id="inventory-table-rows" data-itemcode="${element.itemcode}">
                         <td>
                                 <div class="alignnames"><img
                                                 src="https://static.vecteezy.com/system/resources/previews/060/818/430/non_2x/a-glass-of-creamy-nutritious-soy-milk-surrounded-by-soybeans-png.png"
@@ -1811,7 +1858,7 @@ function generate_inventory_rows() {
         }); 
         document.querySelector(".inventory-content table tbody").innerHTML = inventory_content;
 }
-generate_inventory_rows()
+
 
 function generate_stock_status(instock) {
         if (instock==0) {
@@ -1826,9 +1873,87 @@ function generate_stock_status(instock) {
                 <td><div class="inv-status">In Stock</div></td>`
 }
 
+// insert rows
 function add_inventory(addinv) {
         const manage_inventory = JSON.parse(localStorage.getItem("inventory"));
         manage_inventory.push(addinv);
         localStorage.inventory = JSON.stringify(manage_inventory);
         alert("Inventory Updated");
+}
+
+// read rows
+function get_inventory_item(itemcode) {
+        let inventory_content = JSON.parse(localStorage.getItem("inventory"));
+        return inventory_content.find((element) => element.itemcode == itemcode);
+}
+
+
+
+
+
+
+
+// Add items to inevntory function
+function additems_inventory() {
+        const additem_form_elements = document.querySelectorAll("#additem-form-itemcode, #additem-form-itemimage, #additem-form-category, #additem-form-unit, #additem-form-itemname, #additem-form-itemdesc, #additem-form-price, #additem-form-instock, #additem-form-supplier");
+        if (additem_form_elements) {
+                additem_form_array = Array.from(additem_form_elements, (elem) => elem.value);
+                if (additem_form_array.includes("")) {
+                        alert("All Fields are Required!")
+                } else {
+                        let addinv = {
+                                "itemcode": additem_form_array[0],
+                                "itemimage": additem_form_array[1],
+                                "category": additem_form_array[2],
+                                "unit": additem_form_array[3],
+                                "itemname": additem_form_array[4],
+                                "itemdesc": additem_form_array[5],
+                                "price": additem_form_array[6],
+                                "instock": additem_form_array[7],
+                                "supplier": additem_form_array[8]
+                        }
+                        add_inventory(addinv);
+                        document.querySelector("#additem-form-itemcode").value = generate_itemcode();
+                };
+        }
+}
+
+
+// Edit items from inevntory function
+function edititems_inventory(edit_item_itemcode) {
+        const additem_form_elements = document.querySelectorAll("#additem-form-itemcode, #additem-form-itemimage, #additem-form-category, #additem-form-unit, #additem-form-itemname, #additem-form-itemdesc, #additem-form-price, #additem-form-instock, #additem-form-supplier");
+        if (additem_form_elements) {
+                additem_form_array = Array.from(additem_form_elements, (elem) => elem.value);
+                if (additem_form_array.includes("")) {
+                        alert("All Fields are Required!")
+                } else {
+                        let addinv = {
+                                "itemcode": edit_item_itemcode,
+                                "itemimage": additem_form_array[1],
+                                "category": additem_form_array[2],
+                                "unit": additem_form_array[3],
+                                "itemname": additem_form_array[4],
+                                "itemdesc": additem_form_array[5],
+                                "price": additem_form_array[6],
+                                "instock": additem_form_array[7],
+                                "supplier": additem_form_array[8]
+                        }
+                        const manage_inventory = JSON.parse(localStorage.getItem("inventory"));
+                        const filtered_inventory = manage_inventory.filter((element) => element.itemcode != edit_item_itemcode);
+                        filtered_inventory.push(addinv);
+                        localStorage.inventory = JSON.stringify(filtered_inventory);
+                        alert("Inventory Updated");
+                        document.querySelector("#additem-form-itemcode").value = generate_itemcode();
+                };
+        }
+}
+
+
+// Delete items from inevntory function
+function deleteitems_inventory(delete_item_itemcode) {
+        const inventory_content = JSON.parse(localStorage.getItem("inventory"));
+        const deleted_inventory = inventory_content.filter((element) => element.itemcode != delete_item_itemcode);
+        localStorage.inventory = JSON.stringify(deleted_inventory);
+        alert("Item Deleted");
+
 }

@@ -1630,6 +1630,10 @@ color: hsl(357, 95%, 43%);
     color: var(--cpurple-dark);
 }
 
+.inv-baction-delete {
+    color: hsl(357, 95%, 43%);
+    background: hsl(346, 100%, 93%);
+}
 
 /* ############################################################ */
 /* #######################ItemRequest Page#######################*/
@@ -1842,18 +1846,16 @@ color: hsl(357, 95%, 43%);
     display: flex;
     align-items: center;
     justify-content: center;
-    /* background-color: aquamarine; */
-    /* padding: 10px; */
     text-wrap-mode: nowrap;
     border-radius: 6px;
     font-size: var(--fh4);
     /* height: 40%; */
-    margin-top: 2%;
+    margin-top: 0%;
     position: relative;
-    /* gap: 6%; */
     border: 1px solid var(--cborderdark);
     box-shadow: var(--cborder);
     padding: 1vw;
+    aspect-ratio: 15/4;
 }
 
 .tbutton-group {
@@ -1874,7 +1876,7 @@ color: hsl(357, 95%, 43%);
     background: var(--cwhite-pale);
 }
 
-.inventory-card table thead, .inventory-card table thead tr {background: hsl(249, 100%, 99%);}
+.inventory-card table thead, .inventory-card table thead tr {background: hsl(249, 100%, 99%);position: relative;}
 
 .inventory-card table {
     overflow-y: scroll;
@@ -1883,10 +1885,10 @@ color: hsl(357, 95%, 43%);
 .inventory-card table thead tr td::after {
     content: '';
     position: absolute;
-    width: 20px;
-    height: 20px;
-    margin-top: -2px;
-    margin-left: 10px;
+    width: 12px;
+    height: 12px;
+    margin-top: 1px;
+    margin-left: 2px;
     background: url(updown.png) no-repeat;
     background-size: contain;
 }
@@ -1991,4 +1993,8 @@ color: hsl(357, 95%, 43%);
 
 .hide-all {
     opacity: 0 !important;
+}
+
+.remove-all {
+    display: none !important;
 }
