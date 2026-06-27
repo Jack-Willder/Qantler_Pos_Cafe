@@ -186,7 +186,7 @@ body>* {
     border: 0px;
     border-radius: 8px;
     /* padding: 10px; */
-    background: url(search.png) no-repeat scroll 14px 0px;
+    background: url(/assets/search.png) no-repeat scroll 14px 0px;
     background-color: var(--cwhite);
     background-size: 1.3rem;
     background-position-y: center;
@@ -254,7 +254,7 @@ body>* {
     display: flex;
     height: 100%;
     width: 100%;
-    overflow-y: scroll;
+    /* overflow-y: scroll; */
     position: relative;
 }
 
@@ -285,13 +285,12 @@ body>* {
         "three  four    five    five"
         "six    four    five    five"
         "seven  eight   eight   nine";
-    grid-template-rows: 5.5% 52.9% 26%;
+    grid-template-rows: 5.5% 52.9% 26% 11.2%;
     grid-template-columns: 42.6% 13% 4.8%;
     gap: 0.8%;
     height: 100%;
     width: 100%;
     font-weight: 600;
-    /* margin: 1%; */
     padding: 16px;
 }
 
@@ -378,7 +377,7 @@ body>* {
     grid-area: two;
 }
 .three {grid-area: three;}
-.four {grid-area: four;overflow: scroll;}
+.four {grid-area: four;}
 .five {grid-area: five;}
 .six {grid-area: six;}
 .seven {grid-area: seven;}
@@ -416,7 +415,7 @@ body>* {
 }
 
 .layoutgrid > span, .layoutlist > span {
-    font-size: clamp(0.7rem, 3vw, 1.7rem);
+    font-size: clamp(0.7rem, 2.4vh, 2rem);
 }
 
 .changelayout > .symbol {
@@ -479,6 +478,7 @@ th, tr, thead, tbody, table {
     gap: 4px;
     padding-left: 4px;
     width: 90%;
+    text-align: left;
 }
 
 .aligncount {
@@ -501,8 +501,8 @@ img.item-symbol {
     font-size: var(--fh1);
     border-radius: var(--button-radius);
     height: 32px;
+    aspect-ratio: 1/1;
 }
-
 tbody > tr > td:nth-child(2) {
     width: 13%;
     text-align: center;
@@ -555,13 +555,15 @@ span.delete-symbol {
     width: 100%;
     display: flex;
     flex-direction: column;
-    gap: 2px;
     overflow-y: scroll;
     scrollbar-width: none;
     color: var(--cblack);
-    padding: 14%;
-    font-size: var(--fh3);
+    padding: clamp(1px, calc((100vw - 1000px) * 0.05), 23px);
+    font-size: var(--fh4);
     position: relative;
+    /* margin-left: 10px; */
+    height: 100%;
+    row-gap: clamp(0px, calc((100vh - 700px) * 0.05), 14px);
 }
 
 .option-type {
@@ -612,7 +614,8 @@ span.delete-symbol {
     color: var(--cblack);
     padding: 5% 2%;
     font-size: var(--small-font);
-    grid-template-columns: repeat(auto-fit, minmax(130px, 0fr));
+    grid-template-columns: repeat(auto-fit, 130px);
+    justify-content: center;
 }
 
 .option-item {
@@ -698,6 +701,7 @@ span.delete-symbol {
 .crow-top, .crow-bottom {
     display: flex;
     width: 100%;
+    flex-grow: 1;
 }
 
 .crow-top {
@@ -731,7 +735,6 @@ span.delete-symbol {
     align-items: center;
     justify-content: center;
     border-radius: var(--button-radius);
-    margin-top: 5px;
     color: white;
     background: hsla(236, 62%, 50%, 1);
     background: linear-gradient(
@@ -747,7 +750,7 @@ span.delete-symbol {
     /* width: 90%; */
     /* max-width: 45px; */
     /* aspect-ratio: 1.5/1; */
-    padding: 6px;
+    /* padding: 6px; */
     align-items: center;
     justify-content: center;
     text-align: center;
@@ -766,7 +769,7 @@ span.delete-symbol {
 .itemnumber-input {
     width: 100%;
     text-align: left;
-    background: url(barcode.png) no-repeat scroll;
+    background: url(/assets/barcode.png) no-repeat scroll;
     background-color: var(--cwhite);
     background-size: 1.3rem;
     background-position-y: center;
@@ -812,7 +815,7 @@ span.delete-symbol {
 
 .calc-table {
     flex-grow: 1;
-    padding: 3% 0px;
+    padding: 0 0 6.5% 0;
     display: flex;
     flex-direction: column;
     gap: 28%;
@@ -830,12 +833,11 @@ span.delete-symbol {
     column-gap: 6%;
     grid-template-columns: repeat(3, minmax(60px, 0fr));
     flex-grow: 1;
-    margin-top: 2.6%;
 }
 
 .crow-button {
     flex-grow: 1;
-    margin-top: 2%;
+    width: 7%;
 }
 
 .crow-separator {
@@ -847,17 +849,14 @@ span.delete-symbol {
 
 .ac-button, .clear-button {
     display: flex;
-    width: 100%;
-    height: auto;
     gap: 4px;
-    margin-top: 6%;
+    /* padding: 13%; */
 }
 
 .grid-seven {
     display: flex;
     gap: 1%;
-    margin-top: 2%;
-    margin-bottom: 0.78%;
+    margin-top: 2.5%;
     grid-template-columns: repeat(3, minmax(60px, 0fr));
     background: hsla(244, 42%, 56%, 1);
     background: linear-gradient(90deg, hsla(244, 42%, 56%, 1) 0%, hsla(266, 82%, 70%, 1) 100%);
@@ -922,8 +921,7 @@ span.delete-symbol {
 
 .grid-eight {
     display: grid;
-    margin-top: 4%;
-    margin-bottom: 2%;
+    margin-top: 6%;
     grid-template-columns: repeat(2, 1fr);
     grid-template-rows: repeat(2, 1fr);
     background: hsla(167, 34%, 50%, 1);
@@ -949,8 +947,7 @@ span.delete-symbol {
 }
 
 .grid-nine {
-    margin-top: 2%;
-    margin-bottom: 1%;
+    margin-top: 3%;
     background: hsla(36, 100%, 70%, 1);
     background: linear-gradient(135deg, hsla(36, 100%, 70%, 1) 0%, hsla(34, 98%, 63%, 1) 100%);
     background: -moz-linear-gradient(135deg, hsla(36, 100%, 70%, 1) 0%, hsla(34, 98%, 63%, 1) 100%);
@@ -1253,7 +1250,7 @@ span.delete-symbol {
     height: 20px;
     margin-top: -2px;
     margin-left: 10px;
-    background: url(updown.png) no-repeat;
+    background: url(/assets/updown.png) no-repeat;
     background-size: contain;
 }
 
@@ -1867,7 +1864,7 @@ color: hsl(357, 95%, 43%);
     height: 12px;
     margin-top: 1px;
     margin-left: 2px;
-    background: url(updown.png) no-repeat;
+    background: url(/assets/updown.png) no-repeat;
     background-size: contain;
 }
 
