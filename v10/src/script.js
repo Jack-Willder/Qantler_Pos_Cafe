@@ -927,34 +927,43 @@ const inventory = `<div class="inventory-content">
 
 const additem = `<div class="additem-content">
                         <div class="additem-statusbar">
-                                <div class="additem-titlebar">
-                                        <span class="material-symbols-outlined additem-menu-symbol">menu</span>
-                                        <div class="additem-inventorytitle">Inventory</div>
-                                </div>
-                                <div class="search card two datetimegrid">
-                                <div class="datetime">
-                                        <div class="dategrid">
-                                                <span class="material-symbols-outlined calendar-symbol">
-                                                        calendar_month
-                                                </span>
-                                                <div class="date">
-                                                        <div class="date-names">
-                                                                <span class="datename">20 May 2024</span>
-                                                                <span class="dayname">Monday</span>
+                                <div class="additem-topbar">
+                                        <div class="additem-titlebar">
+                                                <span class="material-symbols-outlined additem-menu-symbol">menu</span>
+                                                <div class="additem-inventorytitle">Inventory</div>
+                                        </div>
+                                        <div class="search card two datetimegrid">
+                                        <div class="datetime">
+                                                <div class="dategrid">
+                                                        <span class="material-symbols-outlined calendar-symbol">
+                                                                calendar_month
+                                                        </span>
+                                                        <div class="date">
+                                                                <div class="date-names">
+                                                                        <span class="datename">20 May 2024</span>
+                                                                        <span class="dayname">Monday</span>
+                                                                </div>
+                                                        </div>
+                                                </div>
+                                                <div class="separator"></div>
+                                                <div class="timegrid">
+                                                        <span class="material-symbols-outlined time-symbol">
+                                                                schedule
+                                                        </span>
+                                                        <div class="time">
+                                                                <span class="timename">10:30 AM</span>
                                                         </div>
                                                 </div>
                                         </div>
-                                        <div class="separator"></div>
-                                        <div class="timegrid">
-                                                <span class="material-symbols-outlined time-symbol">
-                                                        schedule
-                                                </span>
-                                                <div class="time">
-                                                        <span class="timename">10:30 AM</span>
-                                                </div>
                                         </div>
                                 </div>
-                        </div>
+                                <div class="additem-navbar">
+                                        <div class="additem-navbar-align">
+                                                <div class="additem-navbar-inventory">Inventory</div>
+                                                <span class="material-symbols-outlined additem-navbar-arrow">keyboard_arrow_right</span>
+                                                <div class="additem-navbar-inventory">Add Inventory</div>
+                                        </div>
+                                </div>
                         </div>
                         <div class="additem-card">
                                 <div class="additem-card-title">
