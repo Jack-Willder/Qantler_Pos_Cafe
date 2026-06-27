@@ -715,7 +715,7 @@ span.delete-symbol {
 
 .grid-items {
     position: relative;
-    overflow-y: scroll;
+    overflow: hidden;
 }
 
 .grid-items::after {
@@ -737,13 +737,36 @@ span.delete-symbol {
     width: 100%;
     display: grid;
     gap: 10px;
-    overflow-y: scroll;
+    overflow: hidden;
     scrollbar-width: none;
     color: var(--cblack);
     padding: 5% 2%;
     font-size: var(--fh4);
     grid-template-columns: repeat(auto-fit, 130px);
     justify-content: center;
+}
+
+.grid-page-control {
+    position: absolute;
+    left: 38%;
+    bottom: 4.6%;
+    width: 17%;
+    height: 22px;
+    border: 0;
+    border-bottom: clamp(1px, 0.8vw, 10px) dotted var(--cgrey);
+    background: transparent;
+    color: transparent;
+    cursor: pointer;
+    z-index: 5;
+    padding: 0;
+}
+
+.grid-page-control span {
+    display: none;
+}
+
+.grid-page-control.is-hidden {
+    display: none;
 }
 
 .option-item {

@@ -2531,6 +2531,37 @@ function generate_stock_status(instock) {
                 <td><div class="inv-status">In Stock</div></td>`
 }
 
+function getActualGridInfo() {
+        const container = document.querySelector(".card.five.grid-items");
+        const firstItem = container?.querySelector(".option-item");
+        const list = container?.querySelector(".items-options");
+
+        if (!container || !firstItem || !list) {
+                return { columns: 1, rows: 1, itemsPerPage: 1 };
+        }
+
+        const containerStyle = getComputedStyle(container);
+        const listStyle = getComputedStyle(list);
+        const itemStyle = getComputedStyle(firstItem);
+        const itemRect = firstItem.getBoundingClientRect();
+
+        const containerWidth = container.clientWidth
+                - parseFloat(containerStyle.paddingLeft || 0)
+                - parseFloat(containerStyle.paddingRight || 0);
+        const containerHeight = container.clientHeight
+                - parseFloat(containerStyle.paddingTop || 0)
+                - parseFloat(containerStyle.paddingBottom || 0);
+        const listPaddingTop = parseFloat(listStyle.paddingTop || 0);
+        const listPaddingBottom = parseFloat(listStyle.paddingBottom || 0);
+        const gap = parseFloat(listStyle.gap || listStyle.rowGap || 0);
+        const itemWidth = itemRect.width + parseFloat(itemStyle.marginLeft || 0) + parseFloat(itemStyle.marginRight || 0);
+        const itemHeight = itemRect.height + parseFloat(itemStyle.marginTop || 0) + parseFloat(itemStyle.marginBottom || 0);
+
+        const columns = Math.max(1, Math.floor((containerWidth + gap) / (itemWidth + gap)));
+        const availableHeight = Math.max(1, containerHeight - listPaddingTop - listPaddingBottom);
+        const rows = Math.max(1, Math.floor((availableHeight + gap) / (itemHeight + gap)));
+        return { columns, rows, itemsPerPage: Math.max(1, columns * rows) };
+    }
 
 function generate_billing_items_list(category) {
         let inventory = read_inventory();
@@ -2546,6 +2577,7 @@ function generate_billing_items_list(category) {
                 "all": undefined
         }
         if (category_list[category]) inventory = inventory.filter((element) => element.category == category_list[category]);
+
         const billing_items_list = document.querySelector(".card.five.grid-items .items-options");
         let billing_items_list_content = "";
         inventory.forEach(element => {
@@ -2559,9 +2591,103 @@ function generate_billing_items_list(category) {
                         </div>`; 
                 }); // 咖啡黑
                 // <span class="opname-chinese">$${element.price}</span>
-        billing_items_list.innerHTML = billing_items_list_content;
+                billing_items_list.innerHTML = billing_items_list_content;
+                const gridInfo = getActualGridInfo();
+                console.log(gridInfo);
+                // billing_item_list.innerHTML = billing_items_list_content[gridInfo.items - 10];
 }
+
+const billingGridState = {
+        currentCategory: "Beverage",
+        currentPage: 0,
+        totalPages: 1,
+        scheduled: false
+};
+
+function ensureBillingPager() {
+        const container = document.querySelector(".card.five.grid-items");
+        if (!container) return null;
+
+        let pager = container.querySelector(".grid-page-control");
+        if (!pager) {
+                pager = document.createElement("button");
+                pager.type = "button";
+                pager.className = "grid-page-control";
+                pager.setAttribute("aria-label", "Next billing items page");
+                pager.innerHTML = "<span aria-hidden=\"true\">···</span>";
+                pager.addEventListener("click", () => {
+                        if (billingGridState.totalPages <= 1) return;
+                        billingGridState.currentPage = (billingGridState.currentPage + 1) % billingGridState.totalPages;
+                        render_billing_items_page();
+                });
+                container.appendChild(pager);
+        }
+        return pager;
+}
+
+function render_billing_items_page() {
+        const billing_items_list = document.querySelector(".card.five.grid-items .items-options");
+        if (!billing_items_list) return;
+
+        let inventory = read_inventory();
+        const category_list = {
+                "Beverage": "Beverage",
+                "Steamed Bun": "Steamed Bun",
+                "Steamed Timsum": "Steamed Timsum",
+                "Deep Fry Timsum": "Deep Fry Timsum",
+                "Bake": "Bake",
+                "Noodle/Dumplings": "Noodle/Dumplings",
+                "Porridge": "Porridge",
+                "all": undefined
+        };
+
+        const category = billingGridState.currentCategory || "Beverage";
+        if (category_list[category]) inventory = inventory.filter((element) => element.category == category_list[category]);
+
+        const gridInfo = getActualGridInfo();
+        billingGridState.totalPages = Math.max(1, Math.ceil(inventory.length / gridInfo.itemsPerPage));
+        billingGridState.currentPage = Math.min(billingGridState.currentPage, billingGridState.totalPages - 1);
+
+        const start = billingGridState.currentPage * gridInfo.itemsPerPage;
+        const pageItems = inventory.slice(start, start + gridInfo.itemsPerPage);
+
+        billing_items_list.style.gridTemplateColumns = `repeat(${gridInfo.columns}, 130px)`;
+        billing_items_list.innerHTML = pageItems.map((element) => `
+                <div class="option-item option-item-select" data-itemcode="${element.itemcode}" data-inventory-count="${element.instock}">
+                        <img src="${element.itemimage}" alt="${element.itemname}" srcset="" name="item" draggable="false" class="item-img">
+                        <span class="opname">${element.itemname}</span>
+                        <span class="opname-chinese">å’–å•¡é»‘</span>
+                </div>`).join("");
+
+        const pager = ensureBillingPager();
+        if (pager) {
+                pager.classList.toggle("is-hidden", billingGridState.totalPages <= 1);
+                pager.dataset.page = String(billingGridState.currentPage + 1);
+                pager.dataset.totalPages = String(billingGridState.totalPages);
+                pager.setAttribute("aria-label", `Next billing items page. Page ${billingGridState.currentPage + 1} of ${billingGridState.totalPages}`);
+        }
+}
+
+function generate_billing_items_list(category) {
+        billingGridState.currentCategory = category || billingGridState.currentCategory || "Beverage";
+        billingGridState.currentPage = 0;
+        render_billing_items_page();
+}
+
 generate_billing_items_list();
+
+const billingGridContainer = document.querySelector(".card.five.grid-items");
+if (billingGridContainer && "ResizeObserver" in window) {
+        const billingGridResizeObserver = new ResizeObserver(() => {
+                if (billingGridState.scheduled) return;
+                billingGridState.scheduled = true;
+                requestAnimationFrame(() => {
+                        billingGridState.scheduled = false;
+                        render_billing_items_page();
+                });
+        });
+        billingGridResizeObserver.observe(billingGridContainer);
+}
 
 
 function generate_billing_checkout_list(itemcode) {
@@ -2834,7 +2960,7 @@ function generate_search_items(search_value) {
                 generate_billing_items_list(current_category);
         } else {
                 const billing_items_list = document.querySelector(".card.five.grid-items .items-options");
-                const search_filter_list = inventory.filter(e => e.itemname.toLowerCase().includes(search_value));
+                const search_filter_list = inventory.filter(e => e.itemname.toLowerCase().includes(search_value.toLowerCase()));
                 let billing_items_list_content = "";
                 search_filter_list.forEach(element => {
                         billing_items_list_content += `
