@@ -10,14 +10,6 @@ interface datetype {
 }
 export default function Inventory({date}:datetype) {
   const [currentPage, setCurrentPage] = useState(1);
-  // const [datenow, setDatenow] = useState(new Date);
-  // const month = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
-  // const dayname = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-
-  // `${datenow.getDate()} ${month[date.getMonth()]} ${date.getFullYear()}`
-  // `${dayname[date.getDay()]}`
-  // `${datenow.getHours() % 12 || 12}:${datenow.getMinutes()} ${(datenow.getHours() >= 12) ? "PM" : "AM"}`
-
   const inventorylist = [
     { itemimage: <img src="https://static.vecteezy.com/system/resources/previews/060/818/430/non_2x/a-glass-of-creamy-nutritious-soy-milk-surrounded-by-soybeans-png.png" alt="coffee" srcSet="" className="w-4.5 h-4.5"></img>, itemname: "Soya Milk", category: "Beverage", price: "$3.00", unit: "Cup", purchased: "150", sold: "98", instock: "52", status: "In Stock", lastupdated: "20 May 2024, 10:30AM" },
     { itemimage: <img src="https://png.pngtree.com/png-vector/20250429/ourmid/pngtree-iced-black-tea-in-clear-plastic-cup-with-ice-cubes-png-image_16041290.png" alt="coffee" srcSet="" className="w-4.5 h-4.5"></img>, itemname: "Tea C", category: "Beverage", price: "$4.70", unit: "Cup", purchased: "200", sold: "150", instock: "50", status: "In Stock", lastupdated: "20 May 2024, 10:30AM" },
@@ -30,154 +22,6 @@ export default function Inventory({date}:datetype) {
     { itemimage: <img src="https://png.pngtree.com/png-vector/20250429/ourmid/pngtree-iced-black-tea-in-clear-plastic-cup-with-ice-cubes-png-image_16041290.png" alt="coffee" srcSet="" className="w-4.5 h-4.5"></img>, itemname: "Tea C", category: "Beverage", price: "$4.70", unit: "Cup", purchased: "200", sold: "150", instock: "50", status: "In Stock", lastupdated: "20 May 2024, 10:30AM" },
     { itemimage: <img src="https://png.pngtree.com/png-vector/20250429/ourmid/pngtree-iced-black-tea-in-clear-plastic-cup-with-ice-cubes-png-image_16041290.png" alt="coffee" srcSet="" className="w-4.5 h-4.5"></img>, itemname: "Tea C", category: "Beverage", price: "$4.70", unit: "Cup", purchased: "200", sold: "150", instock: "50", status: "In Stock", lastupdated: "20 May 2024, 10:30AM" },
   ];
-
-
-
-
-  `
-</tr>
-<tr>
-  <td>
-    <div className="alignnames">
-      <BadgePosCafe color="grey"/>
-      <div className="bill-itemname">Streamed Timsum</div>
-    </div>
-  </td>
-  <td><div className="inv-category">Steamed Timsum</div></td>
-  <td><div className="inv-price">$7.30</div></td>
-  <td><div className="inv-unit">Pcs</div></td>
-  <td><div className="inv-purchased">120</div></td>
-  <td><div className="inv-sold">80</div></td>
-  <td><div className="inv-instock">40</div></td>
-  <td><div className="inv-status">In Stock</div></td>
-  <td><div className="inv-lastupdated">20 May 2024, 10:30AM</div></td>
-</tr>
-<tr>
-  <td>
-    <div className="alignnames">
-      <BadgePosCafe color="grey" />
-      <div className="bill-itemname">Porridge</div>
-    </div>
-  </td>
-  <td><div className="inv-category">Porridge</div></td>
-  <td><div className="inv-price">$11.20</div></td>
-  <td><div className="inv-unit">Bowl</div></td>
-  <td><div className="inv-purchased">100</div></td>
-  <td><div className="inv-sold">90</div></td>
-  <td><div className="inv-instock inv-instock-orange">10</div></td>
-  <td><div className="inv-status inv-status-orange">Low Stock</div></td>
-  <td><div className="inv-lastupdated">20 May 2024, 10:30AM</div></td>
-</tr>
-<tr>
-  <td>
-    <div className="alignnames">
-      <BadgePosCafe color="grey" />
-      <div className="bill-itemname">Iced Tea</div>
-    </div>
-  </td>
-  <td><div className="inv-category">Beverage</div></td>
-  <td><div className="inv-price">$11.70</div></td>
-  <td><div className="inv-unit">Glass</div></td>
-  <td><div className="inv-purchased">180</div></td>
-  <td><div className="inv-sold">170</div></td>
-  <td><div className="inv-instock inv-instock-orange">10</div></td>
-  <td><div className="inv-status inv-status-orange">Low Stock</div></td>
-  <td><div className="inv-lastupdated">20 May 2024, 10:30AM</div></td>
-</tr>
-<tr>
-  <td>
-    <div className="alignnames">
-      <BadgePosCafe color="grey" />
-      <div className="bill-itemname">Dumplings</div>
-    </div>
-  </td>
-  <td><div className="inv-category">Noodle/Dumplings</div></td>
-  <td><div className="inv-price">$16.10</div></td>
-  <td><div className="inv-unit">Pcs</div></td>
-  <td><div className="inv-purchased">80</div></td>
-  <td><div className="inv-sold">70</div></td>
-  <td><div className="inv-instock inv-instock-orange">10</div></td>
-  <td><div className="inv-status inv-status-orange">Low Stock</div></td>
-  <td><div className="inv-lastupdated">20 May 2024, 10:30AM</div></td>
-</tr>
-<tr>
-  <td>
-    <div className="alignnames">
-      <BadgePosCafe color="grey" />
-      <div className="bill-itemname">Iced Coffee</div>
-    </div>
-  </td>
-  <td><div className="inv-category">Beverage</div></td>
-  <td><div className="inv-price">$13.50</div></td>
-  <td><div className="inv-unit">Glass</div></td>
-  <td><div className="inv-purchased">160</div></td>
-  <td><div className="inv-sold">160</div></td>
-  <td><div className="inv-instock inv-instock-red">0</div></td>
-  <td><div className="inv-status inv-status-red">Out of Stock</div></td>
-  <td><div className="inv-lastupdated">20 May 2024, 10:30AM</div></td>
-</tr>
-<tr>
-  <td>
-    <div className="alignnames">
-      <img
-      src="https://static.vecteezy.com/system/resources/thumbnails/041/643/200/small/ai-generated-a-cup-of-coffee-and-a-piece-of-coffee-bean-perfect-for-food-and-beverage-related-designs-or-promoting-cozy-moments-png.png"
-      alt="coffee" srcSet="" 
-      className="item-symbol"></img>
-      <div className="bill-itemname">Coffee C</div>
-    </div>
-  </td>
-  <td><div className="inv-category">Beverage</div></td>
-  <td><div className="inv-price">$16.50</div></td>
-  <td><div className="inv-unit">Cup</div></td>
-  <td><div className="inv-purchased">140</div></td>
-  <td><div className="inv-sold">140</div></td>
-  <td><div className="inv-instock inv-instock-red">0</div></td>
-  <td><div className="inv-status inv-status-red">Out of Stock</div></td>
-  <td><div className="inv-lastupdated">20 May 2024, 10:30AM</div></td>
-</tr>
-<tr>
-  <td>
-    <div className="alignnames">
-      <img
-      src="https://static.vecteezy.com/system/resources/thumbnails/041/643/200/small/ai-generated-a-cup-of-coffee-and-a-piece-of-coffee-bean-perfect-for-food-and-beverage-related-designs-or-promoting-cozy-moments-png.png"
-      alt="coffee" srcSet="" 
-      className="item-symbol"></img>
-      <div className="bill-itemname">Milo</div>
-    </div>
-  </td>
-  <td><div className="inv-category">Beverage</div></td>
-  <td><div className="inv-price">$15.00</div></td>
-  <td><div className="inv-unit">Cup</div></td>
-  <td><div className="inv-purchased">60</div></td>
-  <td><div className="inv-sold">45</div></td>
-  <td><div className="inv-instock">15</div></td>
-  <td><div className="inv-status">In Stock</div></td>
-  <td><div className="inv-lastupdated">20 May 2024, 10:30AM</div></td>
-</tr>
-<tr>
-  <td>
-    <div className="alignnames">
-      <img
-      src="https://static.vecteezy.com/system/resources/thumbnails/041/643/200/small/ai-generated-a-cup-of-coffee-and-a-piece-of-coffee-bean-perfect-for-food-and-beverage-related-designs-or-promoting-cozy-moments-png.png"
-      alt="coffee" srcSet="" 
-      className="item-symbol"></img>
-      <div className="bill-itemname">Chinese Tea</div>
-    </div>
-  </td>
-  <td><div className="inv-category">Beverage</div></td>
-  <td><div className="inv-price">$4.20</div></td>
-  <td><div className="inv-unit">Cup</div></td>
-  <td><div className="inv-purchased">90</div></td>
-  <td><div className="inv-sold">60</div></td>
-  <td><div className="inv-instock">30</div></td>
-  <td><div className="inv-status">In Stock</div></td>
-  <td><div className="inv-lastupdated">20 May 2024, 10:30AM</div></td>
-</tr>
-
-`;
-
-
-
 
   return (
     <div className="flex grow relative">
@@ -354,7 +198,6 @@ export default function Inventory({date}:datetype) {
             </div>
           </div>
         </div>
-
       </div>
     </div>
   );

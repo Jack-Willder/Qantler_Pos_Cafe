@@ -1,10 +1,10 @@
 import { useNavigate } from "react-router-dom";
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import { IconPosCafe } from "../icons";
 import { FormAction } from "../App";
 
 
-interface datetype {
+type datetype = {
   date: {
     date: string,
     day: string,
@@ -12,24 +12,118 @@ interface datetype {
   };
 }
 export default function Inventory({date}:datetype) {
-  const [currentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
   const navigate = useNavigate();
-  function handleChangeContent(path: string) {
-    navigate(path);
+  function handleChangeContent(path: string, item?: object) {
+    navigate(path, { state: item });
+  }  const {setFormAction} = useContext(FormAction);
+
+    function* generatepages(totalpages: number, currentpage: number) {
+      const maxpages = 5;
+      let start = Math.max(1, currentpage - Math.floor(maxpages / 2));
+      let end = Math.min(totalpages, start + maxpages - 1);
+      if (end - start < maxpages - 1) {
+        start = Math.max(1, end - maxpages + 1);
+      }
+      if (start > 1) {
+        yield 1;
+        if (start > 2) yield '...';
+      }
+      for (let i = start; i <= end; i++) {
+        yield i;
+      }
+      if (end < totalpages) {
+        if (end < totalpages - 1) yield '...';
+        yield totalpages;
+      }
+    }
+
+type Request = {
+  requestid: string,
+  subject: string,
+  requestedby: string,
+  requestdate: string,
+  expectingdelivery: string,
+  status: string
+}
+
+
+const requestlist: Request[] = [
+];
+  const [allRequest, setAllRequest] = useState<Request[]>(requestlist);
+  const [request, setRequest] = useState<Request[]>(requestlist);
+
+  useEffect(() => {
+    const data = localStorage.getItem("requestlist");
+    const requests = data ? JSON.parse(data) : requestlist;
+    setAllRequest(requests);
+    setRequest(requests);
+  }, []);
+
+  const totalPages = Math.ceil(request.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedRequest = request.slice(startIndex, endIndex);
+  const pageNumbers = Array.from(generatepages(totalPages, currentPage));
+
+  function handlePageChange(page: number | string) {
+    if (typeof page === 'number') {
+      setCurrentPage(page);
+    }
   }
-  const {setFormAction} = useContext(FormAction);
-  const inventorylist = [
-    { requestid: "REQ-00012", subject: "Request for Coffee Beans", requestedby: "James Anderson", requesteddate: "20 May 2024 09:15 AM", expectingdelivery: "23 May 2024", status: "Pending"},
-    { requestid: "REQ-00011", subject: "Request for Milk and Cream", requestedby: "Sarah Johnson", requesteddate: "20 May 2024 09:15 AM", expectingdelivery: "23 May 2024", status: "On the Way"},
-    { requestid: "REQ-00010", subject: "Request for Disposable Cups", requestedby: "Michlael Brown", requesteddate: "20 May 2024 09:15 AM", expectingdelivery: "23 May 2024", status: "Received"},
-    { requestid: "REQ-00009", subject: "Request for Sugar and Sweeteners", requestedby: "Emily Davis", requesteddate: "20 May 2024 09:15 AM", expectingdelivery: "23 May 2024", status: "Pending"},
-    { requestid: "REQ-00008", subject: "Request for Teabags", requestedby: "David Wilson", requesteddate: "20 May 2024 09:15 AM", expectingdelivery: "23 May 2024", status: "On the way"},
-    { requestid: "REQ-00007", subject: "Request for Chocolate Syrup", requestedby: "Lisa Martinez", requesteddate: "20 May 2024 09:15 AM", expectingdelivery: "23 May 2024", status: "Received"},
-    { requestid: "REQ-00006", subject: "Request for Paper Napkins", requestedby: "Robert Taylor", requesteddate: "20 May 2024 09:15 AM", expectingdelivery: "23 May 2024", status: "Canceled"},
-    { requestid: "REQ-00005", subject: "Request for Straws", requestedby: "Jessica White", requesteddate: "20 May 2024 09:15 AM", expectingdelivery: "23 May 2024", status: "On the way"},
-    { requestid: "REQ-00004", subject: "Request for Vanilla Syrup", requestedby: "Daniel Harris", requesteddate: "20 May 2024 09:15 AM", expectingdelivery: "23 May 2024", status: "Pending"},
-    { requestid: "REQ-00003", subject: "Request for Oat Milk", requestedby: "Sophia Clark", requesteddate: "20 May 2024 09:15 AM", expectingdelivery: "23 May 2024", status: "Received"},
-  ];
+  function handlePreviousPage() { if (currentPage > 1) { setCurrentPage(currentPage - 1); } }
+  function handleNextPage() { if (currentPage < totalPages) { setCurrentPage(currentPage + 1); } }
+  function handleFirstPage() { setCurrentPage(1); }
+  function handleLastPage() { setCurrentPage(totalPages); }
+
+  const [filterData, setFilterData] = useState({
+    requestid: "",
+    subject: "",
+    requestedby: "",
+    status: "",
+    dateFrom: "",
+    dateTo: ""
+  });
+
+  const handleFilterChange = (e: any) => {
+    const { name, value } = e.target;
+    setFilterData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  function filter() {
+    const filteredlist = allRequest.filter((item: Request) => {
+      const itemDate = item.requestdate ? new Date(item.requestdate) : null;
+      return (
+        (!filterData.requestid || item.requestid === filterData.requestid) &&
+        (!filterData.subject || item.subject.toLowerCase().includes(filterData.subject.toLowerCase())) &&
+        (!filterData.requestedby || item.requestedby === filterData.requestedby) &&
+        (!filterData.status || item.status === filterData.status) &&
+        (!filterData.dateFrom || !itemDate || itemDate >= new Date(filterData.dateFrom)) &&
+        (!filterData.dateTo || !itemDate || itemDate <= new Date(filterData.dateTo))
+      );
+    });
+
+    setRequest(filteredlist);
+  }
+
+  function reset() {
+    setFilterData({
+      requestid: "",
+      subject: "",
+      requestedby: "",
+      status: "",
+      dateFrom: "",
+      dateTo: ""
+    });
+    setRequest(allRequest);
+  }
+
+
+
   return (
     <div className="flex grow relative">
       <div className="flex flex-col gap-2 p-4 h-full w-full font-bold">
@@ -61,51 +155,56 @@ export default function Inventory({date}:datetype) {
           <div className="border-0 w-full">
             <div className="text-ss-50 text-gray-500">Request ID</div>
             <div className="flex items-center text-nowrap border rounded-sm justify-evenly p-2 grow w-full h-full border-gray-200">
-              <select name="opg-select" id="opg-select-category" className="opg-select w-full text-ss-50 lg:text-ss-55" required>
-                <option value="all">Select Request ID</option>
-                <option value="Beverage">Beverage</option>
-                <option value="Steamed Bun">Steamed Bun</option>
-                <option value="Steamed Timsum">Steamed Timsum</option>
-                <option value="Deep Fry Timsum">Deep Fry Timsum</option>
-                <option value="Bake">Bake</option>
-                <option value="Noodle/Dumplings">Noodle/ Dumplings</option>
-                <option value="Porridge">Porridge</option>
+              <select name="requestid" id="opg-select-category" className="opg-select w-full text-ss-50 lg:text-ss-55" value={filterData.requestid} onChange={handleFilterChange} required>
+                <option value="">Select Request ID</option>
+                {Array.from(new Set(Array.from(allRequest, item => item.requestid))).map((item, index) => (<option key={index} value={item}>{item}</option>))}
               </select>
             </div>
           </div>
           <div className="border-0 w-full">
             <div className="text-ss-50 text-gray-500">Subject</div>
             <div className="flex items-center text-nowrap border rounded-sm justify-evenly p-2 grow w-full h-full border-gray-200">
-              <select name="opg-select" id="opg-select-items" className="opg-select w-full text-ss-50 lg:text-ss-55">
-                <option value="all">Enter Subject</option>
+              <select name="subject" id="opg-select-items" className="opg-select w-full text-ss-50 lg:text-ss-55" value={filterData.subject} onChange={handleFilterChange}>
+                <option value="">Enter Subject</option>
+                {Array.from(new Set(Array.from(allRequest, item => item.subject))).map((item, index) => (<option key={index} value={item}>{item}</option>))}
               </select>
             </div>
           </div>
           <div className="border-0 w-full">
             <div className="text-ss-50 text-gray-500">Requested By</div>
             <div className="flex items-center text-nowrap border rounded-sm justify-evenly p-2 grow w-full h-full border-gray-200">
-              <select name="opg-select" id="opg-select-status" className="opg-select w-full text-ss-50 lg:text-ss-55">
-                <option value="all">Select requested by</option>
-                <option value="instock">In Stock</option>
-                <option value="lowstock">Low Stock</option>
-                <option value="outofstock">Out of Stock</option>
+              <select name="requestedby" id="opg-select-status" className="opg-select w-full text-ss-50 lg:text-ss-55" value={filterData.requestedby} onChange={handleFilterChange}>
+                <option value="">Select requested by</option>
+                {Array.from(new Set(Array.from(allRequest, item => item.requestedby))).map((item, index) => (<option key={index} value={item}>{item}</option>))}
+              </select>
+            </div>
+          </div>
+          <div className="border-0 w-full">
+            <div className="text-ss-50 text-gray-500">Status</div>
+            <div className="flex items-center text-nowrap border rounded-sm justify-evenly p-2 grow w-full h-full border-gray-200">
+              <select name="status" id="opg-select-status" className="opg-select w-full text-ss-50 lg:text-ss-55" value={filterData.status} onChange={handleFilterChange}>
+                <option value="">All Status</option>
+                <option value="Pending">Pending</option>
+                <option value="On the Way">On the Way</option>
+                <option value="Received">Received</option>
+                <option value="Canceled">Canceled</option>
               </select>
             </div>
           </div>
           <div className="flex flex-col items-start justify-center w-full">
             <div className="text-ss-50 text-gray-500">Requested Date From</div>
-            <input className="border border-gray-200 rounded-md p-2 w-full text-ss-50 lg:text-ss-55" type="date" id="opg-select-dfrom" value="2024-05-20" placeholder="Select date"></input>
+            <input className="border border-gray-200 rounded-md p-2 w-full text-ss-50 lg:text-ss-55" type="date" id="opg-select-dfrom" name="dateFrom" value={filterData.dateFrom} onChange={handleFilterChange} placeholder="Select date"></input>
           </div>
           <div className="flex flex-col items-start justify-center w-full">
             <div className="text-ss-50 text-gray-500">Requested Date To</div>
-            <input className="border border-gray-200 rounded-md p-2 w-full text-ss-50 lg:text-ss-55" type="date" id="opg-select-dto" value="2024-05-20" placeholder="Select date"></input>
+            <input className="border border-gray-200 rounded-md p-2 w-full text-ss-50 lg:text-ss-55" type="date" id="opg-select-dto" name="dateTo" value={filterData.dateTo} onChange={handleFilterChange} placeholder="Select date"></input>
           </div>
           <div className="flex h-full items-end gap-2">
-            <div className="bg-gpurple flex p-4 rounded-md aspect-16/8 h-1/2 items-center justify-center border border-gray-200" id="inventory-action-filter">
+            <div className="bg-gpurple flex p-4 rounded-md aspect-16/8 h-1/2 items-center justify-center border border-gray-200" id="inventory-action-filter" onClick={() => { filter(); }}>
               <IconPosCafe color="white" icon="filter" />
               <span className="text-white">Filter</span>
             </div>
-            <div className="flex p-4 rounded-md aspect-16/8 h-1/2 items-center justify-center border border-gray-200" id="inventory-action-reset">
+            <div className="flex p-4 rounded-md aspect-16/8 h-1/2 items-center justify-center border border-gray-200" id="inventory-action-reset" onClick={() => { reset(); }}>
               <IconPosCafe color="black" icon="reset" />
               <span className="text-black">Reset</span>
             </div>
@@ -115,7 +214,7 @@ export default function Inventory({date}:datetype) {
           <div className="flex items-center justify-between w-full">
             <div className="align-ttitle">
               <div className="text-ss-70 font-bold">Item Request List</div>
-              <div className="text-gray-500 text-ss-45 lg:text-ss-50">Total { inventorylist.length || 0 } items found</div>
+              <div className="text-gray-500 text-ss-45 lg:text-ss-50">Total { request.length || 0 } items found</div>
             </div>
             <div className="">
               <div className="flex gap-3">
@@ -146,15 +245,12 @@ export default function Inventory({date}:datetype) {
               </tr>
             </thead>
             <tbody>
-              {inventorylist.map((item, index) => (
-                <tr className="border border-gray-100" key={index} onClick={() => {
-                  setFormAction("edit");
-                  handleChangeContent("/requestitem");
-                }}>
+              {paginatedRequest.map((item, index) => (
+                <tr className="border border-gray-100" key={index} onClick={() => { setFormAction("edit"), handleChangeContent("/requestitem", item) }}>
                   <td><div className="p-2 text-ss-50 text-center min-[780px]:text-ss-55">{item.requestid}</div></td>
                   <td><div className="p-2 text-left text-gray-500 text-ss-50 min-[780px]:text-ss-55">{item.subject}</div></td>
                   <td><div className="p-2 text-left  text-ss-50 min-[780px]:text-ss-55">{item.requestedby}</div></td>
-                  <td><div className="p-2 text-left text-gray-500 text-ss-50 min-[780px]:text-ss-55">{item.requesteddate}</div></td>
+                  <td><div className="p-2 text-left text-gray-500 text-ss-50 min-[780px]:text-ss-55">{item.requestdate}</div></td>
                   <td><div className="p-2 text-left  text-ss-50 min-[780px]:text-ss-55">{item.expectingdelivery}</div></td>
                   <td><div className={`p-1 px-2 text-left text-ss-50 min-[780px]:text-ss-55 ${(item.status == "Received") ? "text-green-500 bg-green-100" : (item.status == "Pending") ? "text-yellow-500 bg-yellow-100" : (item.status == "Canceled") ? "text-red-500 bg-red-100" : "text-blue-500 bg-blue-100"} rounded-sm flex items-center w-fit`}>{item.status}</div></td>
                   <td><div className="p-2 flex justify-center"><IconPosCafe icon="eye" color="purple" size={14}/></div></td>
@@ -166,7 +262,7 @@ export default function Inventory({date}:datetype) {
             <div>
               <div className="flex items-center">
                 <div className="text-ss-55">show</div>
-                <select id="entriescount" className="border border-gray-200 text-ss-65 p-1 rounded-sm mx-2">
+                <select id="entriescount" className="border border-gray-200 text-ss-65 p-1 rounded-sm mx-2" value={itemsPerPage} onChange={(e) => { setItemsPerPage(parseInt(e.target.value)); setCurrentPage(1); }}>
                   <option value="10">10</option>
                   <option value="20">20</option>
                   <option value="30">30</option>
@@ -176,22 +272,28 @@ export default function Inventory({date}:datetype) {
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <div className="p-2 text-ss-65 border border-gray-200 rounded-sm aspect-square h-3/5 text-center flex items-center justify-center"><IconPosCafe icon="dleft" color="black" size={12} /></div>
-                <div className="p-2 text-ss-65 border border-gray-200 rounded-sm aspect-square h-3/5 text-center flex items-center justify-center"><IconPosCafe icon="left" color="black" size={12} /></div>
-                <div className="p-2.5 text-ss-65 border border-gray-200 rounded-sm aspect-square h-3/5 text-center flex items-center justify-center bg-gpurple text-white">1</div>
-                <div className="p-2.5 text-ss-65 border border-gray-200 rounded-sm aspect-square h-3/5 text-center flex items-center justify-center">2</div>
-                <div className="p-2.5 text-ss-65 border border-gray-200 rounded-sm aspect-square h-3/5 text-center flex items-center justify-center">3</div>
-                <div className="p-2.5 text-ss-65 border border-gray-200 rounded-sm aspect-square h-3/5 text-center flex items-center justify-center">4</div>
-                <div className="p-2.5 text-ss-65 border border-gray-200 rounded-sm aspect-square h-3/5 text-center flex items-center justify-center">5</div>
-                <div className="p-2.5 text-ss-65 border border-gray-200 rounded-sm aspect-square h-3/5 text-center flex items-center justify-center">...</div>
-                <div className="p-2.5 text-ss-65 border border-gray-200 rounded-sm aspect-square h-3/5 text-center flex items-center justify-center">13</div>
-                <div className="p-2 text-ss-65 border border-gray-200 rounded-sm aspect-square h-3/5 text-center flex items-center justify-center"><IconPosCafe icon="right" color="black" size={12} /></div>
-                <div className="p-2 text-ss-65 border border-gray-200 rounded-sm aspect-square h-3/5 text-center flex items-center justify-center"><IconPosCafe icon="dright" color="black" size={12} /></div>
+                <div className="p-2 text-ss-65 border border-gray-200 rounded-sm aspect-square h-3/5 text-center flex items-center justify-center cursor-pointer" onClick={handleFirstPage}><IconPosCafe icon="dleft" color="black" size={12} /></div>
+                <div className="p-2 text-ss-65 border border-gray-200 rounded-sm aspect-square h-3/5 text-center flex items-center justify-center cursor-pointer" onClick={handlePreviousPage}><IconPosCafe icon="left" color="black" size={12} /></div>
+                {pageNumbers.map((page, index) => (
+                  <div 
+                    key={index} 
+                    className={`p-2.5 text-ss-65 border border-gray-200 rounded-sm aspect-square h-3/5 text-center flex items-center justify-center cursor-pointer ${
+                      page === currentPage ? 'bg-gpurple text-white' : ''
+                    } ${
+                      page === '...' ? 'cursor-default' : ''
+                    }`}
+                    onClick={() => handlePageChange(page)}
+                  >
+                    {page}
+                  </div>
+                ))}
+                <div className="p-2 text-ss-65 border border-gray-200 rounded-sm aspect-square h-3/5 text-center flex items-center justify-center cursor-pointer" onClick={handleNextPage}><IconPosCafe icon="right" color="black" size={12} /></div>
+                <div className="p-2 text-ss-65 border border-gray-200 rounded-sm aspect-square h-3/5 text-center flex items-center justify-center cursor-pointer" onClick={handleLastPage}><IconPosCafe icon="dright" color="black" size={12} /></div>
               </div>
             </div>
             <div className="align-tshow">
               <div className="flex items-center">
-                <div className="text-ss-55">showing {currentPage} to {(inventorylist.length) ? inventorylist.length : 0} of 128 requests</div>
+                <div className="text-ss-55">showing {startIndex + 1} to {Math.min(endIndex, request.length)} of {request.length} requests</div>
               </div>
             </div>
           </div>

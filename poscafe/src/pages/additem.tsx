@@ -2,6 +2,7 @@ import { useContext, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { IconPosCafe } from "../icons";
 import { FormAction } from "../App";
+import Popup from "./popup";
 
 interface datetype {
     date: {
@@ -25,13 +26,16 @@ type invitemtype = {
 };
 export default function AddItem({ date }: datetype) {
     const navigate = useNavigate();
+    const [showPopup, setShowPopup] = useState(false);
+    const [popupType, setPopupType] = useState<"confirm" | "delete" | "error">("error");
+    const [popupDescription, setPopupDescription] = useState("");
     function handleChangeContent(path: string) {
         navigate(path);
     }
     const { formAction } = useContext(FormAction);
     const { state: item } = useLocation();
-    const [invitem, setInvItem] = useState<invitemtype>(item || {
-        itemcode: "",
+    const [invitem, setInvItem] = useState<invitemtype>(item ? item : {
+        itemcode: generate_itemcode(),
         itemimage: "",
         category: "",
         unit: "",
@@ -63,7 +67,91 @@ export default function AddItem({ date }: datetype) {
 
 
 
-    function handlesave() {
+    function handleFormChange(e: any) {
+        const { name, value } = e.target;
+        setInvItem((prev: invitemtype) => ({
+            ...prev,
+            [name]: value,
+        }));
+    };
+
+function handleEditContent() {
+    const data = localStorage.getItem("inventory");
+    const inventory: invitemtype[] = data ? JSON.parse(data) : [];
+
+    if (formAction === "edit") {
+        const itemIndex = inventory.findIndex( (item) => item.itemcode === invitem.itemcode );
+        if (itemIndex === -1) {
+            setPopupType("error");
+            setPopupDescription("Item not found!");
+            setShowPopup(true);
+            return;
+        }
+        const duplicateItem = inventory.find( (item) => item.itemcode !== invitem.itemcode && item.itemname.toLowerCase() === invitem.itemname.toLowerCase() );
+        if (duplicateItem) {
+            setPopupType("error");
+            setPopupDescription("ItemName Already Exists");
+            setShowPopup(true);
+            return;
+        }
+        const updatedItem: invitemtype = { ...invitem, itemimage: invitem.itemimage.replace( "C:\\fakepath\\", "/public/assets/item-images/" ), oldstock: invitem.instock, };
+        setInvItem(updatedItem);
+        setPopupType("confirm");
+        setPopupDescription("Inventory Updated");
+        setShowPopup(true);
+    } else {
+        invitem.itemcode = generate_itemcode();
+        invitem.supplier = "Local";
+        invitem.oldstock = invitem.instock;
+
+        const newitem: invitemtype = {
+            ...invitem,
+            itemimage: invitem.itemimage.replace("C:\\fakepath\\", "/public/assets/item-images/"),
+            itemcode: invitem.itemcode,
+            category: invitem.category,
+            unit: invitem.unit,
+            itemname: invitem.itemname,
+            itemdesc: invitem.itemdesc,
+            price: invitem.price,
+            instock: invitem.instock,
+            oldstock: invitem.instock,
+            supplier: invitem.supplier,
+        };
+
+        const additemFormArray = Object.values(newitem);
+
+        if (additemFormArray.includes("")) {
+            setPopupType("error");
+            setPopupDescription("All Fields are Required!");
+            setShowPopup(true);
+            return;
+        }
+
+        if ( inventory.find( (item) => item.itemname.toLowerCase() === newitem.itemname.toLowerCase() ) ) {
+            setPopupType("error");
+            setPopupDescription("ItemName Already Exists");
+            setShowPopup(true);
+            return;
+        }
+
+        setPopupType("confirm");
+        setShowPopup(true);
+    }
+}
+    function confirmEdit() {
+        const inventory = JSON.parse(localStorage.getItem("inventory") || "[]");
+
+        const itemIndex = inventory.findIndex( (item: invitemtype) => item.itemcode === invitem.itemcode );
+        inventory[itemIndex] = invitem;
+
+        localStorage.setItem(
+            "inventory",
+            JSON.stringify(inventory)
+        );
+
+        setShowPopup(false);
+    }
+    function handleSaveContent() {
         const data = localStorage.getItem("inventory");
         const inventory = data ? JSON.parse(data) : [];
 
@@ -83,48 +171,101 @@ export default function AddItem({ date }: datetype) {
             invitem.supplier = "Local";
             invitem.oldstock = invitem.instock;
             const newitem : invitemtype = {
-                "itemcode": invitem.itemcode,
-                "itemimage": invitem.itemimage,
-                "category": invitem.category,
-                "unit": invitem.unit,
-                "itemname": invitem.itemname,
-                "itemdesc": invitem.itemdesc,
-                "price": invitem.price,
-                "instock": invitem.instock,
-                "oldstock": invitem.instock,
-                "supplier": invitem.supplier
+                ...invitem,
+                itemimage: invitem.itemimage.replace('C:\\fakepath\\', '/public/assets/'),
+                itemcode: invitem.itemcode,
+                category: invitem.category,
+                unit: invitem.unit,
+                itemname: invitem.itemname,
+                itemdesc: invitem.itemdesc,
+                price: invitem.price,
+                instock: invitem.instock,
+                oldstock: invitem.instock,
+                supplier: invitem.supplier
             }
             const additem_form_array = Object.values(newitem);
 
             if (additem_form_array.includes("")) {
-                alert("All Fields are Required!");
-                console.log(additem_form_array)
+                setPopupType("error");
+                setPopupDescription("All Fields are Required!");
+                setShowPopup(true);
             } else {
 
                 if (inventory.find((element : invitemtype) => element.itemname == invitem.itemname)) {
-                    alert("ItemName Already Exists");
+                    setPopupType("error");
+                    setPopupDescription("ItemName Already Exists");
+                    setShowPopup(true);
                 } else {
-                    inventory.push(invitem);
-                    localStorage.inventory = JSON.stringify(inventory);
-                    alert("Item Added");
+                    setPopupType("confirm");
+                    setShowPopup(true);
                 }
             };
         }
     }
+    function confirmSave() {
+        const data = localStorage.getItem("inventory");
+        const inventory = data ? JSON.parse(data) : [];
 
-
-    function handleFormChange(e: any) {
-        const { name, value } = e.target;
-        setInvItem((prev: invitemtype) => ({
-            ...prev,
-            [name]: value,
-        }));
-    };
-
+        if (formAction == "edit") {
+            const olddata = inventory.find((item: invitemtype) => item.itemcode == invitem.itemcode);
+            // olddata.itemimage = invitem.itemcode,
+            olddata.category = invitem.category;
+            olddata.unit = invitem.unit;
+            olddata.itemname = invitem.itemname;
+            olddata.itemdesc = invitem.itemdesc;
+            olddata.price = invitem.price;
+            olddata.instock = invitem.instock;
+            olddata.oldstock = invitem.instock;
+            olddata.supplier = invitem.supplier;
+            const index = inventory.findIndex((item: invitemtype) => item.itemcode == invitem.itemcode);
+            inventory[index] = olddata;
+            localStorage.inventory = JSON.stringify(inventory);
+        } else {
+            invitem.itemcode = generate_itemcode();
+            invitem.supplier = "Local";
+            invitem.oldstock = invitem.instock;
+            const newitem : invitemtype = {
+                ...invitem,
+                itemimage: invitem.itemimage.replace('C:\\fakepath\\', '/public/assets/'),
+                itemcode: invitem.itemcode,
+                category: invitem.category,
+                unit: invitem.unit,
+                itemname: invitem.itemname,
+                itemdesc: invitem.itemdesc,
+                price: invitem.price,
+                instock: invitem.instock,
+                oldstock: invitem.instock,
+                supplier: invitem.supplier
+            }
+            inventory.push(newitem);
+            localStorage.inventory = JSON.stringify(inventory);
+        }
+        setShowPopup(false);
+    }
+    function handleDeleteContent() {
+        setPopupType("delete");
+        setShowPopup(true);
+    }
+    function confirmDelete() {
+        const inventory = JSON.parse(localStorage.inventory);
+        const itemIndex = inventory.findIndex((item: invitemtype) => item.itemcode === invitem.itemcode);
+        if (itemIndex !== -1) {
+            inventory.splice(itemIndex, 1);
+            localStorage.inventory = JSON.stringify(inventory);
+        }
+        setShowPopup(false);
+    }
 
 
     return (
-        <div className="w-full p-4">
+        <div className="w-full p-4 relative">
+            <Popup show={showPopup} 
+            message="Inventory?"
+            type={popupType}
+            description={popupDescription}
+            navigateTo={popupType === "error" ? "" : "/inventory"}
+            onSubmit={() => {setShowPopup(false), popupType === "confirm" ? ((formAction === "edit") ? confirmEdit() : confirmSave()) : popupType === "delete" ? confirmDelete() : setShowPopup(false)}} 
+            onCancel={() => {setShowPopup(false)}} />
             <div className="flex flex-col w-full h-full gap-3">
                 <div className="flex">
                     <div className="flex items-center justify-center gap-3">
@@ -204,7 +345,7 @@ export default function AddItem({ date }: datetype) {
                                 <div className="w-full flex flex-col gap-1">
                                     <div className="text-ss-55 font-bold after:content-['*'] after:text-ss-50 after:ml-1 after:text-transparent">Status</div>
                                     <select name="" id="additem-form-status" className="border border-gray-200 rounded-sm p-1.5 w-full bg-gray-50" value={(invitem.instock > 0) ? "In Stock" : "Low Stock"} required disabled>
-                                        <option value="instock" selected>In Stock</option>
+                                        <option value="instock">In Stock</option>
                                         <option value="lowstock">Low Stock</option>
                                         <option value="outofstock">Out of Stock</option>
                                     </select>
@@ -235,7 +376,7 @@ export default function AddItem({ date }: datetype) {
                                 <div className=" w-full flex flex-col gap-1">
                                     <div className="text-ss-55 font-bold after:content-['*'] after:text-ss-50 after:ml-1 after:text-transparent">Supplier</div>
                                     <select name="additem-supplier-option" className="border border-gray-200 rounded-sm p-1.5 w-full" id="additem-form-supplier" value={"Local"} onChange={handleFormChange}>
-                                        <option value="" selected disabled hidden>Select supplier</option>
+                                        <option value="" disabled hidden>Select supplier</option>
                                         <option value="Local">Local</option>
                                     </select>
                                     <div className="text-ss-45 text-transparent">Status is auto-populated based on In Stock quantity.</div>
@@ -246,13 +387,13 @@ export default function AddItem({ date }: datetype) {
                             <div className="p-2 rounded-sm border border-gray-200 flex items-center justify-center aspect-6/1" id="additem" data-target="inventory" onClick={() => handleChangeContent("/inventory")}>
                                 <span className="text-center">Cancel</span>
                             </div>
-                            <div className="p-2 bg-gpurple rounded-sm flex items-center justify-center aspect-6/1 gap-1" id="additem-form-addinvitem" onClick={handlesave} >
+                            <div className="p-2 bg-gpurple rounded-sm flex items-center justify-center aspect-6/1 gap-1" id="additem-form-addinvitem" onClick={() => formAction === "edit" ? handleEditContent() : handleSaveContent()} >
                                 <IconPosCafe color="white" icon="save" />
                                 <span className="text-ss-50 text-white">Save</span>
                             </div>
                             {
                                 (formAction == "edit") ? (
-                                    <div className="p-2 bg-red-100 text-red-500 rounded-sm flex items-center justify-center aspect-6/1" id="additem-form-deleteinvitem">
+                                    <div className="p-2 bg-red-100 text-red-500 rounded-sm flex items-center justify-center aspect-6/1" id="additem-form-deleteinvitem" onClick={handleDeleteContent}>
                                         <IconPosCafe icon="delete" color="red" />
                                         <span className="text-ss-50">Delete</span>
                                     </div>

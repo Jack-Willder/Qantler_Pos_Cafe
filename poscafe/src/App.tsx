@@ -10,16 +10,15 @@ import CustomerReport from "./pages/customerreport";
 import SideBar from "./pages/SideBar";
 import AddItem from "./pages/additem";
 import RequestItem from "./pages/requestitem";
-import Popup from "./pages/popup";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 
 
-type fromactiontype = {
+type formActionType = {
   formAction: string,
   setFormAction: CallableFunction
 }
 
-export const FormAction = createContext<fromactiontype>({ formAction: "add", setFormAction: () => {}});
+export const FormAction = createContext<formActionType>({ formAction: "add", setFormAction: () => {}});
 
 function App() {
 
@@ -67,7 +66,6 @@ function App() {
           <Route path="/users" element={<Users date={date} />} />
           <Route path="/additem" element={<AddItem date={date} />} />
           <Route path="/requestitem" element={<RequestItem date={date} />} />
-          <Route path="/popup" element={<Popup />} />
         </Routes>
       </FormAction.Provider>
     </BrowserRouter>

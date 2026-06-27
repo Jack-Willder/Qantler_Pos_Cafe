@@ -9,66 +9,152 @@ interface datetype {
     time: string;
   };
 }
-export default function Inventory({date}: datetype) {
-  const [currentPage, setCurrentPage] = useState(1);
-  // const saleslist = [
-  //   { itemname: "Espresso", quantity: 45, totalprice: 135 },
-  //   { itemname: "Cappuccino", quantity: 38, totalprice: 228 },
-  //   { itemname: "Latte", quantity: 52, totalprice: 312 },
-  //   { itemname: "Americano", quantity: 41, totalprice: 123 },
-  //   { itemname: "Mocha", quantity: 29, totalprice: 174 },
-  //   { itemname: "Hot Chocolate", quantity: 33, totalprice: 165 },
-  //   { itemname: "Tea", quantity: 60, totalprice: 120 },
-  //   { itemname: "Iced Coffee", quantity: 47, totalprice: 188 },
-  //   { itemname: "Smoothie", quantity: 24, totalprice: 216 },
-  //   // { itemname: "Croissant", quantity: 35, totalprice: 175 },
-  // ];
 
+
+export default function Inventory({ date }: datetype) {
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
   const [filterDate, setFilterDate] = useState("Today");
   function handleFilterDate(date: string) {
-    setFilterDate(date)
+    setFilterDate(date);
   }
+  function handleCustomDate(e: any) {
+    const {name, value} = e.target;
+    setFilterData((prev) => ({
+      ...prev,
+      [name]: value
+    }))
+  }
+
 
   function initStorage() {
     const inventory = localStorage.getItem("saleslist");
-
-    if (!inventory) {
-      localStorage.setItem("saleslist", JSON.stringify([
-        { itemname: "Espresso", quantity: 45, totalprice: 135 },
-        { itemname: "Cappuccino", quantity: 38, totalprice: 228 },
-        { itemname: "Latte", quantity: 52, totalprice: 312 },
-        { itemname: "Americano", quantity: 41, totalprice: 123 },
-        { itemname: "Mocha", quantity: 29, totalprice: 174 },
-        { itemname: "Hot Chocolate", quantity: 33, totalprice: 165 },
-        { itemname: "Tea", quantity: 60, totalprice: 120 },
-        { itemname: "Iced Coffee", quantity: 47, totalprice: 188 },
-        { itemname: "Smoothie", quantity: 24, totalprice: 216 },
-      // { itemname: "Croissant", quantity: 35, totalprice: 175 },
-      ]));
-    }
+    if (!inventory) { localStorage.setItem("saleslist", JSON.stringify([{ itemname: "Espresso", quantity: 45, totalprice: 135 },])); }
   }
+  const [allSales, setAllSales] = useState<saleslisttype[]>([{ itemname: "Espresso", quantity: 45, totalprice: 135, date: "" },]);
+  const [saleslist, setSaleslist] = useState<saleslisttype[]>([{ itemname: "Espresso", quantity: 45, totalprice: 135, date: "" },]);
+  type mappedItemsType = {
+    itemcode: string;
+    itemname: string;
+    quantity: number;
+    total: number;
+    price: number;
+  };
 
+  type saleslisttype = {
+    date: string;
+    itemname: string;
+    quantity: number;
+    totalprice: number;
+  };
 
-  const [allSales, setAllSales] = useState([
-    { itemname: "Espresso", quantity: 45, totalprice: 135 },
-    { itemname: "Cappuccino", quantity: 38, totalprice: 228 },
-    { itemname: "Latte", quantity: 52, totalprice: 312 },
-    { itemname: "Americano", quantity: 41, totalprice: 123 },
-  ]);
-  const [saleslist, setSaleslist] = useState([
-    { itemname: "Espresso", quantity: 45, totalprice: 135 },
-    { itemname: "Cappuccino", quantity: 38, totalprice: 228 },
-    { itemname: "Latte", quantity: 52, totalprice: 312 },
-    { itemname: "Americano", quantity: 41, totalprice: 123 },
-  ]);
+  type BillItemWithDate = mappedItemsType & {
+    date: string;
+  };
 
   useEffect(() => {
     initStorage();
-    const data = localStorage.getItem("saleslist");
-    const inventory = data ? JSON.parse(data) : [];
-    setAllSales(inventory);
-    setSaleslist(inventory);
+    const data = localStorage.getItem("bills");
+    const bills = data ? JSON.parse(data) : [];
+
+    type BillListType = { items: mappedItemsType[]; };
+
+    bills.forEach((bill: { date: string; items: mappedItemsType[]; }) => {
+      bill.items.forEach((item) => {
+        (item as BillItemWithDate).date = bill.date;
+      });
+    });
+
+    const billList = Array.from(bills, (element: BillListType) => element.items);
+
+    const mergedBillList = billList.flat() as BillItemWithDate[];
+
+    const updatedBillList = mergedBillList.map(
+      ({ total, ...items }: BillItemWithDate) => ({
+        ...items,
+        totalprice: total,
+      })
+    );
+
+    let mapped_items: {
+      [key: string]: {
+        itemname: string;
+        date: string;
+        quantity: number;
+        totalprice: number;
+      };
+    } = {};
+
+    updatedBillList.forEach((item) => {
+      if (mapped_items[item.itemcode]) {
+        mapped_items[item.itemcode].quantity += item.quantity;
+        mapped_items[item.itemcode].totalprice += item.totalprice;
+      } else {
+        mapped_items[item.itemcode] = {
+          itemname: item.itemname,
+          date: item.date,
+          quantity: item.quantity,
+          totalprice: item.totalprice,
+        };
+      }
+    });
+
+    const SalesListArray: saleslisttype[] = Object.values(mapped_items);
+    setAllSales(SalesListArray);
+    setSaleslist(SalesListArray);
   }, []);
+
+  function* generatepages(totalpages: number, currentpage: number) {
+    const maxpages = 5;
+    let start = Math.max(1, currentpage - Math.floor(maxpages / 2));
+    let end = Math.min(totalpages, start + maxpages - 1);
+    if (end - start < maxpages - 1) {
+      start = Math.max(1, end - maxpages + 1);
+    }
+    if (start > 1) {
+      yield 1;
+      if (start > 2) yield '...';
+    }
+    for (let i = start; i <= end; i++) {
+      yield i;
+    }
+    if (end < totalpages) {
+      if (end < totalpages - 1) yield '...';
+      yield totalpages;
+    }
+  }
+
+  const totalPages = Math.ceil(saleslist.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedSales = saleslist.slice(startIndex, endIndex);
+  const pageNumbers = Array.from(generatepages(totalPages, currentPage));
+
+  function handlePageChange(page: number | string) {
+    if (typeof page === 'number') {
+      setCurrentPage(page);
+    }
+  }
+
+  function handlePreviousPage() {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  }
+
+  function handleNextPage() {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  }
+
+  function handleFirstPage() {
+    setCurrentPage(1);
+  }
+
+  function handleLastPage() {
+    setCurrentPage(totalPages);
+  }
 
   const [filterData, setFilterData] = useState({
     itemname: "",
@@ -85,17 +171,102 @@ export default function Inventory({date}: datetype) {
     }));
   };
 
+  // function filter() {
+  //   const filteredlist = allSales.filter((item: any) => (!filterData.itemname || item.itemname === filterData.itemname));
+  //   // const currentCalendar = new Date();
+  //   // const today = [currentCalendar.getFullYear(), currentCalendar.getMonth().toString().padStart(2, "0"), currentCalendar.getDate().toString().padStart(2, "0")]
+  //   // const yesterday = () => {
+  //   //   if (currentCalendar.getDate() == 1) {
+  //   //     return 1;
+  //   //   } else {
+  //   //     if (currentCalendar.getMonth() == 1) {
+          
+  //   //     }
+  //   //   }
+  //   // }
+  //   // const filterMap: {
+  //   //   [key:string]: string | number
+  //   // } = {
+  //   //   "Today": today.join("-"),
+  //   //   "Yesterday": "yesterday",
+  //   //   "This Week": new Date().getDate(),
+  //   //   "This Month": new Date().getDate(),
+  //   //   "custom": new Date().getDate(),
+  //   // }
+  //   // console.log(filterMap[filterDate as string])
+  //   // setSaleslist(filteredlist);
+  // }
+
+
   function filter() {
-    const filteredlist = allSales.filter((item: any) => (!filterData.itemname || item.itemname === filterData.itemname));
-    setSaleslist(filteredlist);
+    const today = new Date();
+
+    const startOfToday = new Date(
+      today.getFullYear(),
+      today.getMonth(),
+      today.getDate()
+    );
+
+    const startOfYesterday = new Date(startOfToday);
+    startOfYesterday.setDate(startOfYesterday.getDate() - 1);
+
+    const startOfWeek = new Date(startOfToday);
+    startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay()); // Sunday
+
+    const startOfMonth = new Date(
+      today.getFullYear(),
+      today.getMonth(),
+      1
+    );
+
+    const filteredList = allSales.filter((item: any) => {
+      // Item name filter
+      const itemMatch =
+        !filterData.itemname ||
+        item.itemname === filterData.itemname;
+
+      if (!itemMatch) return false;
+
+      const saleDate = new Date(item.date);
+
+      switch (filterDate) {
+        case "Today":
+          return saleDate >= startOfToday;
+
+        case "Yesterday":
+          return (
+            saleDate >= startOfYesterday &&
+            saleDate < startOfToday
+          );
+
+        case "This Week":
+          return saleDate >= startOfWeek;
+
+        case "This Month":
+          return saleDate >= startOfMonth;
+
+        case "Custom":
+          return (
+            filterData.dateFrom &&
+            filterData.dateTo &&
+            saleDate >= new Date(filterData.dateFrom) &&
+            saleDate <= new Date(filterData.dateTo)
+          );
+
+        default:
+          return true;
+      }
+    });
+
+    setSaleslist(filteredList);
   }
 
   function reset() {
     setFilterData({
       itemname: "",
       reportDate: "",
-      dateFrom: "2024-05-20",
-      dateTo: "2024-05-20"
+      dateFrom: "",
+      dateTo: ""
     });
     setSaleslist(allSales);
   }
@@ -152,11 +323,11 @@ export default function Inventory({date}: datetype) {
             <div className="flex gap-4 w-full">
               <div className="flex flex-col items-start justify-center w-1/2">
                 <div className="text-ss-50 text-gray-500">Requested Date From</div>
-                <input className="border border-gray-200 rounded-md p-2 w-full" type="date" id="opg-select-dfrom" value="2024-05-20" placeholder="Select date"></input>
+                <input className="border border-gray-200 rounded-md p-2 w-full" type="date" id="opg-select-dfrom" value={filterData.dateFrom} placeholder="Select date" name="dateFrom" onChange={handleCustomDate}></input>
               </div>
               <div className="flex flex-col items-start justify-center w-1/2">
                 <div className="text-ss-50 text-gray-500">Requested Date To</div>
-                <input className="border border-gray-200 rounded-md p-2 w-full" type="date" id="opg-select-dto" value="2024-05-20" placeholder="Select date"></input>
+                <input className="border border-gray-200 rounded-md p-2 w-full" type="date" id="opg-select-dto" value={filterData.dateTo} placeholder="Select date" name="dateTo" onChange={handleCustomDate}></input>
               </div>
             </div>
           </div>
@@ -199,11 +370,11 @@ export default function Inventory({date}: datetype) {
               </tr>
             </thead>
             <tbody>
-              {saleslist.map((item, index) => (
+              {paginatedSales.map((item, index) => (
                 <tr className="border border-gray-100" key={index}>
                   <td><div className="p-2 text-ss-55 text-left">{item.itemname}</div></td>
                   <td><div className="p-2 text-left text-gray-500 text-ss-55">{item.quantity}</div></td>
-                  <td><div className="p-2 text-left text-ss-55">{`$${item.totalprice}.00`}</div></td>
+                  <td><div className="p-2 text-left text-ss-55">{`$${item.totalprice.toFixed(2)}`}</div></td>
                 </tr>
               ))}
             </tbody>
@@ -212,7 +383,7 @@ export default function Inventory({date}: datetype) {
             <div>
               <div className="flex items-center">
                 <div className="text-ss-55 max-[820px]:text-ss-50">show</div>
-                <select id="entriescount" className="border border-gray-200 text-ss-65 p-1 rounded-sm mx-2">
+                <select id="entriescount" className="border border-gray-200 text-ss-65 p-1 rounded-sm mx-2" value={itemsPerPage} onChange={(e) => { setItemsPerPage(parseInt(e.target.value)); setCurrentPage(1); }}>
                   <option value="10">10</option>
                   <option value="20">20</option>
                   <option value="30">30</option>
@@ -222,22 +393,26 @@ export default function Inventory({date}: datetype) {
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <div className="p-2 text-ss-65 border border-gray-200 rounded-sm aspect-square h-3/5 text-center flex items-center justify-center"><IconPosCafe icon="dleft" color="black" size={12} /></div>
-                <div className="p-2 text-ss-65 border border-gray-200 rounded-sm aspect-square h-3/5 text-center flex items-center justify-center"><IconPosCafe icon="left" color="black" size={12} /></div>
-                <div className="p-2 text-ss-65 border border-gray-200 rounded-sm aspect-square h-3/5 text-center flex items-center justify-center bg-gpurple text-white">1</div>
-                <div className="p-2 text-ss-65 border border-gray-200 rounded-sm aspect-square h-3/5 text-center flex items-center justify-center">2</div>
-                <div className="p-2 text-ss-65 border border-gray-200 rounded-sm aspect-square h-3/5 text-center flex items-center justify-center">3</div>
-                <div className="p-2 text-ss-65 border border-gray-200 rounded-sm aspect-square h-3/5 text-center flex items-center justify-center">4</div>
-                <div className="p-2 text-ss-65 border border-gray-200 rounded-sm aspect-square h-3/5 text-center flex items-center justify-center">5</div>
-                <div className="p-2 text-ss-65 border border-gray-200 rounded-sm aspect-square h-3/5 text-center flex items-center justify-center">...</div>
-                <div className="p-2 text-ss-65 border border-gray-200 rounded-sm aspect-square h-3/5 text-center flex items-center justify-center">13</div>
-                <div className="p-2 text-ss-65 border border-gray-200 rounded-sm aspect-square h-3/5 text-center flex items-center justify-center"><IconPosCafe icon="right" color="black" size={12} /></div>
-                <div className="p-2 text-ss-65 border border-gray-200 rounded-sm aspect-square h-3/5 text-center flex items-center justify-center"><IconPosCafe icon="dright" color="black" size={12} /></div>
+                <div className="p-2 text-ss-65 border border-gray-200 rounded-sm aspect-square h-3/5 text-center flex items-center justify-center cursor-pointer" onClick={handleFirstPage}><IconPosCafe icon="dleft" color="black" size={12} /></div>
+                <div className="p-2 text-ss-65 border border-gray-200 rounded-sm aspect-square h-3/5 text-center flex items-center justify-center cursor-pointer" onClick={handlePreviousPage}><IconPosCafe icon="left" color="black" size={12} /></div>
+                {pageNumbers.map((page, index) => (
+                  <div
+                    key={index}
+                    className={`p-2 text-ss-65 border border-gray-200 rounded-sm aspect-square h-3/5 text-center flex items-center justify-center cursor-pointer ${page === currentPage ? 'bg-gpurple text-white' : ''
+                      } ${page === '...' ? 'cursor-default' : ''
+                      }`}
+                    onClick={() => handlePageChange(page)}
+                  >
+                    {page}
+                  </div>
+                ))}
+                <div className="p-2 text-ss-65 border border-gray-200 rounded-sm aspect-square h-3/5 text-center flex items-center justify-center cursor-pointer" onClick={handleNextPage}><IconPosCafe icon="right" color="black" size={12} /></div>
+                <div className="p-2 text-ss-65 border border-gray-200 rounded-sm aspect-square h-3/5 text-center flex items-center justify-center cursor-pointer" onClick={handleLastPage}><IconPosCafe icon="dright" color="black" size={12} /></div>
               </div>
             </div>
             <div className="align-tshow flex items-center">
               <div className="flex items-center">
-                <div className="text-ss-55 max-[820px]:text-ss-50">showing {currentPage} to {(saleslist.length) ? saleslist.length : 0} of 128 reports</div>
+                <div className="text-ss-55 max-[820px]:text-ss-50">showing {startIndex + 1} to {Math.min(endIndex, saleslist.length)} of {saleslist.length} reports</div>
               </div>
             </div>
           </div>

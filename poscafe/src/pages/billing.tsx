@@ -19,13 +19,15 @@ type checkouttype = {
   itemname: string,
   price: number,
   total: number,
-  itemcode: string
+  itemcode: string,
+  quantity: number
 };
 
 export default function Billing() {
   const [activeCategory, setActiveCategory] = useState("Beverage");
   const [activeView, setActiveView] = useState("grid");
   const [priceAmendment, setPriceAmendment] = useState(false);
+  const [tender, setTenderAmount] = useState(0);
   const handleCategory = (categoryname: string): void => {
     setActiveCategory(categoryname || "Beverage");
     const categoryfilter = allInventory.filter(item => item.category == categoryname);
@@ -54,7 +56,6 @@ export default function Billing() {
 
 
   const init_inventory = [{ "itemcode": "ITM-000001", "itemimage": "/public/assets/item-images/soya milk.webp", "category": "Beverage", "unit": "Cup", "itemname": "Soya Milk", "itemdesc": "Soya Milk", "price": 3, "instock": 52, "oldstock": 52, "supplier": "Local" }, { "itemcode": "ITM-000002", "itemimage": "/public/assets/item-images/tea c.png", "category": "Beverage", "unit": "Cup", "itemname": "Tea C", "itemdesc": "Tea C", "price": 4.7, "instock": 50, "oldstock": 50, "supplier": "Local" }, { "itemcode": "ITM-000003", "itemimage": "/public/assets/item-images/coffee black.webp", "category": "Steamed Timsum", "unit": "Pcs", "itemname": "Steamed Timsum", "itemdesc": "Steamed Timsum", "price": 7.3, "instock": 40, "oldstock": 40, "supplier": "Local" }, { "itemcode": "ITM-000004", "itemimage": "/public/assets/item-images/coffee black.webp", "category": "Porridge", "unit": "Bowl", "itemname": "Porridge", "itemdesc": "Porridge", "price": 11.2, "instock": 10, "oldstock": 10, "supplier": "Local" }, { "itemcode": "ITM-000005", "itemimage": "/public/assets/item-images/iced-coffee.png", "category": "Beverage", "unit": "Glass", "itemname": "Iced Coffee", "itemdesc": "Iced Coffee", "price": 11.7, "instock": 10, "oldstock": 10, "supplier": "Local" }, { "itemcode": "ITM-000006", "itemimage": "/public/assets/item-images/coffee black.webp", "category": "Noodle/Dumplings", "unit": "Pcs", "itemname": "Dumplings", "itemdesc": "Dumplings", "price": 16.1, "instock": 10, "oldstock": 10, "supplier": "Local" }, { "itemcode": "ITM-000007", "itemimage": "/public/assets/item-images/iced-coffee.png", "category": "Beverage", "unit": "Glass", "itemname": "Iced milo", "itemdesc": "Iced milo", "price": 13.5, "instock": 10, "oldstock": 10, "supplier": "Local" }, { "itemcode": "ITM-000008", "itemimage": "/public/assets/item-images/coffee c.webp", "category": "Beverage", "unit": "Cup", "itemname": "Coffee C", "itemdesc": "Coffee C", "price": 16.5, "instock": 10, "oldstock": 10, "supplier": "Local" }, { "itemcode": "ITM-000009", "itemimage": "/public/assets/item-images/milo.png", "category": "Beverage", "unit": "Cup", "itemname": "Milo", "itemdesc": "Milo", "price": 15, "instock": 15, "oldstock": 15, "supplier": "Local" }, { "itemcode": "ITM-000010", "itemimage": "/public/assets/item-images/chinese tea.webp", "category": "Beverage", "unit": "Cup", "itemname": "Chinese Tea", "itemdesc": "Chinese Tea", "price": 4.2, "instock": 30, "oldstock": 30, "supplier": "Local" }, { "itemcode": "ITM-000011", "itemimage": "/public/assets/item-images/iced-tea-black.png", "category": "Beverage", "unit": "Cup", "itemname": "orange juice", "itemdesc": "orange juice", "price": 1.8, "instock": 3, "oldstock": 3, "supplier": "Local" }];
-
   function initStorage() {
     const inventory = localStorage.getItem("inventory");
 
@@ -83,25 +84,130 @@ export default function Billing() {
   }
 
 
-  // const checkoutlist = useState<checkouttype[]>([]);
-  const checkoutlist: checkouttype[] = [
-    { image: "./assets/item-images/iced-coffee.png", itemname: "Soya Milk", price: 16.50, total: 33.00, itemcode: "" },
-    { image: "./assets/item-images/iced-coffee.png", itemname: "Tea C", price: 4.70, total: 23.50, itemcode: "" },
-    { image: "./assets/item-images/iced-coffee.png", itemname: "Streamed Timsum", price: 7.30, total: 7.30, itemcode: "" },
-    { image: "./assets/item-images/iced-coffee.png", itemname: "Porridge", price: 11.20, total: 11.20, itemcode: "" },
-    { image: "./assets/item-images/iced-coffee.png", itemname: "Iced Tea", price: 11.70, total: 11.70, itemcode: "" },
-    { image: "./assets/item-images/iced-coffee.png", itemname: "Dumplings", price: 16.10, total: 16.10, itemcode: "" },
-    { image: "./assets/item-images/iced-coffee.png", itemname: "Iced Coffee", price: 13.50, total: 27.00, itemcode: "" },
-    { image: "./assets/item-images/iced-coffee.png", itemname: "Coffee C", price: 16.50, total: 16.50, itemcode: "" }
-  ]
-  function addcartitem(item: invitemtype) {
-    checkoutlist.push({
-      itemcode: item.itemcode,
-      image: item.itemimage,
-      price: item.price,
-      total: item.price,
-      itemname: item.itemname
-    })
+  const [checkoutlist, setCheckoutlist] = useState<checkouttype[]>([]);
+
+  function addcheckout(item: invitemtype) {
+    if (item.instock > 0) {
+      const existing = checkoutlist.find(element => element.itemcode === item.itemcode);
+      if (existing) {
+        existing.quantity += 1;
+        existing.total = existing.quantity * existing.price;
+        setCheckoutlist([...checkoutlist]);
+      } else {
+        setCheckoutlist([...checkoutlist, {
+          itemcode: item.itemcode,
+          itemname: item.itemname,
+          quantity: 1,
+          image: item.itemimage,
+          total: item.price,
+          price: item.price
+        }]);
+      }
+      const updatedInventory = allInventory.map(invItem => invItem.itemcode === item.itemcode ? { ...invItem, instock: invItem.instock - 1 } : invItem );
+      setAllInventory(updatedInventory);
+      const categoryfilter = updatedInventory.filter(invItem => invItem.category == activeCategory);
+      setInventorylist(activeCategory === "All Items" ? updatedInventory : categoryfilter);
+      localStorage.setItem("inventory", JSON.stringify(updatedInventory));
+    }
+  }
+
+  function updatequantity(itemcode: string, quantity: number) {
+    const inventoryItem = allInventory.find(item => item.itemcode === itemcode);
+    if (!inventoryItem) return;
+
+    setCheckoutlist(checkoutlist.map(item => {
+      if (item.itemcode === itemcode) {
+        let newQuantity = quantity;
+        if (quantity < 1) {
+          newQuantity = 1;
+        } else if (quantity > inventoryItem.oldstock) {
+          newQuantity = inventoryItem.oldstock;
+        }
+        return {
+          ...item,
+          quantity: newQuantity,
+          total: newQuantity * item.price
+        };
+      }
+      return item;
+    }));
+    const updatedInventory = allInventory.map(item => item.itemcode === itemcode ? { ...item, instock: item.oldstock - quantity } : item );
+    setAllInventory(updatedInventory);
+    const categoryfilter = updatedInventory.filter(item => item.category == activeCategory);
+    setInventorylist(activeCategory === "All Items" ? updatedInventory : categoryfilter);
+    localStorage.setItem("inventory", JSON.stringify(updatedInventory));
+  }
+
+  function deletefromcheckout(itemcode: string) {
+    const deletedItem = checkoutlist.find(item => item.itemcode === itemcode);
+    if (!deletedItem) return;
+
+    setCheckoutlist(checkoutlist.filter(item => item.itemcode !== itemcode));
+
+    const updatedInventory = allInventory.map(item => item.itemcode === itemcode ? { ...item, instock: item.oldstock } : item );
+    setAllInventory(updatedInventory);
+    const categoryfilter = updatedInventory.filter(item => item.category == activeCategory);
+    setInventorylist(activeCategory === "All Items" ? updatedInventory : categoryfilter);
+    localStorage.setItem("inventory", JSON.stringify(updatedInventory));
+  }
+
+  const totalAmount = checkoutlist.reduce((total, item) => total + item.total, 0);
+  const gstAmount = totalAmount * 0.07;
+  const payable = totalAmount + gstAmount;
+  const changeAmount = tender - payable;
+
+  function changetender(amount: number) {
+    setTenderAmount(tender + amount);
+  }
+
+  function handlechangetender(e: any) {
+    setTenderAmount(parseFloat(e.target.value) || 0);
+  }
+
+  function saveBill() {
+    if (checkoutlist.length === 0) return;
+
+    const bills = JSON.parse(localStorage.getItem("bills") || "[]");
+    const inventory = JSON.parse(localStorage.getItem("inventory") || "[]");
+
+    const bill = {
+      date: new Date().toISOString().split('T')[0],
+      time: new Date().toLocaleTimeString(),
+      items: checkoutlist.map(item => ({
+        itemcode: item.itemcode,
+        itemname: item.itemname,
+        quantity: item.quantity,
+        price: item.price,
+        total: item.total
+      })),
+      totalAmount: totalAmount,
+      gstAmount: gstAmount,
+      payableAmount: payable,
+      tenderAmount: tender,
+      changeAmount: changeAmount
+    };
+
+    bills.push(bill);
+    localStorage.setItem("bills", JSON.stringify(bills));
+
+    const updatedInventory = inventory.map((invitem: invitemtype) => {
+      const checkoutItem = checkoutlist.find(item => item.itemcode === invitem.itemcode);
+      if (checkoutItem) {
+        return {
+          ...invitem,
+          oldstock: invitem.oldstock - checkoutItem.quantity,
+          instock: invitem.oldstock - checkoutItem.quantity
+        };
+      }
+      return invitem;
+    });
+
+    localStorage.setItem("inventory", JSON.stringify(updatedInventory));
+    setAllInventory(updatedInventory);
+    const categoryfilter = updatedInventory.filter(item => item.category == activeCategory);
+    setInventorylist(activeCategory === "All Items" ? updatedInventory : categoryfilter);
+    setCheckoutlist([]);
+    setTenderAmount(0);
   }
 
   return (<div className="content">
@@ -111,7 +217,7 @@ export default function Billing() {
         <div className="h-full flex flex-col">
           <div className="flex flex-col items-end">
             <div className="text-ss-45 h-min">Total Amount</div>
-            <div className="text-violet-800 font-bold h-min -mt-1.5 lg:text-lg" id="checkout-total-amount">$146.30</div>
+            <div className="text-violet-800 font-bold h-min -mt-1.5 lg:text-lg" id="checkout-total-amount">${totalAmount.toFixed(2)}</div>
           </div>
         </div>
       </div>
@@ -154,7 +260,7 @@ export default function Billing() {
                     </td>
                     <td>
                       <div className="aligncount"><input type="number" placeholder="2"
-                        className="[&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none text-ss-45 border border-gray-200 rounded-md text-center p-0.5 w-7 lg:text-ss-70" name="count" value="2" onChange={() => { }}></input>
+                        className="[&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none text-ss-45 border border-gray-200 rounded-md text-center p-0.5 w-7 lg:text-ss-70" name="count" value={item.quantity} onChange={(e) => updatequantity(item.itemcode, parseInt(e.target.value))}></input>
                       </div>
                     </td>
                     <td>
@@ -163,7 +269,7 @@ export default function Billing() {
                     <td>
                       <div className="text-ss-45 font-bold lg:text-ss-70">${item.total.toFixed(2)}</div>
                     </td>
-                    <td><IconPosCafe icon="delete" size={10} color="black" />
+                    <td><div onClick={() => deletefromcheckout(item.itemcode)}><IconPosCafe icon="delete" size={10} color="black" /></div>
                     </td>
                   </tr>
                 ))
@@ -187,25 +293,25 @@ export default function Billing() {
         <div className="w-full h-px bg-gray-100"></div>
         <div className="flex w-full justify-between">
           <div className="text-ss-55">Total Amount</div>
-          <div className="text-ss-70">$146.30</div>
+          <div className="text-ss-70">${totalAmount.toFixed(2)}</div>
         </div>
         <div className="flex w-full justify-between">
           <div className="text-ss-55">GST Amount (7%)</div>
-          <div className="text-ss-70">$10.24</div>
+          <div className="text-ss-70">${gstAmount.toFixed(2)}</div>
         </div>
         <div className="w-full h-px bg-gray-100"></div>
         <div className="flex w-full justify-between">
           <div className="text-ss-70">Payable</div>
-          <div className="text-md">$156.54</div>
+          <div className="text-md">${payable.toFixed(2)}</div>
         </div>
         <div className="w-full h-px bg-gray-100"></div>
         <div className="flex w-full justify-between">
           <div className="text-ss-55">Tender</div>
-          <input type="number" autoComplete="false" placeholder="$160.00" className="border rounded-md border-gray-300 text-end w-1/3 text-sm text-thin" />
+          <input type="number" autoComplete="false" placeholder="$0.00" value={tender || ""} onChange={handlechangetender} className="border rounded-md border-gray-300 text-end w-1/3 text-sm text-thin" />
         </div>
         <div className="flex w-full justify-between bg-purple-100 p-2 items-center rounded-md">
           <div className="text-ss-55">Change (Balance)</div>
-          <div className="text-sm">$3.46</div>
+          <div className="text-sm">${changeAmount >= 0 ? changeAmount.toFixed(2) : "0.00"}</div>
         </div>
         <div></div>
       </div>)}
@@ -237,8 +343,10 @@ export default function Billing() {
     <div className="bg-white rounded-md shadow-sm overflow-hidden relative overflow-y-scroll scrollbar-none five">
       <div className="grid grid-cols-[repeat(auto-fill,minmax(100px,1fr))] gap-2.5 p-3.5 lg:grid-cols-[repeat(auto-fill,minmax(100px,1fr))]">
         {
+          //  option-item-select
           inventorylist.map((item, index) => (
-            <div key={index} className="flex flex-col rounded-md items-center aspect-square p-2 relative shadow-sm shadow-gray-100 border border-gray-100 option-item-select" onClick={()=>addcartitem(item)}>
+            <div key={index} className="flex flex-col rounded-md items-center aspect-square p-2 relative shadow-sm shadow-gray-100 border border-gray-100" onClick={()=>addcheckout(item)}>
+              <div className="absolute top-0 left-0 bg-ipurple text-white text-ss-35 font-bold px-1.5 py-1.5 rounded-sm">{item.instock}</div>
               <img src={item.itemimage} className="absolute h-9/12"></img>
               <div className="absolute flex flex-col w-full h-7 items-center justify-center bottom-0 bg-white rounded-md lg:h-2/5">
                 <span className="text-ss-40 relative w-full text-center lg:text-ss-50">{item.itemname}</span>
@@ -303,7 +411,7 @@ export default function Billing() {
     </div>
     <div className="overflow-hidden rounded-md seven bg-bviolet0 flex gap-px grid-cols-[repeat(3, 60px)]">
       <div className="h-full flex flex-col md:flex-row">
-        <div className="bg-bviolet1 flex items-center justify-center flex-col h-full rounded-md gap-1 md:aspect-square">
+        <div className="bg-bviolet1 flex items-center justify-center flex-col h-full rounded-md gap-1 md:aspect-square cursor-pointer" onClick={() => saveBill()}>
           <IconPosCafe icon="add" />
           <div className="text-white text-ss-45 font-thin lg:text-ss-70">New Bill</div>
         </div>
@@ -313,11 +421,11 @@ export default function Billing() {
         </div>
       </div>
       <div className="grid gap-px grid-cols-[repeat(3,1fr)] grow">
-        <div className="bg-bviolet3 flex flex-col justify-center items-center rounded-md text-white text-ss-55 font-thin lg:text-ss-70">$2</div>
-        <div className="bg-bviolet3 flex flex-col justify-center items-center rounded-md text-white text-ss-55 font-thin lg:text-ss-70">$5</div>
-        <div className="bg-bviolet3 flex flex-col justify-center items-center rounded-md text-white text-ss-55 font-thin lg:text-ss-70">$10</div>
-        <div className="bg-bviolet3 flex flex-col justify-center items-center rounded-md text-white text-ss-55 font-thin lg:text-ss-70">$20</div>
-        <div className="bg-bviolet3 flex flex-col justify-center items-center rounded-md text-white text-ss-55 font-thin lg:text-ss-70">$50</div>
+        <div className="bg-bviolet3 flex flex-col justify-center items-center rounded-md text-white text-ss-55 font-thin lg:text-ss-70 cursor-pointer" onClick={() => changetender(2)}>$2</div>
+        <div className="bg-bviolet3 flex flex-col justify-center items-center rounded-md text-white text-ss-55 font-thin lg:text-ss-70 cursor-pointer" onClick={() => changetender(5)}>$5</div>
+        <div className="bg-bviolet3 flex flex-col justify-center items-center rounded-md text-white text-ss-55 font-thin lg:text-ss-70 cursor-pointer" onClick={() => changetender(10)}>$10</div>
+        <div className="bg-bviolet3 flex flex-col justify-center items-center rounded-md text-white text-ss-55 font-thin lg:text-ss-70 cursor-pointer" onClick={() => changetender(20)}>$20</div>
+        <div className="bg-bviolet3 flex flex-col justify-center items-center rounded-md text-white text-ss-55 font-thin lg:text-ss-70 cursor-pointer" onClick={() => changetender(50)}>$50</div>
         <div className="bg-bviolet3 flex flex-col items-center justify-center rounded-md">
           <IconPosCafe icon="gift" size={14} />
           <div className="text-white text-ss-45 font-thin text-center lg:text-ss-70">Gift Voucher</div>

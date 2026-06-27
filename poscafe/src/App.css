@@ -2,10 +2,10 @@
 @import "tailwindcss";
 
 * {@apply font-roboto select-none;}
-
 html, body, #root {@apply h-full;}
-
 #root {@apply flex w-full bg-gray-100;}
+.clex {@apply flex flex-col items-center justify-center}
+.rlex {@apply flex flex-row items-center justify-center}
 
 .content {
     @apply grid h-full w-full p-3.5 gap-3.5;

@@ -14,7 +14,7 @@ export default function SideBar() {
                 { name: "Inventory", icon: <IconPosCafe icon="inventory" size={12}/>, path: "/inventory" },
                 { name: "Item Request", icon: <IconPosCafe icon="itemrequest" size={12}/>, path: "/itemrequest" },
                 { name: "Sales Report", icon: <IconPosCafe icon="salesreport" size={12}/>, path: "/salesreport" },
-                { name: "Customer", icon: <IconPosCafe icon="customerreport" size={12}/>, path: "/customerreport" },
+                // { name: "Customer", icon: <IconPosCafe icon="customerreport" size={12}/>, path: "/customerreport" },
                 { name: "Settings", icon: <IconPosCafe icon="settings" size={12}/>, path: "/settings" },
                 { name: "Users", icon: <IconPosCafe icon="users" size={12}/>, path: "/users" }
         ];
