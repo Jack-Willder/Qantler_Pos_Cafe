@@ -1,0 +1,317 @@
+* {
+    margin: 0;
+    padding: 0;
+    outline: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    /* colors */
+    --cwhite: #FFFFFF;
+    --cblack: #000000;
+    --cgrey: hsl(226, 14%, 65%);
+    --cwhite-pale: hsl(240, 50%, 98%);
+    --cvoilet: hsl(239, 66%, 54%);
+    --cpurple: hsl(255, 72%, 55%);
+    --cpurple-pale: hsl(244, 43%, 57%);
+    --cpurple-dark: hsl(248, 57%, 47%);
+    --cviolet-pale: hsl(267, 81%, 71%);
+    --cgreen: hsl(168, 33%, 49%);
+    --ctorquise: hsl(173, 45%, 36%);
+    --corange: hsl(36, 99%, 70%);
+    --corange-pale: hsl(35, 99%, 60%);
+    --cblue: hsl(225, 43%, 16%);
+    --clogo: hsl(258, 77%, 66%);
+    --cmenu: hsl(224, 47%, 11%);
+    --cmenu-pale: hsl(228, 33%, 21%);
+    /* sizes */
+    --big-font: 1.4rem;
+    --small-font: clamp(1rem, 1vw, 1.4rem);
+    --p1: 8px;
+    --p2: 16px;
+    --p3: 32px;
+    --p4: 64px;
+
+    /* global settings */
+    --background: var(--cwhite);
+    --card-background: var(--cwhite-pale);
+    --test-background: salmon;
+
+
+}
+
+html,
+body {
+    height: 100%;
+    width: 100%;
+}
+
+body {
+    background: var(--background);
+    display: flex;
+}
+
+body>* {
+    font-family: "Poppins", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 500;
+    font-style: normal;
+    color: var(--cblack);
+    font-size: var(--small-font);
+}
+
+.menu {
+    background-color: var(--cmenu);
+    background: hsla(224, 46%, 11%, 1);
+    background: linear-gradient(90deg, hsla(224, 46%, 11%, 1) 0%, hsla(228, 33%, 21%, 1) 100%);
+    background: -moz-linear-gradient(90deg, hsla(224, 46%, 11%, 1) 0%, hsla(228, 33%, 21%, 1) 100%);
+    background: -webkit-linear-gradient(90deg, hsla(224, 46%, 11%, 1) 0%, hsla(228, 33%, 21%, 1) 100%);
+    filter: progid: DXImageTransform.Microsoft.gradient( startColorstr="#0F1629", endColorstr="#242B47", GradientType=1 );
+    height: 100%;
+    /* width: 40%; */
+    max-width: 480px;
+    padding: 2%;
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+}
+
+.names {
+    display: flex;
+    flex-direction: column;
+}
+
+.appinfo {
+    width: 100%;
+    height: fit-content;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    position: relative;
+}
+
+.icon.appicon {
+    font-size: clamp(1rem, 2.5vw, 4.5rem);
+    color: var(--cwhite);
+    background-color: var(--clogo);
+    border-radius: 50%;
+    padding: 15px;
+}
+
+.appname {
+    color: white;
+    font-size: var(--small-font);
+}
+
+.appname.userrole {
+    color: var(--cgrey);
+}
+
+.userprof {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+.usericon {
+    background-color: var(--cpurple);
+    padding: 16px;
+    border-radius: 50%;
+}
+
+.search {}
+
+.bar {
+    /* background: transparent; */
+    width: 100%;
+    /* height: 50px; */
+    border: 3px solid hsl(0, 0%, 30%);
+    border-radius: 10px;
+    padding: 10px;
+    background: url(search.png) no-repeat scroll 7px 7px;
+    background-size: 1.4rem;
+    padding-left: 32px;
+    color: white;
+}
+
+.options {
+    width: 100%;
+    flex-grow: 100;
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+    overflow-y: scroll;
+    scrollbar-width: none;
+    color: var(--cgrey);
+}
+
+.option-bg {
+    background: hsla(236, 62%, 50%, 1);
+    background: linear-gradient(135deg, hsla(236, 62%, 50%, 1) 0%, hsla(257, 71%, 56%, 1) 100%);
+    background: -moz-linear-gradient(135deg, hsla(236, 62%, 50%, 1) 0%, hsla(257, 71%, 56%, 1) 100%);
+    background: -webkit-linear-gradient(135deg, hsla(236, 62%, 50%, 1) 0%, hsla(257, 71%, 56%, 1) 100%);
+    filter: progid: DXImageTransform.Microsoft.gradient( startColorstr="#303ace", endColorstr="#6D40DF", GradientType=1 );
+}
+
+.option {
+    display: flex;
+    border-radius: 8px;
+    align-items: center;
+    gap: 10px;
+}
+
+.option:nth-child(1) {
+    background-color: rgb(26, 206, 50);
+    color: white;
+}
+
+.option:hover {
+    background-color: rgb(26, 206, 50);
+    color: white;
+}
+
+.opname {
+    /* color: white; */
+    /* height: 100%; */
+    /* width: 100%; */
+    /* text-align: left; */
+    /* padding: 10px 10px; */
+}
+
+.option>.symbol {
+    font-size: clamp(1rem, 2.5vw, 4.5rem);
+    padding: 1px;
+}
+
+.img {
+    /* width: 100px; */
+    height: clamp(1rem, 3vw, 4.5rem);
+    border-radius: 50%;
+}
+
+.content {
+    background-color: var(--background);
+    display: grid;
+    grid-template-areas: 
+    "one    one     two     two     two"
+    "three  three   four    five    five"
+    "three  three   four    five    five"
+    "six    six     four    five    five"
+    "six    six     four    five    five";
+    grid-template-columns: 20% 20% 20% 20% 20%;
+    grid-template-rows: 20% 20% 20% 20% 20%;
+    gap: 20px;
+    height: 100%;
+    width: 100%;
+}
+
+.title {
+    font-size: var(--big-font);
+    margin-bottom: 12px;
+    margin-top: 12px;
+}
+
+.card {
+    background-color: var(--test-background);
+    font-size: 5rem;
+    /* height: 45%; */
+    /* width: 100%; */
+    /* max-height: 350px; */
+    border-radius: 16px;
+}
+
+.dashboard {
+    display: grid;
+    gap: 10px;
+    grid-template-areas:
+        "welcome welcome welcome revenue revenue"
+        "total application new revenue revenue";
+    padding: 16px;
+}
+
+.one {grid-area: one;}
+.two {grid-area: two;}
+.three {grid-area: three;}
+.four {grid-area: four;}
+.five {grid-area: five;}
+.six {grid-area: six;}
+.seven {grid-area: seven;}
+.eight {grid-area: eight;}
+.nine {grid-area: nine;}
+
+.smallcard {
+    background-color: hsl(0, 0%, 22%);
+    border-radius: 16px;
+    display: flex;
+    align-items: flex-start;
+    flex-direction: column;
+    padding: 16px;
+}
+
+.cardsymbols {
+    padding: 16px;
+    border-radius: 50%;
+}
+
+.cardsymbols:nth-of-type(1) {
+    background-color: red;
+}
+
+.titlehead {
+    font-size: var(--big-font);
+    color: rgb(26, 206, 50)
+}
+
+.titledesc {
+    color: white;
+}
+
+.employees {
+    overflow-y: hidden;
+}
+
+table>* {
+    border-collapse: collapse;
+}
+
+.number {
+    font-size: var(--big-font);
+    letter-spacing: 1px;
+}
+
+.desc {
+    color: white;
+}
+
+table {
+    width: 100%;
+    height: auto;
+    text-align: center;
+    border-radius: 16px;
+}
+
+thead {
+    background-color: hsl(0, 0%, 30%);
+    border-radius: 16px;
+}
+
+th,
+td {
+    padding: 8px;
+}
+
+.ename {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 48px;
+    padding: 16px;
+}
+
+.smallimg {
+    height: 30px;
+    width: 30px;
+}
