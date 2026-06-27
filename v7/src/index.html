@@ -1,18 +1,85 @@
-function option_activate() {
-    let options = document.querySelectorAll(".option")
-    let content = document.querySelector(".content")
-    options.forEach(element => {
-        element.addEventListener("click", () => {
-            options.forEach(elm => {
-                elm.classList.remove("option-select");
-            })
-            element.classList.add("option-select");
+<!DOCTYPE html>
+<html lang="en">
 
-                let target = element.getAttribute("data-target");
-                if(target == "billing") {
-                    console.log("billing");
-                    content.innerHTML = `
-                                    <div class="card one">
+<head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="style.css">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <!-- <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap" rel="stylesheet"> -->
+        <!-- <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap" rel="stylesheet"> -->
+        <!-- <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Nunito:ital,wght@0,200..1000;1,200..1000&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet"> -->
+        <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=add_circle,app_registration,archive,backspace,bakery_dining,bookmark,calendar_month,cancel,change_history,comic_bubble,contactless_off,delete,description,edit_calendar,featured_seasonal_and_gifts,grid_view,group,home,info,keyboard_arrow_down,list,list_alt_check,local_cafe,menu,monitoring,more_vert,onsen,order_approve,oven,payment_card,person,point_of_sale,print,ramen_dining,rebase,receipt,restart_alt,schedule,settings,shopping_cart,shoppingmode,soup_kitchen,trip,work_update" />
+        <title>POS</title>
+</head>
+
+<body>
+        <img src="overlay.png" class="overlay"></img>
+        <div class="menu">
+                <div class="appinfo">
+                        <span class="material-symbols-outlined icon appicon">
+                                local_cafe
+                        </span>
+                        <div class="appname">
+                                POS Cafe
+                        </div>
+                </div>
+                <div class="options">
+                        <div class="option option-select" data-target="billing">
+                                <span class="material-symbols-outlined symbol">
+                                        receipt
+                                </span>
+                                <span class="opname">Billing</span>
+                        </div>
+                        <div class="option" data-target="inventory">
+                                <span class="material-symbols-outlined symbol">
+                                        work_update
+                                </span>
+                                <span class="opname">Inventory</span>
+                        </div>
+                        <div class="option" data-target="request">
+                                <span class="material-symbols-outlined symbol">
+                                        archive
+                                </span>
+                                <span class="opname">Item Request</span>
+                        </div>
+                        <div class="option" data-target="report">
+                                <span class="material-symbols-outlined symbol">
+                                        monitoring
+                                </span>
+                                <span class="opname">Sales Report</span>
+                        </div>
+                        <div class="option" data-target="settings">
+                                <span class="material-symbols-outlined symbol">
+                                        settings
+                                </span>
+                                <span class="opname">Settings</span>
+                        </div>
+                        <div class="option" data-target="users">
+                                <span class="material-symbols-outlined symbol">
+                                        person
+                                </span>
+                                <span class="opname">Users</span>
+                        </div>
+                </div>
+                <div class="appinfo userprof">
+                        <!-- <img src="https://static.vecteezy.com/system/resources/previews/046/409/821/non_2x/avatar-profile-icon-in-flat-style-male-user-profile-illustration-on-isolated-background-man-profile-sign-business-concept-vector.jpg" alt="image" srcset="" class="img"> -->
+                        <div class="usericon">A</div>
+                        <div class="names">
+                                <span class="appname">Admin</span>
+                                <span class="appname userrole">Administrator</span>
+                        </div>
+                        <span class="material-symbols-outlined userrole-symbol">
+                                keyboard_arrow_down
+                        </span>
+                </div>
+        </div>
+        <div class="content-area">
+                        <div class="content">
+                <div class="card one">
                         <div class="grid-total">
                                 <div class="billtitle">Current Bill<span
                                                 class="material-symbols-outlined more-symbol">more_vert</span></div>
@@ -55,8 +122,10 @@ function option_activate() {
                                 <tbody>
                                         <tr>
                                                 <td>
-                                                        <div class="alignnames"><span
-                                                                        class="material-symbols-outlined item-symbol">local_cafe</span>
+                                                        <div class="alignnames"><img
+                                                                        src="https://static.vecteezy.com/system/resources/previews/060/818/430/non_2x/a-glass-of-creamy-nutritious-soy-milk-surrounded-by-soybeans-png.png"
+                                                                        alt="coffee" srcset="" name="item"
+                                                                        class="item-symbol">
                                                                 <div class="bill-itemname">Soya Milk</div>
                                                         </div>
                                                 </td>
@@ -76,8 +145,10 @@ function option_activate() {
                                         </tr>
                                         <tr>
                                                 <td>
-                                                        <div class="alignnames"><span
-                                                                        class="material-symbols-outlined item-symbol">local_cafe</span>
+                                                        <div class="alignnames"><img
+                                                                        src="https://png.pngtree.com/png-vector/20250429/ourmid/pngtree-iced-black-tea-in-clear-plastic-cup-with-ice-cubes-png-image_16041290.png"
+                                                                        alt="coffee" srcset="" name="item"
+                                                                        class="item-symbol">
                                                                 <div class="bill-itemname">Tea C</div>
                                                         </div>
                                                 </td>
@@ -139,8 +210,10 @@ function option_activate() {
                                         </tr>
                                         <tr>
                                                 <td>
-                                                        <div class="alignnames"><span
-                                                                        class="material-symbols-outlined item-symbol">local_cafe</span>
+                                                        <div class="alignnames"><img
+                                                                        src="iced-coffee.png"
+                                                                        alt="coffee" srcset="" name="item"
+                                                                        class="item-symbol">
                                                                 <div class="bill-itemname">Iced Tea</div>
                                                         </div>
                                                 </td>
@@ -181,8 +254,10 @@ function option_activate() {
                                         </tr>
                                         <tr>
                                                 <td>
-                                                        <div class="alignnames"><span
-                                                                        class="material-symbols-outlined item-symbol">local_cafe</span>
+                                                        <div class="alignnames"><img
+                                                                        src="iced-coffee.png"
+                                                                        alt="coffee" srcset="" name="item"
+                                                                        class="item-symbol">
                                                                 <div class="bill-itemname">Iced Coffee</div>
                                                         </div>
                                                 </td>
@@ -306,49 +381,49 @@ function option_activate() {
                                         <span class="opname-chinese">咖啡黑</span>
                                 </div>
                                 <div class="option-item">
-                                        <img src="https://static.vecteezy.com/system/resources/thumbnails/041/643/200/small/ai-generated-a-cup-of-coffee-and-a-piece-of-coffee-bean-perfect-for-food-and-beverage-related-designs-or-promoting-cozy-moments-png.png"
+                                        <img src="https://static.vecteezy.com/system/resources/thumbnails/023/438/448/small/espresso-coffee-cutout-free-png.png"
                                                 alt="coffee" srcset="" name="item"
                                                 class="item-img">
                                         <span class="opname">Tea Black</span>
                                         <span class="opname-chinese">茶黑</span>
                                 </div>
                                 <div class="option-item">
-                                        <img src="https://static.vecteezy.com/system/resources/thumbnails/041/643/200/small/ai-generated-a-cup-of-coffee-and-a-piece-of-coffee-bean-perfect-for-food-and-beverage-related-designs-or-promoting-cozy-moments-png.png"
+                                        <img src="https://static.vecteezy.com/system/resources/previews/020/482/048/non_2x/chrysanthemum-tea-in-a-glass-isolated-png.png"
                                                 alt="coffee" srcset="" name="item"
                                                 class="item-img">
                                         <span class="opname">Chrysanthemum Tea</span>
                                         <span class="opname-chinese">菊花茶</span>
                                 </div>
                                 <div class="option-item">
-                                        <img src="https://static.vecteezy.com/system/resources/thumbnails/041/643/200/small/ai-generated-a-cup-of-coffee-and-a-piece-of-coffee-bean-perfect-for-food-and-beverage-related-designs-or-promoting-cozy-moments-png.png"
+                                        <img src="https://static.vecteezy.com/system/resources/thumbnails/023/742/327/small/latte-coffee-isolated-illustration-ai-generative-free-png.png"
                                                 alt="coffee" srcset="" name="item"
                                                 class="item-img">
                                         <span class="opname">Coffee</span>
                                         <span class="opname-chinese">咖啡</span>
                                 </div>
                                 <div class="option-item">
-                                        <img src="https://static.vecteezy.com/system/resources/thumbnails/041/643/200/small/ai-generated-a-cup-of-coffee-and-a-piece-of-coffee-bean-perfect-for-food-and-beverage-related-designs-or-promoting-cozy-moments-png.png"
+                                        <img src="https://png.pngtree.com/png-vector/20250123/ourmid/pngtree-steaming-tea-in-a-transparent-glass-mug-with-subtle-reflections-png-image_15314690.png"
                                                 alt="coffee" srcset="" name="item"
                                                 class="item-img">
                                         <span class="opname">Tea</span>
                                         <span class="opname-chinese">茶</span>
                                 </div>
                                 <div class="option-item">
-                                        <img src="https://static.vecteezy.com/system/resources/thumbnails/041/643/200/small/ai-generated-a-cup-of-coffee-and-a-piece-of-coffee-bean-perfect-for-food-and-beverage-related-designs-or-promoting-cozy-moments-png.png"
+                                        <img src="https://static.vecteezy.com/system/resources/thumbnails/058/988/343/small/tea-set-with-teapot-and-cup-on-black-background-cut-out-transparent-png.png"
                                                 alt="coffee" srcset="" name="item"
                                                 class="item-img">
                                         <span class="opname">Chinese Tea</span>
                                         <span class="opname-chinese">中国茶</span>
                                 </div>
                                 <div class="option-item">
-                                        <img src="https://static.vecteezy.com/system/resources/thumbnails/041/643/200/small/ai-generated-a-cup-of-coffee-and-a-piece-of-coffee-bean-perfect-for-food-and-beverage-related-designs-or-promoting-cozy-moments-png.png"
+                                        <img src="https://static.vecteezy.com/system/resources/previews/024/984/823/non_2x/illustration-ice-coffee-in-the-glass-cup-fresh-coffee-ice-pro-transparent-background-png.png"
                                                 alt="coffee" srcset="" name="item"
                                                 class="item-img">
                                         <span class="opname">Iced Coffee Black</span>
                                         <span class="opname-chinese">咖啡黑</span>
                                 </div>
                                 <div class="option-item">
-                                        <img src="https://static.vecteezy.com/system/resources/thumbnails/041/643/200/small/ai-generated-a-cup-of-coffee-and-a-piece-of-coffee-bean-perfect-for-food-and-beverage-related-designs-or-promoting-cozy-moments-png.png"
+                                        <img src="iced-tea-black.png"
                                                 alt="coffee" srcset="" name="item"
                                                 class="item-img">
                                         <span class="opname">Iced Tea Black</span>
@@ -359,84 +434,84 @@ function option_activate() {
 
                                 
                                 <div class="option-item">
-                                        <img src="https://static.vecteezy.com/system/resources/thumbnails/041/643/200/small/ai-generated-a-cup-of-coffee-and-a-piece-of-coffee-bean-perfect-for-food-and-beverage-related-designs-or-promoting-cozy-moments-png.png"
+                                        <img src="https://static.vecteezy.com/system/resources/previews/060/818/430/non_2x/a-glass-of-creamy-nutritious-soy-milk-surrounded-by-soybeans-png.png"
                                                 alt="coffee" srcset="" name="item"
                                                 class="item-img">
                                         <span class="opname">soya Milk</span>
                                         <span class="opname-chinese">牛奶</span>
                                 </div>
                                 <div class="option-item">
-                                        <img src="https://static.vecteezy.com/system/resources/thumbnails/041/643/200/small/ai-generated-a-cup-of-coffee-and-a-piece-of-coffee-bean-perfect-for-food-and-beverage-related-designs-or-promoting-cozy-moments-png.png"
+                                        <img src="iced-coffee.png"
                                                 alt="coffee" srcset="" name="item"
                                                 class="item-img">
                                         <span class="opname">Iced Coffee</span>
                                         <span class="opname-chinese">冰咖啡</span>
                                 </div>
                                 <div class="option-item">
-                                        <img src="https://static.vecteezy.com/system/resources/thumbnails/041/643/200/small/ai-generated-a-cup-of-coffee-and-a-piece-of-coffee-bean-perfect-for-food-and-beverage-related-designs-or-promoting-cozy-moments-png.png"
+                                        <img src="https://static.vecteezy.com/system/resources/previews/050/610/328/non_2x/refreshing-iced-tea-in-a-clear-glass-isolated-on-transparent-background-png.png"
                                                 alt="coffee" srcset="" name="item"
                                                 class="item-img">
                                         <span class="opname">Iced Tea</span>
                                         <span class="opname-chinese">冰茶</span>
                                 </div>
                                 <div class="option-item">
-                                        <img src="https://static.vecteezy.com/system/resources/thumbnails/041/643/200/small/ai-generated-a-cup-of-coffee-and-a-piece-of-coffee-bean-perfect-for-food-and-beverage-related-designs-or-promoting-cozy-moments-png.png"
+                                        <img src="https://png.pngtree.com/png-clipart/20250228/original/pngtree-takjil-ice-black-grass-jelly-for-iftar-ramadhan-kareem-png-image_20529932.png"
                                                 alt="coffee" srcset="" name="item"
                                                 class="item-img">
                                         <span class="opname">Grass Jelly</span>
                                         <span class="opname-chinese">仙草</span>
                                 </div>
                                 <div class="option-item">
-                                        <img src="https://static.vecteezy.com/system/resources/thumbnails/041/643/200/small/ai-generated-a-cup-of-coffee-and-a-piece-of-coffee-bean-perfect-for-food-and-beverage-related-designs-or-promoting-cozy-moments-png.png"
+                                        <img src="https://static.vecteezy.com/system/resources/thumbnails/059/599/181/small/cup-of-black-coffee-isolated-cut-out-transparent-png.png"
                                                 alt="coffee" srcset="" name="item"
                                                 class="item-img">
                                         <span class="opname">Coffee C</span>
                                         <span class="opname-chinese">咖啡C</span>
                                 </div>
                                 <div class="option-item">
-                                        <img src="https://static.vecteezy.com/system/resources/thumbnails/041/643/200/small/ai-generated-a-cup-of-coffee-and-a-piece-of-coffee-bean-perfect-for-food-and-beverage-related-designs-or-promoting-cozy-moments-png.png"
+                                        <img src="https://png.pngtree.com/png-vector/20250429/ourmid/pngtree-iced-black-tea-in-clear-plastic-cup-with-ice-cubes-png-image_16041290.png"
                                                 alt="coffee" srcset="" name="item"
                                                 class="item-img">
                                         <span class="opname">Tea C</span>
                                         <span class="opname-chinese">茶C</span>
                                 </div>
                                 <div class="option-item">
-                                        <img src="https://static.vecteezy.com/system/resources/thumbnails/041/643/200/small/ai-generated-a-cup-of-coffee-and-a-piece-of-coffee-bean-perfect-for-food-and-beverage-related-designs-or-promoting-cozy-moments-png.png"
+                                        <img src="https://png.pngtree.com/png-vector/20241211/ourmid/pngtree-tea-cup-image-png-image_14722832.png"
                                                 alt="coffee" srcset="" name="item"
                                                 class="item-img">
                                         <span class="opname">Black & White</span>
                                         <span class="opname-chinese">黑, 白</span>
                                 </div>
                                 <div class="option-item">
-                                        <img src="https://static.vecteezy.com/system/resources/thumbnails/041/643/200/small/ai-generated-a-cup-of-coffee-and-a-piece-of-coffee-bean-perfect-for-food-and-beverage-related-designs-or-promoting-cozy-moments-png.png"
+                                        <img src="milo.png"
                                                 alt="coffee" srcset="" name="item"
                                                 class="item-img">
                                         <span class="opname">Milo</span>
                                         <span class="opname-chinese">米露</span>
                                 </div>
                                 <div class="option-item">
-                                        <img src="https://static.vecteezy.com/system/resources/thumbnails/041/643/200/small/ai-generated-a-cup-of-coffee-and-a-piece-of-coffee-bean-perfect-for-food-and-beverage-related-designs-or-promoting-cozy-moments-png.png"
+                                        <img src="iced-milo.png"
                                                 alt="coffee" srcset="" name="item"
                                                 class="item-img">
                                         <span class="opname">Iced Milo</span>
                                         <span class="opname-chinese">冰 Milo</span>
                                 </div>
                                 <div class="option-item">
-                                        <img src="https://static.vecteezy.com/system/resources/thumbnails/041/643/200/small/ai-generated-a-cup-of-coffee-and-a-piece-of-coffee-bean-perfect-for-food-and-beverage-related-designs-or-promoting-cozy-moments-png.png"
+                                        <img src="https://static.vecteezy.com/system/resources/thumbnails/047/420/976/small_2x/trendy-water-caps-and-bottles-elevate-your-hydration-game-free-png.png"
                                                 alt="coffee" srcset="" name="item"
                                                 class="item-img">
                                         <span class="opname">Takeaway (Water)</span>
                                         <span class="opname-chinese">外带 (水)</span>
                                 </div>
                                 <div class="option-item">
-                                        <img src="https://static.vecteezy.com/system/resources/thumbnails/041/643/200/small/ai-generated-a-cup-of-coffee-and-a-piece-of-coffee-bean-perfect-for-food-and-beverage-related-designs-or-promoting-cozy-moments-png.png"
+                                        <img src="https://static.vecteezy.com/system/resources/thumbnails/016/349/669/small/cup-of-tea-with-fresh-tea-leaves-on-saucer-transparant-background-png.png"
                                                 alt="coffee" srcset="" name="item"
                                                 class="item-img">
                                         <span class="opname">Tea</span>
                                         <span class="opname-chinese">茶</span>
                                 </div>
                                 <div class="option-item">
-                                        <img src="https://static.vecteezy.com/system/resources/thumbnails/041/643/200/small/ai-generated-a-cup-of-coffee-and-a-piece-of-coffee-bean-perfect-for-food-and-beverage-related-designs-or-promoting-cozy-moments-png.png"
+                                        <img src="https://static.vecteezy.com/system/resources/thumbnails/058/988/343/small/tea-set-with-teapot-and-cup-on-black-background-cut-out-transparent-png.png"
                                                 alt="coffee" srcset="" name="item"
                                                 class="item-img">
                                         <span class="opname">Chinese Tea</span>
@@ -593,42 +668,11 @@ function option_activate() {
                                         <div class="tdel-name">Main Menu</div>
                                 </div></div>
                         </div>
-                </div>`
-                }
+                </div>
+        </div>
+        </div>
+        </div>
+        <script src="script.js"></script>
+</body>
 
-                if (target == "mainmenu") {
-                    console.log("main menu")
-                    content.innerHTML = `
-                        <div class="card one grid-one">
-                            <div class="mainmenu">
-                                <span class="material-symbols-outlined symbol">
-                                        home
-                                </span>
-                                <div class="opname">Main Menu</div>
-                            </div>
-                        </div>
-                    `;
-                }
-        })
-    });
-}
-
-// function fill_table_with_data() {
-//     let table = document.querySelector("table")
-//     let data = [
-// ["James",            "James@gmail.com",      "Product designer",         "patricia",     "Product Team",     "Imaginer USA",     "Active"],
-// ["Michael",          "Michael@gmail.com",    "User interface designer",  "ennifer",      "Design Team",      "Imaginer AUS",     "Active"],
-// ["Robert",           "Robert@gmail.com",     "User experience designer", "Linda",        "Design Team",      "Imaginer India",   "Active"],
-// ["John",             "Jhon@gmail.com",       "Graphical designer",       "Elizabeth",    "Marketing Team",   "Imaginer SA",      "Active"],
-// ["David",            "David@gmail.com",      "CX Designer",              "Barbara",      "Product Team",     "Imaginer CH",      "Active"],
-// ["William",          "Richard@gmail.com",    "User experience designer", "Christopher",  "Design Team",      "Imaginer India",   "Active"],
-// ["Richard",          "David@gmail.com",      "CX Designer",              "Chorles",      "Product Team",     "Imaginer SA",      "Probation"],
-// ["Joseph",           "Joseph@gmail.com",     "User interface designer",  "Marv",         "Design Team",      "Imaginer CH",      "On Leave"],
-// ["Thomas",           "Thomas@gmail.com",     "User interface designer",  "Matthew",      "Marketing Taam",   "Imaginer AUS",     "On Leave"],
-// ["Shiva Chandru",    "Shiva@imaginers.com",   "Graphical designer",       "kennetl",      "Marketing Team",   "Imaginer India",  "On Leave"],
-// ["Andrew",           "Andrew@gmall.com",     "Graphical designer",       "kennetl",      "Marketing Team",   "Imaginer India",   "On Leave"],
-// ]
-// }
-// fill_table_with_data()
-
-option_activate()
+</html>
