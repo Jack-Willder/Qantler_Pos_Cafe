@@ -1,0 +1,37 @@
+                        <div class="popup">
+                                <span class="material-symbols-outlined success-symbol">
+                                        calendar_month
+                                </span>
+                                <div class="popup-message"></div>
+                        </div>
+
+
+                        .popup {
+    position: absolute;
+    background-color: green;
+    height: 10%;
+    aspect-ratio: 16/4;
+    bottom: 20px;
+    left: 50%;
+    transform: translate(-50%, 0);
+    z-index: 10;
+    border-radius: 100px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.popup .success-symbol {
+    background-color: var(--cwhite);
+    border-radius: 50%;
+    height: 80%;
+    aspect-ratio: 1/1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.popup .popup-message {
+    flex-grow: 90;
+}

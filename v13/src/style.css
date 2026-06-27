@@ -255,6 +255,7 @@ body>* {
     height: 100%;
     width: 100%;
     overflow-y: scroll;
+    position: relative;
 }
 
 /* .content {
@@ -584,6 +585,7 @@ span.delete-symbol {
 
 .grid-items {
     position: relative;
+    overflow-y: scroll;
 }
 
 .grid-items::after {
@@ -1336,6 +1338,10 @@ color: hsl(357, 95%, 43%);
     z-index: 2;
 }
 
+.inventory-card table tbody .alignnames {
+    text-wrap-mode: nowrap;
+}
+
 
 /* ############################################################ */
 /* ########################Additem Page########################*/
@@ -1425,10 +1431,11 @@ color: hsl(357, 95%, 43%);
     display: flex;
     /* width: 100%; */
     gap: 4%;
-    padding: 3% 7%;
+    padding: 2% 7%;
     /* align-items: center; */
     flex-grow: 100;
     flex-direction: column;
+    overflow-y: scroll;
 }
 
 .additem-baction-group {
@@ -1552,6 +1559,23 @@ color: hsl(357, 95%, 43%);
     padding: 2%;
     border: 1px solid var(--cborderdark);
     font-size: var(--fh4);
+}
+
+.additem-form input:invalid, 
+.additem-form select:invalid, 
+.additem-form textarea:invalid {
+    height: 100%;
+    border-radius: 6px;
+    padding: 2%;
+    border: 1px solid red;
+    font-size: var(--fh4);
+}
+
+.additem-itemcode input.additem-itemcode-input,
+.additem-itemcode input.additem-itemcode-input::selection
+{
+    user-select: none;
+    background-color: transparent;
 }
 
 .additem-itemcode input, .additem-status select {
@@ -1953,4 +1977,18 @@ color: hsl(357, 95%, 43%);
 .inventory-card table tbody {
     position: relative;
     z-index: 2;
+}
+
+
+
+
+/* ############################################################ */
+/* #######################Misc#######################*/
+/* ############################################################ */
+.hide-text {
+    color: transparent !important;
+}
+
+.hide-all {
+    opacity: 0 !important;
 }

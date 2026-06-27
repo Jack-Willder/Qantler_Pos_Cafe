@@ -686,7 +686,7 @@ const inventory = `<div class="inventory-content">
                                                         </span>
                                                         <span class="datename">Add Item</span>
                                                 </div>
-                                                <div class="t-bfilter option-select">
+                                                <div class="t-bfilter option-select" id="additem" data-target="request">
                                                         <span class="material-symbols-outlined calendar-symbol">
                                                                 download
                                                         </span>
@@ -976,7 +976,7 @@ const additem = `<div class="additem-content">
                                                 <div class="additem-card-left">
                                                         <div class="additem-itemcode">
                                                                 <div class="additem-title-text">Item Code</div>
-                                                                <input type="text" class="additem-itemcode-input" placeholder="ITM-000129" id="additem-form-itemcode">
+                                                                <input type="text" class="additem-itemcode-input" placeholder="ITM-000129" id="additem-form-itemcode" disabled>
                                                                 <div class="additem-desc-text">Auto-generated</div>
                                                         </div>
                                                         <div class="additem-itemimage">
@@ -1018,9 +1018,9 @@ const additem = `<div class="additem-content">
                                                                 </select>
                                                                 <div class="additem-desc-text hide-text">Auto-generated</div>
                                                         </div>
-                                                        <div class="additem-status">
+                                                        <div class="additem-status hide-all">
                                                                 <div class="additem-title-text">Status</div>
-                                                                <select name="category" id="additem-form-status">
+                                                                <select name="category" id="additem-form-status" required>
                                                                         <option value="instock" selected>In Stock</option>
                                                                         <option value="lowstock">Low Stock</option>
                                                                         <option value="outofstock">Out of Stock</option>
@@ -1589,7 +1589,6 @@ const init_inventory = [
                 "itemimage": "soyamilk.png",
                 "category": "Beverage",
                 "unit": "Cup",
-                "status": "In Stock",
                 "itemname": "Soya Milk",
                 "itemdesc": "Soya Milk",
                 "price": "3.00",
@@ -1601,7 +1600,6 @@ const init_inventory = [
                 "itemimage": "teac.png",
                 "category": "Beverage",
                 "unit": "Cup",
-                "status": "In Stock",
                 "itemname": "Tea C",
                 "itemdesc": "Tea C",
                 "price": "4.70",
@@ -1613,7 +1611,6 @@ const init_inventory = [
                 "itemimage": "steamedtimsum.png",
                 "category": "Steamed Timsum",
                 "unit": "Pcs",
-                "status": "In Stock",
                 "itemname": "Steamed Timsum",
                 "itemdesc": "Steamed Timsum",
                 "price": "7.30",
@@ -1625,7 +1622,6 @@ const init_inventory = [
                 "itemimage": "porridge.png",
                 "category": "Porridge",
                 "unit": "Bowl",
-                "status": "In Stock",
                 "itemname": "Porridge",
                 "itemdesc": "Porridge",
                 "price": "11.20",
@@ -1637,7 +1633,6 @@ const init_inventory = [
                 "itemimage": "icedtea.png",
                 "category": "Beverage",
                 "unit": "Glass",
-                "status": "In Stock",
                 "itemname": "Iced Coffee",
                 "itemdesc": "Iced Coffee",
                 "price": "11.70",
@@ -1649,7 +1644,6 @@ const init_inventory = [
                 "itemimage": "dumplings.png",
                 "category": "Noodle/Dumplings",
                 "unit": "Pcs",
-                "status": "In Stock",
                 "itemname": "Dumplings",
                 "itemdesc": "Dumplings",
                 "price": "16.10",
@@ -1661,7 +1655,6 @@ const init_inventory = [
                 "itemimage": "icedcoffee.png",
                 "category": "Beverage",
                 "unit": "Glass",
-                "status": "In Stock",
                 "itemname": "Iced Coffee",
                 "itemdesc": "Iced Coffee",
                 "price": "13.50",
@@ -1673,7 +1666,6 @@ const init_inventory = [
                 "itemimage": "coffeec.png",
                 "category": "Beverage",
                 "unit": "Cup",
-                "status": "In Stock",
                 "itemname": "Coffee C",
                 "itemdesc": "Coffee C",
                 "price": "16.50",
@@ -1685,7 +1677,6 @@ const init_inventory = [
                 "itemimage": "milo.png",
                 "category": "Beverage",
                 "unit": "Cup",
-                "status": "In Stock",
                 "itemname": "Milo",
                 "itemdesc": "Milo",
                 "price": "15.00",
@@ -1693,11 +1684,10 @@ const init_inventory = [
                 "supplier": "Local",
         },
         {
-                "itemcode": "ITM-000015",
+                "itemcode": "ITM-000010",
                 "itemimage": "chinesetea.png",
                 "category": "Beverage",
                 "unit": "Cup",
-                "status": "In Stock",
                 "itemname": "Chinese Tea",
                 "itemdesc": "Chinese Tea",
                 "price": "4.20",
@@ -1708,23 +1698,22 @@ const init_inventory = [
 
 function option_activate() {
         let options = document.querySelectorAll(".option");
-        let canceladditems = document.querySelectorAll("#additem");
         let content = document.querySelector(".content-area");
 
-
-                options.forEach(element => {
-                element.addEventListener("click", () => {
-                        options.forEach(elm => elm.classList.remove("option-select"));
-                        element.classList.add("option-select");
-                        let target = element.getAttribute("data-target");
-                        if(target == "billing") content.innerHTML = billing;
-                        if (target == "inventory") content.innerHTML = inventory;
-                        if (target == "additem") content.innerHTML = additem;
-                        if (target == "request") content.innerHTML = request;
-                        if (target == "report") content.innerHTML = report;
-                        if (target == "settings") content.innerHTML = settings;
-                        if (target == "users") content.innerHTML = users;
-                        canceladditems = document.querySelectorAll("#additem")
+        // page navigation
+        options.forEach(element => {
+        element.addEventListener("click", () => {
+                options.forEach(elm => elm.classList.remove("option-select"));
+                element.classList.add("option-select");
+                let target = element.getAttribute("data-target");
+                if(target == "billing") content.innerHTML = billing;
+                if (target == "inventory") content.innerHTML = inventory;
+                // if (target == "additem") content.innerHTML = additem;
+                if (target == "request") content.innerHTML = request;
+                if (target == "report") content.innerHTML = report;
+                if (target == "settings") content.innerHTML = settings;
+                if (target == "users") content.innerHTML = users;
+                canceladditems = document.querySelectorAll("#additem")
         })
     });
 
@@ -1734,159 +1723,112 @@ function option_activate() {
                 if (handleadditems) {
                         let target = handleadditems.getAttribute("data-target");
                         if (target == "inventory") content.innerHTML = inventory;
-                        if (target == "additem") content.innerHTML = additem;
+                        if (target == "additem") {
+                                content.innerHTML = additem;
+                                document.querySelector(".additem-itemcode-input").value = generate_itemcode();
+                        };
+                        if (target == "request") {
+                                content.innerHTML = request;
+                                options[1].classList.remove("option-select");
+                                options[2].classList.add("option-select");
+                        };
                 }
                 
                 // Button actions
                 const save_item = e.target.closest("#additem-form-addinvitem");
                 if (save_item) {
-                        const additem_form_elements = document.querySelectorAll("#additem-form-itemcode, #additem-form-itemimage, #additem-form-category, #additem-form-unit, #additem-form-status, #additem-form-itemname, #additem-form-itemdesc, #additem-form-price, #additem-form-instock, #additem-form-supplier");
+                        const additem_form_elements = document.querySelectorAll("#additem-form-itemcode, #additem-form-itemimage, #additem-form-category, #additem-form-unit, #additem-form-itemname, #additem-form-itemdesc, #additem-form-price, #additem-form-instock, #additem-form-supplier");
                         if (additem_form_elements) {
                                 additem_form_array = Array.from(additem_form_elements, (elem) => elem.value);
                                 if (additem_form_array.includes("")) alert("All Fields are Required!");
-                                let test_addinv = {
+                                let addinv = {
                                         "itemcode": additem_form_array[0],
                                         "itemimage": additem_form_array[1],
                                         "category": additem_form_array[2],
                                         "unit": additem_form_array[3],
-                                        "status": additem_form_array[4],
-                                        "itemname": additem_form_array[5],
-                                        "itemdesc": additem_form_array[6],
-                                        "price": additem_form_array[7],
-                                        "instock": additem_form_array[8],
-                                        "supplier": additem_form_array[9]
+                                        "itemname": additem_form_array[4],
+                                        "itemdesc": additem_form_array[5],
+                                        "price": additem_form_array[6],
+                                        "instock": additem_form_array[7],
+                                        "supplier": additem_form_array[8]
                                 }
-                                console.table(test_addinv);
-                                additem_form_elements.forEach(element => {
-                                        // console.log(element.value);
-                                });
+                                console.table(addinv);
+                                add_inventory(addinv);
+                                document.querySelector(".additem-itemcode-input").value = generate_itemcode();
+                                // additem_form_elements.forEach(element => {
+                                //         // console.log(element.value);
+                                // });
                         }
                 }
         })
 }
 option_activate()
 
-function manage_localstorage(test_addinv) {
+function manage_localstorage() {
         if (!localStorage.getItem("inventory")) {
                 localStorage.inventory = JSON.stringify(init_inventory);
                 const test_inv = JSON.parse(localStorage.getItem("inventory"));
                 console.table(test_inv);
                 alert("Table Initialised");
-        } else {
-
         }
 }
 manage_localstorage()
 
+function generate_itemcode() {
+        let newitemnumber = JSON.parse(localStorage.getItem("inventory")).length - 1
+        let newitemnumberstring = "" + newitemnumber;
+        let newitemcode = newitemnumberstring;
+        for (let index = 0; index < (6 - newitemnumberstring.length); index++) {
+                newitemcode = "0" + newitemcode;
+        }
+        newitemcode = "ITM-" + newitemcode;
+        return newitemcode;
+}
 
-// function option_activate() {
-//         let options = document.querySelectorAll(".option");
-//         let canceladditems = document.querySelectorAll("#additem");
-//         let content = document.querySelector(".content-area");
+function generate_inventory_rows() {
+        const inventory = JSON.parse(localStorage.getItem("inventory"));
+        let inventory_content = "";
+        inventory.forEach(element => {
+                let inventory_row = ""
+                inventory_row += `<tr>
+                        <td>
+                                <div class="alignnames"><img
+                                                src="https://static.vecteezy.com/system/resources/previews/060/818/430/non_2x/a-glass-of-creamy-nutritious-soy-milk-surrounded-by-soybeans-png.png"
+                                                alt="${element.itemname}" class="item-symbol">
+                                        <div class="bill-itemname">${element.itemname}</div>
+                                </div>
+                        </td>
+                        <td><div class="inv-category">${element.category}</div></td>
+                        <td><div class="inv-price">$${element.price}</div></td>
+                        <td><div class="inv-unit">${element.unit}</div></td>
+                        <td><div class="inv-purchased">0</div></td>
+                        <td><div class="inv-sold">0</div></td>
+                        ${generate_stock_status(element.instock)}
+                        <td><div class="inv-lastupdated">20 May 2024, 10:30AM</div></td>
+                </tr>`
+                
+                inventory_content += inventory_row;
+        }); 
+        document.querySelector(".inventory-content table tbody").innerHTML = inventory_content;
+}
+generate_inventory_rows()
 
+function generate_stock_status(instock) {
+        if (instock==0) {
+                return `<td><div class="inv-instock inv-instock-red">${instock}</div></td>
+                        <td><div class="inv-status inv-status-red">Out of Stock</div></td>`
+        }
+        if (instock<=10) {
+                return `<td><div class="inv-instock inv-instock-orange">${instock}</div></td>
+                        <td><div class="inv-status inv-status-orange">Low Stock</div></td>`
+        }
+        return `<td><div class="inv-instock">${instock}</div></td>
+                <td><div class="inv-status">In Stock</div></td>`
+}
 
-//                 options.forEach(element => {
-//                 element.addEventListener("click", () => {
-//                         options.forEach(elm => {
-//                                 elm.classList.remove("option-select");
-//                         })
-//                         element.classList.add("option-select");
-//                         let target = element.getAttribute("data-target");
-//                         if(target == "billing") content.innerHTML = billing;
-//                         if (target == "inventory") content.innerHTML = inventory;
-//                         if (target == "additem") content.innerHTML = additem;
-//                         if (target == "request") content.innerHTML = request;
-//                         if (target == "report") content.innerHTML = report;
-//                         if (target == "settings") content.innerHTML = settings;
-//                         if (target == "users") content.innerHTML = users;
-//                         canceladditems = document.querySelectorAll("#additem")
-//                         console.log("upperlevel", canceladditems);
-
-
-//         })
-//     });
-
-//         document.addEventListener("click", (e) => {
-//                 const handleadditems = e.target.closest("#additem");
-//                 if (!handleadditems) return;
-
-//                 let target = handleadditems.getAttribute("data-target");
-//                 if (target == "inventory") content.innerHTML = inventory;
-//                 if (target == "additem") content.innerHTML = additem;
-
-//                         // canceladditems.forEach(element => {
-//                         //         element.addEventListener("click", () => {
-//                         //                 let target = element.getAttribute("data-target");
-//                         //                 if (target == "inventory") content.innerHTML = inventory;
-//                         //                 if (target == "additem") content.innerHTML = additem;
-//                         //                 canceladditems = document.querySelectorAll("#additem")
-//                         //         })
-//                         // });
-//         })
-// }
-// option_activate()
-
-
-// function option_activate() {
-//         let options = document.querySelectorAll(".option")
-//         let canceladditems = document.querySelectorAll("#additem")
-//         let content = document.querySelector(".content-area")
-
-
-
-//         options.forEach(element => {
-//                 element.addEventListener("click", () => {
-//                         options.forEach(elm => {
-//                                 elm.classList.remove("option-select");
-//                         })
-//                         element.classList.add("option-select");
-//                         let target = element.getAttribute("data-target");
-//                         if(target == "billing") content.innerHTML = billing;
-//                         if (target == "inventory") content.innerHTML = inventory;
-//                         if (target == "additem") content.innerHTML = additem;
-//                         if (target == "request") content.innerHTML = request;
-//                         if (target == "report") content.innerHTML = report;
-//                         if (target == "settings") content.innerHTML = settings;
-//                         if (target == "users") content.innerHTML = users;
-//                         canceladditems = document.querySelectorAll("#additem")
-//                         console.log("upperlevel", canceladditems);
-
-//                         canceladditems.forEach(element => {
-//                                 element.addEventListener("click", () => {
-//                                         let target = element.getAttribute("data-target");
-//                                         if (target == "inventory") content.innerHTML = inventory;
-//                                         if (target == "additem") content.innerHTML = additem;
-//                                         canceladditems = document.querySelectorAll("#additem")
-//                                         console.log("lowerlevel", canceladditems);
-//                                         canceladditems.forEach(element => {
-//                                                 element.addEventListener("click", () => {
-//                                                         let target = element.getAttribute("data-target");
-//                                                         if (target == "inventory") content.innerHTML = inventory;
-//                                                         if (target == "additem") content.innerHTML = additem;
-//                                                         canceladditems = document.querySelectorAll("#additem")
-//                                                         console.log("groundlevel", canceladditems);
-//                                                 })
-//                                         });
-//                                 })
-//                         });
-//         })
-//     });
-// }
-
-// function fill_table_with_data() {
-//     let table = document.querySelector("table")
-//     let data = [
-// ["James",            "James@gmail.com",      "Product designer",         "patricia",     "Product Team",     "Imaginer USA",     "Active"],
-// ["Michael",          "Michael@gmail.com",    "User interface designer",  "ennifer",      "Design Team",      "Imaginer AUS",     "Active"],
-// ["Robert",           "Robert@gmail.com",     "User experience designer", "Linda",        "Design Team",      "Imaginer India",   "Active"],
-// ["John",             "Jhon@gmail.com",       "Graphical designer",       "Elizabeth",    "Marketing Team",   "Imaginer SA",      "Active"],
-// ["David",            "David@gmail.com",      "CX Designer",              "Barbara",      "Product Team",     "Imaginer CH",      "Active"],
-// ["William",          "Richard@gmail.com",    "User experience designer", "Christopher",  "Design Team",      "Imaginer India",   "Active"],
-// ["Richard",          "David@gmail.com",      "CX Designer",              "Chorles",      "Product Team",     "Imaginer SA",      "Probation"],
-// ["Joseph",           "Joseph@gmail.com",     "User interface designer",  "Marv",         "Design Team",      "Imaginer CH",      "On Leave"],
-// ["Thomas",           "Thomas@gmail.com",     "User interface designer",  "Matthew",      "Marketing Taam",   "Imaginer AUS",     "On Leave"],
-// ["Shiva Chandru",    "Shiva@imaginers.com",   "Graphical designer",       "kennetl",      "Marketing Team",   "Imaginer India",  "On Leave"],
-// ["Andrew",           "Andrew@gmall.com",     "Graphical designer",       "kennetl",      "Marketing Team",   "Imaginer India",   "On Leave"],
-// ]
-// }
-// fill_table_with_data()
+function add_inventory(addinv) {
+        const manage_inventory = JSON.parse(localStorage.getItem("inventory"));
+        manage_inventory.push(addinv);
+        localStorage.inventory = JSON.stringify(manage_inventory);
+        alert("Inventory Updated");
+}
