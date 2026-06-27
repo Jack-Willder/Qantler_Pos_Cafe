@@ -1,411 +1,166 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { IconPosCafe } from "../icons";
-import { FormAction } from "../App";
-import Popup from "./popup";
+import { FormAction } from "../Context/Context";
+import { InventoryItemForm } from "../features/inventory/InventoryItemForm";
+import {hasDuplicateItemName,hasEmptyRequiredField,normalizeInventoryItem} from "../features/inventory/inventoryItemStorage";
+import { CreateInventory, UpdateInventory, DeleteInventory, GetAllInventory, GetItemCode } from "../api/InventoryApi";
+import Popup from "../shared/popup";
+import type { invitemtype } from "../Types/Types";
 
-interface datetype {
-    date: {
-        date: string,
-        day: string,
-        time: string;
-    };
-}
-
-type invitemtype = {
-    "itemcode": string,
-    "itemimage": string,
-    "category": string,
-    "unit": string,
-    "itemname": string,
-    "itemdesc": string,
-    "price": number,
-    "instock": number,
-    "oldstock": number,
-    "supplier": string;
+const emptyInventoryItem: invitemtype = {
+  itemCode: "",
+  itemImage: "",
+  category: "",
+  unit: "",
+  itemName: "",
+  itemDescription: "",
+  price: 0,
+  inStock: 0,
+  supplier: "Local",
 };
-export default function AddItem({ date }: datetype) {
-    const navigate = useNavigate();
-    const [showPopup, setShowPopup] = useState(false);
-    const [popupType, setPopupType] = useState<"confirm" | "delete" | "error">("error");
-    const [popupDescription, setPopupDescription] = useState("");
-    function handleChangeContent(path: string) {
-        navigate(path);
+
+export default function AddItem() {
+  const navigate = useNavigate();
+  const { formAction } = useContext(FormAction);
+  const { state: selectedItem } = useLocation();
+  const [generatedItemCode, setGeneratedItemCode] = useState<string>("");
+  const [showPopup, setShowPopup] = useState(false);
+  const [popupType, setPopupType] = useState<"confirm" | "delete" | "error">("error");
+  const [popupDescription, setPopupDescription] = useState("");
+  const [pendingItem, setPendingItem] = useState<invitemtype | null>(null);
+  const [inventory, setInventory] = useState<Array<invitemtype>>([]);
+  const [invitem, setInvItem] = useState<invitemtype>(selectedItem ? (selectedItem as invitemtype) : { ...emptyInventoryItem, itemCode: generatedItemCode });
+
+  useEffect(() => {
+    (async () => {
+      const itemCode = await GetItemCode();
+      setGeneratedItemCode(itemCode);
+      const allInventory = await GetAllInventory();
+      setInventory(allInventory);
+    })();
+  }, []);
+
+  function handleFormChange(event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) {
+    const { name, value } = event.target;
+    setInvItem((prev) => ({
+      ...prev,
+      [name]: name === "price" || name === "instock" ? Number(value) : value,
+    }));
+  }
+
+  function showError(description: string) {
+    setPopupType("error");
+    setPopupDescription(description);
+    setShowPopup(true);
+  }
+
+  function handleSaveContent() {
+    const itemToSave = normalizeInventoryItem({
+      ...invitem,
+      itemCode: formAction === "edit" ? invitem.itemCode : generatedItemCode,
+    }, generatedItemCode);
+
+    if (hasEmptyRequiredField(itemToSave)) {
+      showError("All Fields are Required!");
+      return;
     }
-    const { formAction } = useContext(FormAction);
-    const { state: item } = useLocation();
-    const [invitem, setInvItem] = useState<invitemtype>(item ? item : {
-        itemcode: generate_itemcode(),
-        itemimage: "",
-        category: "",
-        unit: "",
-        itemname: "",
-        itemdesc: "",
-        price: 0,
-        instock: 0,
-        oldstock: 0,
-        supplier: ""
-    });
 
-    function generate_itemcode(): string {
-        const data = localStorage.getItem("inventory");
-        const inventory_content = data ? JSON.parse(data) : [];
-        let lastinv_number = inventory_content[inventory_content.length - 1].itemcode;
-
-        let olditemcode: string | number = Number.parseInt(lastinv_number.replace("ITM-", ""));
-
-        olditemcode = olditemcode + 1;
-        olditemcode = "" + olditemcode;
-
-        let newitemcode = olditemcode;
-        for (let index = 0; index < (6 - olditemcode.length); index++) {
-            newitemcode = "0" + newitemcode;
-        }
-        newitemcode = "ITM-" + newitemcode;
-        return newitemcode;
+    if (formAction === "edit" && !inventory.some((item) => item.itemCode === itemToSave.itemCode)) {
+      showError("Item not found!");
+      return;
     }
 
+    if (hasDuplicateItemName(inventory, itemToSave)) {
+      showError("ItemName Already Exists");
+      return;
+    }
 
+    setPendingItem(itemToSave);
+    setInvItem(itemToSave);
+    setPopupType("confirm");
+    setPopupDescription(formAction === "edit" ? "Inventory Updated" : "Inventory Added");
+    setShowPopup(true);
+  }
 
-    function handleFormChange(e: any) {
-        const { name, value } = e.target;
-        setInvItem((prev: invitemtype) => ({
-            ...prev,
-            [name]: value,
-        }));
-    };
-
-function handleEditContent() {
-    const data = localStorage.getItem("inventory");
-    const inventory: invitemtype[] = data ? JSON.parse(data) : [];
+  function confirmSave() {
+    if (!pendingItem) return;
 
     if (formAction === "edit") {
-        const itemIndex = inventory.findIndex( (item) => item.itemcode === invitem.itemcode );
-        if (itemIndex === -1) {
-            setPopupType("error");
-            setPopupDescription("Item not found!");
-            setShowPopup(true);
-            return;
-        }
-        const duplicateItem = inventory.find( (item) => item.itemcode !== invitem.itemcode && item.itemname.toLowerCase() === invitem.itemname.toLowerCase() );
-        if (duplicateItem) {
-            setPopupType("error");
-            setPopupDescription("ItemName Already Exists");
-            setShowPopup(true);
-            return;
-        }
-        const updatedItem: invitemtype = { ...invitem, itemimage: invitem.itemimage.replace( "C:\\fakepath\\", "/public/assets/item-images/" ), oldstock: invitem.instock, };
-        setInvItem(updatedItem);
-        setPopupType("confirm");
-        setPopupDescription("Inventory Updated");
-        setShowPopup(true);
+      UpdateInventory(pendingItem)
+      .then(() => {
+        setShowPopup(false);
+        navigate("/inventory");
+      }).catch(() => {
+        setPopupType("error");
+        setPopupDescription("Cannot Save item")
+      });
     } else {
-        invitem.itemcode = generate_itemcode();
-        invitem.supplier = "Local";
-        invitem.oldstock = invitem.instock;
-
-        const newitem: invitemtype = {
-            ...invitem,
-            itemimage: invitem.itemimage.replace("C:\\fakepath\\", "/public/assets/item-images/"),
-            itemcode: invitem.itemcode,
-            category: invitem.category,
-            unit: invitem.unit,
-            itemname: invitem.itemname,
-            itemdesc: invitem.itemdesc,
-            price: invitem.price,
-            instock: invitem.instock,
-            oldstock: invitem.instock,
-            supplier: invitem.supplier,
-        };
-
-        const additemFormArray = Object.values(newitem);
-
-        if (additemFormArray.includes("")) {
-            setPopupType("error");
-            setPopupDescription("All Fields are Required!");
-            setShowPopup(true);
-            return;
-        }
-
-        if ( inventory.find( (item) => item.itemname.toLowerCase() === newitem.itemname.toLowerCase() ) ) {
-            setPopupType("error");
-            setPopupDescription("ItemName Already Exists");
-            setShowPopup(true);
-            return;
-        }
-
-        setPopupType("confirm");
-        setShowPopup(true);
+      CreateInventory(pendingItem)
+        .then(() => {
+          setShowPopup(false);
+          navigate("/inventory");
+        }).catch(() => {
+          setPopupType("error");
+          setPopupDescription("Cannot Edit item");
+        });
     }
-}
-    function confirmEdit() {
-        const inventory = JSON.parse(localStorage.getItem("inventory") || "[]");
+    // const nextInventory =
+    //   formAction === "edit"
+    //     ? inventory.map((item) => (item.itemCode === pendingItem.itemCode ? pendingItem : item))
+    //     : [...inventory, pendingItem];
+  }
 
-        const itemIndex = inventory.findIndex( (item: invitemtype) => item.itemcode === invitem.itemcode );
-        inventory[itemIndex] = invitem;
+  function handleDeleteContent() {
+    setPopupType("delete");
+    setPopupDescription("");
+    setShowPopup(true);
+  }
 
-        localStorage.setItem(
-            "inventory",
-            JSON.stringify(inventory)
-        );
+  function confirmDelete() {
+    DeleteInventory(invitem.itemCode)
+    .then(() => {
+      setShowPopup(false);
+      navigate("/inventory");
+    }).catch(() => {
+      setPopupType("error")
+      setPopupDescription("Cannot Delete Item")
+    })
+  }
 
-        setShowPopup(false);
-    }
-    function handleSaveContent() {
-        const data = localStorage.getItem("inventory");
-        const inventory = data ? JSON.parse(data) : [];
-
-        if (formAction == "edit") {
-            const olddata = inventory.find((item: invitemtype) => item.itemcode == invitem.itemcode);
-            // olddata.itemimage = invitem.itemcode,
-            olddata.category = invitem.category;
-            olddata.unit = invitem.unit;
-            olddata.itemname = invitem.itemname;
-            olddata.itemdesc = invitem.itemdesc;
-            olddata.price = invitem.price;
-            olddata.instock = invitem.instock;
-            olddata.oldstock = invitem.instock;
-            olddata.supplier = invitem.supplier;
-        } else {
-            invitem.itemcode = generate_itemcode();
-            invitem.supplier = "Local";
-            invitem.oldstock = invitem.instock;
-            const newitem : invitemtype = {
-                ...invitem,
-                itemimage: invitem.itemimage.replace('C:\\fakepath\\', '/public/assets/'),
-                itemcode: invitem.itemcode,
-                category: invitem.category,
-                unit: invitem.unit,
-                itemname: invitem.itemname,
-                itemdesc: invitem.itemdesc,
-                price: invitem.price,
-                instock: invitem.instock,
-                oldstock: invitem.instock,
-                supplier: invitem.supplier
-            }
-            const additem_form_array = Object.values(newitem);
-
-            if (additem_form_array.includes("")) {
-                setPopupType("error");
-                setPopupDescription("All Fields are Required!");
-                setShowPopup(true);
-            } else {
-
-                if (inventory.find((element : invitemtype) => element.itemname == invitem.itemname)) {
-                    setPopupType("error");
-                    setPopupDescription("ItemName Already Exists");
-                    setShowPopup(true);
-                } else {
-                    setPopupType("confirm");
-                    setShowPopup(true);
-                }
-            };
-        }
-    }
-    function confirmSave() {
-        const data = localStorage.getItem("inventory");
-        const inventory = data ? JSON.parse(data) : [];
-
-        if (formAction == "edit") {
-            const olddata = inventory.find((item: invitemtype) => item.itemcode == invitem.itemcode);
-            // olddata.itemimage = invitem.itemcode,
-            olddata.category = invitem.category;
-            olddata.unit = invitem.unit;
-            olddata.itemname = invitem.itemname;
-            olddata.itemdesc = invitem.itemdesc;
-            olddata.price = invitem.price;
-            olddata.instock = invitem.instock;
-            olddata.oldstock = invitem.instock;
-            olddata.supplier = invitem.supplier;
-            const index = inventory.findIndex((item: invitemtype) => item.itemcode == invitem.itemcode);
-            inventory[index] = olddata;
-            localStorage.inventory = JSON.stringify(inventory);
-        } else {
-            invitem.itemcode = generate_itemcode();
-            invitem.supplier = "Local";
-            invitem.oldstock = invitem.instock;
-            const newitem : invitemtype = {
-                ...invitem,
-                itemimage: invitem.itemimage.replace('C:\\fakepath\\', '/public/assets/'),
-                itemcode: invitem.itemcode,
-                category: invitem.category,
-                unit: invitem.unit,
-                itemname: invitem.itemname,
-                itemdesc: invitem.itemdesc,
-                price: invitem.price,
-                instock: invitem.instock,
-                oldstock: invitem.instock,
-                supplier: invitem.supplier
-            }
-            inventory.push(newitem);
-            localStorage.inventory = JSON.stringify(inventory);
-        }
-        setShowPopup(false);
-    }
-    function handleDeleteContent() {
-        setPopupType("delete");
-        setShowPopup(true);
-    }
-    function confirmDelete() {
-        const inventory = JSON.parse(localStorage.inventory);
-        const itemIndex = inventory.findIndex((item: invitemtype) => item.itemcode === invitem.itemcode);
-        if (itemIndex !== -1) {
-            inventory.splice(itemIndex, 1);
-            localStorage.inventory = JSON.stringify(inventory);
-        }
-        setShowPopup(false);
+  function handlePopupSubmit() {
+    if (popupType === "confirm") {
+      confirmSave();
+      return;
     }
 
+    if (popupType === "delete") {
+      confirmDelete();
+      return;
+    }
 
-    return (
-        <div className="w-full p-4 relative">
-            <Popup show={showPopup} 
-            message="Inventory?"
-            type={popupType}
-            description={popupDescription}
-            navigateTo={popupType === "error" ? "" : "/inventory"}
-            onSubmit={() => {setShowPopup(false), popupType === "confirm" ? ((formAction === "edit") ? confirmEdit() : confirmSave()) : popupType === "delete" ? confirmDelete() : setShowPopup(false)}} 
-            onCancel={() => {setShowPopup(false)}} />
-            <div className="flex flex-col w-full h-full gap-3">
-                <div className="flex">
-                    <div className="flex items-center justify-center gap-3">
-                        <IconPosCafe color="black" icon="menu" size={24} />
-                        <div className="text-md font-bold">Inventory</div>
-                    </div>
-                    <div className="two p-0 grow flex justify-end">
-                        <div className="flex bg-white h-full w-max p-2 gap-2 rounded-sm items-center justify-center">
-                            <div className="flex items-center justify-center gap-1">
-                                <IconPosCafe color="purple" icon="calendar" size={18} />
-                                <div className="">
-                                    <div className="flex flex-col ">
-                                        <span className="text-ss-50">{date.date}</span>
-                                        <span className="text-ss-40 text-gray-500">{date.day}</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="w-px h-full bg-gray-100 "></div>
-                            <div className="flex items-center justify-center gap-1">
-                                <IconPosCafe color="purple" icon="schedule" size={18} />
-                                <span className="text-ss-60">{date.time}</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div className="bg-white text-ss-55 h-full p-3.5 px-10 flex flex-col justify-center items-center w-full gap-3">
-                    <div className="text-center">
-                        <div className="text-sm font-bold">{(formAction == "edit") ? "Edit Inventory" : "Add New Item"}</div>
-                        <div className="text-ss-65 font-medium">{(formAction == "edit") ? "Update the details of the inventory item" : "Add a new item to your inventory"}</div>
-                    </div>
-                    <div className="h-px bg-gray-200 w-full"></div>
-                    <div className="grow w-full flex flex-col items-center">
-                        <div className="flex grow w-full gap-3.5 pb-3">
-                            <div className="grow flex flex-col gap-2">
-                                <div className="w-full flex flex-col gap-1">
-                                    <div className="text-ss-55 font-bold after:content-['*'] after:text-ss-50 after:ml-1 after:text-transparent">Item Code</div>
-                                    <input type="text" name="itemcode" className="border border-gray-200 rounded-sm p-1.5 w-full bg-gray-50 select-none caret-transparent" placeholder="ITM-000129" id="additem-form-itemcode" value={formAction == "edit" ? invitem.itemcode : generate_itemcode()} disabled></input>
-                                    <div className="text-ss-45 text-gray-500">Auto-generated</div>
-                                </div>
-                                <div className="w-full flex flex-col grow gap-1">
-                                    <div className="text-ss-55 font-bold after:content-['*'] after:text-ss-50 after:ml-1 after:text-transparent">Item Image</div>
-                                    <div className="border border-gray-200 rounded-sm p-1.5 flex flex-col items-center justify-center relative grow border-dashed bg-gray-50">
-                                        <IconPosCafe color="purple" icon="cloud" size={24} />
-                                        <input type="file" name="itemimage" accept="image/png, image/jpg, image/jpeg" placeholder="Click to upload or drag and drop" className="absolute h-full w-full opacity-0 z-10" onChange={handleFormChange} required></input>
-                                        <div className="p-1.5 flex flex-col items-center justify-center">
-                                            <div className="text-ss-55 font-bold">Click to upload or drag and drop</div>
-                                            <div className="text-ss-45">PNG, JPG or WEBP (Max. 2MB)</div>
-                                        </div>
-                                    </div>
-                                    <div className="text-ss-45 text-transparent">Auto-Generated</div>
-                                </div>
-                                <div className="w-full flex flex-col gap-1">
-                                    <div className="text-ss-55 font-bold after:content-['*'] after:text-ss-50 after:ml-1 after:text-red-500">Category</div>
-                                    <select name="category" id="additem-form-category" className="border border-gray-200 rounded-sm p-1.5 w-full" value={invitem.category} onChange={handleFormChange} required>
-                                        <option value="" disabled hidden>Select Category</option>
-                                        <option value="Beverage">Beverage</option>
-                                        <option value="Steamed Bun">Steamed Bun</option>
-                                        <option value="Steamed Timsum">Steamed Timsum</option>
-                                        <option value="Deep Fry Timsum">Deep Fry Timsum</option>
-                                        <option value="Bake">Bake</option>
-                                        <option value="Noodle/Dumplings">Noodle/ Dumplings</option>
-                                        <option value="Porridge">Porridge</option>
-                                    </select>
-                                    <div className="text-ss-45 text-transparent">Auto-generated</div>
-                                </div>
-                                <div className="w-full flex flex-col gap-1">
-                                    <div className="text-ss-55 font-bold after:content-['*'] after:text-ss-50 after:ml-1 after:text-red-500">Unit</div>
-                                    <select name="unit" id="additem-form-unit" className="border border-gray-200 rounded-sm p-1.5 w-full" value={invitem.unit} onChange={handleFormChange} required>
-                                        <option value="" disabled hidden>Select Unit</option>
-                                        <option value="Bowl">Bowl</option>
-                                        <option value="Cup">Cup</option>
-                                        <option value="Pcs">Pcs</option>
-                                        <option value="Glass">Glass</option>
-                                    </select>
-                                    <div className="text-ss-45 text-transparent">Auto-generated</div>
-                                </div>
-                                <div className="w-full flex flex-col gap-1">
-                                    <div className="text-ss-55 font-bold after:content-['*'] after:text-ss-50 after:ml-1 after:text-transparent">Status</div>
-                                    <select name="" id="additem-form-status" className="border border-gray-200 rounded-sm p-1.5 w-full bg-gray-50" value={(invitem.instock > 0) ? "In Stock" : "Low Stock"} required disabled>
-                                        <option value="instock">In Stock</option>
-                                        <option value="lowstock">Low Stock</option>
-                                        <option value="outofstock">Out of Stock</option>
-                                    </select>
-                                    <div className="text-ss-45 text-gray-500">Status is auto-populated based on In Stock quantity.</div>
-                                </div>
-                            </div>
-                            <div className="grow flex flex-col gap-2">
-                                <div className="w-full flex flex-col gap-1">
-                                    <div className="text-ss-55 font-bold after:content-['*'] after:text-ss-50 after:ml-1 after:text-red-500">Item Name</div>
-                                    <input type="text" className="border border-gray-200 rounded-sm p-1.5 w-full" placeholder="Enter item name" id="additem-form-itemname" name="itemname" value={invitem.itemname} onChange={handleFormChange} required></input>
-                                    <div className="text-ss-45 text-transparent">Auto-generated</div>
-                                </div>
-                                <div className="w-full grow flex flex-col gap-1">
-                                    <div className="text-ss-55 font-bold after:content-['*'] after:text-ss-50 after:ml-1 after:text-transparent">Item Description</div>
-                                    <textarea name="itemdesc" className="border border-gray-200 rounded-sm p-1.5 w-full grow" placeholder="Enter item description" value={invitem.itemdesc} onChange={handleFormChange} id="additem-form-itemdesc"></textarea>
-                                    <div className="text-ss-45 text-transparent">Auto-generated</div>
-                                </div>
-                                <div className="w-full flex flex-col gap-1">
-                                    <div className="text-ss-55 font-bold after:content-['*'] after:text-ss-50 after:ml-1 after:text-red-500">Price</div>
-                                    <input type="number" className="border border-gray-200 rounded-sm p-1.5 w-full" placeholder="Enter price" name="price" value={invitem.price} onChange={handleFormChange} id="additem-form-price" min="1" max="1000" step="0.1" required></input>
-                                    <div className="text-ss-45 text-transparent">Auto-generated</div>
-                                </div>
-                                <div className="w-full flex flex-col gap-1">
-                                    <div className="text-ss-55 font-bold after:content-['*'] after:text-ss-50 after:ml-1 after:text-red-500">In Stock</div>
-                                    <input type="number" className="border border-gray-200 rounded-sm p-1.5 w-full" placeholder="Enter stock quantity" name="instock" value={invitem.instock} onChange={handleFormChange} id="additem-form-instock" min="0" max="1000" required></input>
-                                    <div className="text-ss-45 text-transparent">Auto-generated</div>
-                                </div>
-                                <div className=" w-full flex flex-col gap-1">
-                                    <div className="text-ss-55 font-bold after:content-['*'] after:text-ss-50 after:ml-1 after:text-transparent">Supplier</div>
-                                    <select name="additem-supplier-option" className="border border-gray-200 rounded-sm p-1.5 w-full" id="additem-form-supplier" value={"Local"} onChange={handleFormChange}>
-                                        <option value="" disabled hidden>Select supplier</option>
-                                        <option value="Local">Local</option>
-                                    </select>
-                                    <div className="text-ss-45 text-transparent">Status is auto-populated based on In Stock quantity.</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="flex w-full items-center justify-center gap-2">
-                            <div className="p-2 rounded-sm border border-gray-200 flex items-center justify-center aspect-6/1" id="additem" data-target="inventory" onClick={() => handleChangeContent("/inventory")}>
-                                <span className="text-center">Cancel</span>
-                            </div>
-                            <div className="p-2 bg-gpurple rounded-sm flex items-center justify-center aspect-6/1 gap-1" id="additem-form-addinvitem" onClick={() => formAction === "edit" ? handleEditContent() : handleSaveContent()} >
-                                <IconPosCafe color="white" icon="save" />
-                                <span className="text-ss-50 text-white">Save</span>
-                            </div>
-                            {
-                                (formAction == "edit") ? (
-                                    <div className="p-2 bg-red-100 text-red-500 rounded-sm flex items-center justify-center aspect-6/1" id="additem-form-deleteinvitem" onClick={handleDeleteContent}>
-                                        <IconPosCafe icon="delete" color="red" />
-                                        <span className="text-ss-50">Delete</span>
-                                    </div>
-                                ) : null
-                            }
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+    setShowPopup(false);
+  }
 
-
-
-    );
+  return (
+    <div className="w-full flex grow p-4 relative">
+      <Popup
+        show={showPopup}
+        message="Inventory?"
+        type={popupType}
+        description={popupDescription}
+        navigateTo={popupType === "error" ? "" : "/inventory"}
+        onSubmit={handlePopupSubmit}
+        onCancel={() => setShowPopup(false)}
+      />
+      <InventoryItemForm
+        formAction={formAction}
+        item={invitem}
+        generatedItemCode={generatedItemCode}
+        onChange={handleFormChange}
+        onCancel={() => navigate("/inventory")}
+        onSave={handleSaveContent}
+        onDelete={handleDeleteContent}
+      />
+    </div>
+  );
 }

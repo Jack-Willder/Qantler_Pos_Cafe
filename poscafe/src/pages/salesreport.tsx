@@ -1,160 +1,78 @@
-import { useState, useEffect } from "react";
-import { IconPosCafe } from "../icons";
+import { useEffect, useState } from "react";
+import { IconPosCafe } from "../Helper/icons";
+import { Pagination } from "../Helper/Pagination";
+import { getPaginatedItems } from "../Helper/PaginationUtils";
+import { GetAllBill } from "../api/BillingApi";
+import { useLocation } from "react-router-dom";
+import type { saleslisttype } from "../Types/Types";
+
+// type mappedItemsType = {
+//   itemcode: string;
+//   itemname: string;
+//   quantity: number;
+//   total: number;
+//   price: number;
+// };
 
 
-interface datetype {
-  date: {
-    date: string,
-    day: string,
-    time: string;
-  };
-}
 
+// type BillItemWithDate = mappedItemsType & {
+//   date: string;
+// };
 
-export default function Inventory({ date }: datetype) {
+// type BillListType = {
+//   date: string;
+//   items: mappedItemsType[];
+// };
+
+// function getSalesList(): saleslisttype[] {
+// const saleslist = localStorage.getItem("saleslist");
+// if (!saleslist) {
+//   localStorage.setItem("saleslist", JSON.stringify([{ itemname: "Espresso", quantity: 45, totalprice: 135 }]));
+// }
+
+// const data = localStorage.getItem("bills");
+// const bills: BillListType[] = data ? JSON.parse(data) : [];
+// const mergedBillList = bills.flatMap((bill) =>
+//   bill.items.map((item) => ({
+//     ...item,
+//     date: bill.date,
+//   }))
+// );
+
+// const updatedBillList = mergedBillList.map(({ total, ...items }: BillItemWithDate) => ({
+//   ...items,
+//   totalprice: total,
+// }));
+
+// const mappedItems: Record<string, saleslisttype> = {};
+
+// updatedBillList.forEach((item) => {
+//   if (mappedItems[item.itemcode]) {
+//     mappedItems[item.itemcode].quantity += item.quantity;
+//     mappedItems[item.itemcode].totalprice += item.totalprice;
+//   } else {
+//     mappedItems[item.itemcode] = {
+//       itemname: item.itemname,
+//       date: item.date,
+//       quantity: item.quantity,
+//       totalprice: item.totalprice,
+//     };
+//   }
+// });
+
+//   return Object.values(mappedItems);
+// }
+
+export default function Inventory() {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [filterDate, setFilterDate] = useState("Today");
-  function handleFilterDate(date: string) {
-    setFilterDate(date);
-  }
-  function handleCustomDate(e: any) {
-    const {name, value} = e.target;
-    setFilterData((prev) => ({
-      ...prev,
-      [name]: value
-    }))
-  }
 
+  const location = useLocation();
+  const [allSales, setAllSales] = useState<saleslisttype[]>([]);
+  const [saleslist, setSaleslist] = useState<saleslisttype[]>([]);
 
-  function initStorage() {
-    const inventory = localStorage.getItem("saleslist");
-    if (!inventory) { localStorage.setItem("saleslist", JSON.stringify([{ itemname: "Espresso", quantity: 45, totalprice: 135 },])); }
-  }
-  const [allSales, setAllSales] = useState<saleslisttype[]>([{ itemname: "Espresso", quantity: 45, totalprice: 135, date: "" },]);
-  const [saleslist, setSaleslist] = useState<saleslisttype[]>([{ itemname: "Espresso", quantity: 45, totalprice: 135, date: "" },]);
-  type mappedItemsType = {
-    itemcode: string;
-    itemname: string;
-    quantity: number;
-    total: number;
-    price: number;
-  };
-
-  type saleslisttype = {
-    date: string;
-    itemname: string;
-    quantity: number;
-    totalprice: number;
-  };
-
-  type BillItemWithDate = mappedItemsType & {
-    date: string;
-  };
-
-  useEffect(() => {
-    initStorage();
-    const data = localStorage.getItem("bills");
-    const bills = data ? JSON.parse(data) : [];
-
-    type BillListType = { items: mappedItemsType[]; };
-
-    bills.forEach((bill: { date: string; items: mappedItemsType[]; }) => {
-      bill.items.forEach((item) => {
-        (item as BillItemWithDate).date = bill.date;
-      });
-    });
-
-    const billList = Array.from(bills, (element: BillListType) => element.items);
-
-    const mergedBillList = billList.flat() as BillItemWithDate[];
-
-    const updatedBillList = mergedBillList.map(
-      ({ total, ...items }: BillItemWithDate) => ({
-        ...items,
-        totalprice: total,
-      })
-    );
-
-    let mapped_items: {
-      [key: string]: {
-        itemname: string;
-        date: string;
-        quantity: number;
-        totalprice: number;
-      };
-    } = {};
-
-    updatedBillList.forEach((item) => {
-      if (mapped_items[item.itemcode]) {
-        mapped_items[item.itemcode].quantity += item.quantity;
-        mapped_items[item.itemcode].totalprice += item.totalprice;
-      } else {
-        mapped_items[item.itemcode] = {
-          itemname: item.itemname,
-          date: item.date,
-          quantity: item.quantity,
-          totalprice: item.totalprice,
-        };
-      }
-    });
-
-    const SalesListArray: saleslisttype[] = Object.values(mapped_items);
-    setAllSales(SalesListArray);
-    setSaleslist(SalesListArray);
-  }, []);
-
-  function* generatepages(totalpages: number, currentpage: number) {
-    const maxpages = 5;
-    let start = Math.max(1, currentpage - Math.floor(maxpages / 2));
-    let end = Math.min(totalpages, start + maxpages - 1);
-    if (end - start < maxpages - 1) {
-      start = Math.max(1, end - maxpages + 1);
-    }
-    if (start > 1) {
-      yield 1;
-      if (start > 2) yield '...';
-    }
-    for (let i = start; i <= end; i++) {
-      yield i;
-    }
-    if (end < totalpages) {
-      if (end < totalpages - 1) yield '...';
-      yield totalpages;
-    }
-  }
-
-  const totalPages = Math.ceil(saleslist.length / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-  const paginatedSales = saleslist.slice(startIndex, endIndex);
-  const pageNumbers = Array.from(generatepages(totalPages, currentPage));
-
-  function handlePageChange(page: number | string) {
-    if (typeof page === 'number') {
-      setCurrentPage(page);
-    }
-  }
-
-  function handlePreviousPage() {
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
-    }
-  }
-
-  function handleNextPage() {
-    if (currentPage < totalPages) {
-      setCurrentPage(currentPage + 1);
-    }
-  }
-
-  function handleFirstPage() {
-    setCurrentPage(1);
-  }
-
-  function handleLastPage() {
-    setCurrentPage(totalPages);
-  }
 
   const [filterData, setFilterData] = useState({
     itemname: "",
@@ -163,40 +81,72 @@ export default function Inventory({ date }: datetype) {
     dateTo: "2024-05-20"
   });
 
-  const handleFilterChange = (e: any) => {
+  useEffect(() => {
+    GetAllBill()
+      .then((response) => {
+        setAllSales(response);
+        setSaleslist(response);
+      });
+  }, [location.pathname]);
+
+
+
+
+
+
+
+
+
+
+
+  function handleResponseData(saleslist: saleslisttype[]) {
+    const reports = saleslist;
+
+    // reports.forEach(report => {
+    //   report.bill.forEach(item => {
+    //     item.date = report.date;
+    //   });
+    // });
+    // let items_array = Array.from(reports, (element) => element.bill);
+    // items_array = items_array.flat();
+    let items_array = reports;
+    let mapped_items: Record<string, saleslisttype> = {};
+    items_array.forEach(item => {
+      if (mapped_items[item.itemCode]) {
+        mapped_items[item.itemCode].quantity += item.quantity;
+        mapped_items[item.itemCode].total += item.total;
+      } else {
+        mapped_items[item.itemCode] = { ...item };
+      }
+    });
+    items_array = Object.values(mapped_items);
+    items_array = items_array.sort((a, b) => b.quantity - a.quantity);
+    return items_array;
+  }
+
+  const newsaleslist = handleResponseData(saleslist);
+
+  const paginatedSales = getPaginatedItems(newsaleslist, currentPage, itemsPerPage);
+
+
+  function handleFilterDate(date: string) {
+    setFilterDate(date);
+  }
+  function handleCustomDate(e: React.ChangeEvent<HTMLInputElement>) {
+    const { name, value } = e.target;
+    setFilterData((prev) => ({
+      ...prev,
+      [name]: value
+    }));
+  }
+
+  const handleFilterChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFilterData((prev) => ({
       ...prev,
       [name]: value,
     }));
   };
-
-  // function filter() {
-  //   const filteredlist = allSales.filter((item: any) => (!filterData.itemname || item.itemname === filterData.itemname));
-  //   // const currentCalendar = new Date();
-  //   // const today = [currentCalendar.getFullYear(), currentCalendar.getMonth().toString().padStart(2, "0"), currentCalendar.getDate().toString().padStart(2, "0")]
-  //   // const yesterday = () => {
-  //   //   if (currentCalendar.getDate() == 1) {
-  //   //     return 1;
-  //   //   } else {
-  //   //     if (currentCalendar.getMonth() == 1) {
-          
-  //   //     }
-  //   //   }
-  //   // }
-  //   // const filterMap: {
-  //   //   [key:string]: string | number
-  //   // } = {
-  //   //   "Today": today.join("-"),
-  //   //   "Yesterday": "yesterday",
-  //   //   "This Week": new Date().getDate(),
-  //   //   "This Month": new Date().getDate(),
-  //   //   "custom": new Date().getDate(),
-  //   // }
-  //   // console.log(filterMap[filterDate as string])
-  //   // setSaleslist(filteredlist);
-  // }
-
 
   function filter() {
     const today = new Date();
@@ -213,49 +163,49 @@ export default function Inventory({ date }: datetype) {
     const startOfWeek = new Date(startOfToday);
     startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay()); // Sunday
 
-    const startOfMonth = new Date(
-      today.getFullYear(),
-      today.getMonth(),
-      1
-    );
+    // const startOfMonth = new Date(
+    //   today.getFullYear(),
+    //   today.getMonth(),
+    //   1
+    // );
 
-    const filteredList = allSales.filter((item: any) => {
+    const filteredList = allSales.filter((item) => {
       // Item name filter
-      const itemMatch =
-        !filterData.itemname ||
-        item.itemname === filterData.itemname;
+      // const itemMatch =
+      //   !filterData.itemname ||
+      //   item.itemName === filterData.itemname;
 
-      if (!itemMatch) return false;
+      // if (!itemMatch) return false;
 
-      const saleDate = new Date(item.date);
+      // const saleDate = new Date(item.date);
 
-      switch (filterDate) {
-        case "Today":
-          return saleDate >= startOfToday;
+      // switch (filterDate) {
+      //   case "Today":
+      //     return saleDate >= startOfToday;
 
-        case "Yesterday":
-          return (
-            saleDate >= startOfYesterday &&
-            saleDate < startOfToday
-          );
+      //   case "Yesterday":
+      //     return (
+      //       saleDate >= startOfYesterday &&
+      //       saleDate < startOfToday
+      //     );
 
-        case "This Week":
-          return saleDate >= startOfWeek;
+      //   case "This Week":
+      //     return saleDate >= startOfWeek;
 
-        case "This Month":
-          return saleDate >= startOfMonth;
+      //   case "This Month":
+      //     return saleDate >= startOfMonth;
 
-        case "Custom":
-          return (
-            filterData.dateFrom &&
-            filterData.dateTo &&
-            saleDate >= new Date(filterData.dateFrom) &&
-            saleDate <= new Date(filterData.dateTo)
-          );
+      //   case "Custom":
+      //     return (
+      //       filterData.dateFrom &&
+      //       filterData.dateTo &&
+      //       saleDate >= new Date(filterData.dateFrom) &&
+      //       saleDate <= new Date(filterData.dateTo)
+      //     );
 
-        default:
-          return true;
-      }
+      //   default:
+      //     return true;
+      // }
     });
 
     setSaleslist(filteredList);
@@ -273,38 +223,14 @@ export default function Inventory({ date }: datetype) {
 
   return (
     <div className="flex grow relative">
-      <div className="flex flex-col gap-2 p-4 h-full w-full font-bold">
-        <div className="flex">
-          <div className="flex items-center justify-center gap-3">
-            <IconPosCafe color="black" icon="menu" size={24} />
-            <div className="text-md text-md">Sales Report</div>
-          </div>
-          <div className="two p-0 grow flex justify-end">
-            <div className="flex bg-white h-full w-max p-2 gap-2 rounded-sm items-center justify-center">
-              <div className="flex items-center justify-center gap-1">
-                <IconPosCafe color="purple" icon="calendar" size={18} />
-                <div className="">
-                  <div className="flex flex-col ">
-                    <span className="text-ss-50">{date.date}</span>
-                    <span className="text-ss-40 text-gray-500">{date.day}</span>
-                  </div>
-                </div>
-              </div>
-              <div className="w-px h-full bg-gray-100 "></div>
-              <div className="flex items-center justify-center gap-1">
-                <IconPosCafe color="purple" icon="schedule" size={18} />
-                <span className="text-ss-60">{date.time}</span>
-              </div>
-            </div>
-          </div>
-        </div>
+      <div className="flex flex-col gap-2 p-4 pt-0 pb-0 w-full font-bold">
         <div className="bg-white text-ss-55 rounded-sm shadow-sm shadow-gray-200 scrollbar-none flex items-start p-3.5 justify-start gap-6">
           <div className="border-0 w-full max-w-75">
             <div className="text-ss-50 text-gray-500">Item</div>
             <div className="flex items-center text-nowrap border rounded-sm justify-evenly p-2 grow w-full h-full border-gray-200">
               <select name="itemname" id="opg-select-category" className="w-full" onChange={handleFilterChange} value={filterData.itemname} required>
                 {
-                  Array.from(new Set(Array.from(allSales, item => item.itemname))).map((item, index) => (<option key={index} value={item}>{item}</option>))
+                  Array.from(new Set(Array.from(allSales, item => item.itemName))).map((item, index) => (<option key={index} value={item}>{item}</option>))
                 }
               </select>
             </div>
@@ -346,7 +272,7 @@ export default function Inventory({ date }: datetype) {
             </div>
           </div>
         </div>
-        <div className="bg-white rounded-sm shadow-sm shadow-gray-200 scrollbar-none flex items-center p-3 overflow-hidden h-full flex-col">
+        <div className="bg-white rounded-sm shadow-sm shadow-gray-200 scrollbar-none flex items-center p-3 overflow-hidden flex-col">
           <div className="flex items-center justify-between w-full">
             <div className="align-ttitle">
               <div className="text-ss-70 font-bold">Sales Reports</div>
@@ -372,50 +298,21 @@ export default function Inventory({ date }: datetype) {
             <tbody>
               {paginatedSales.map((item, index) => (
                 <tr className="border border-gray-100" key={index}>
-                  <td><div className="p-2 text-ss-55 text-left">{item.itemname}</div></td>
+                  <td><div className="p-2 text-ss-55 text-left">{item.itemName}</div></td>
                   <td><div className="p-2 text-left text-gray-500 text-ss-55">{item.quantity}</div></td>
-                  <td><div className="p-2 text-left text-ss-55">{`$${item.totalprice.toFixed(2)}`}</div></td>
+                  <td><div className="p-2 text-left text-ss-55">{`$${item.total.toFixed(2)}`}</div></td>
                 </tr>
               ))}
             </tbody>
           </table>
-          <div className="w-full flex justify-between">
-            <div>
-              <div className="flex items-center">
-                <div className="text-ss-55 max-[820px]:text-ss-50">show</div>
-                <select id="entriescount" className="border border-gray-200 text-ss-65 p-1 rounded-sm mx-2" value={itemsPerPage} onChange={(e) => { setItemsPerPage(parseInt(e.target.value)); setCurrentPage(1); }}>
-                  <option value="10">10</option>
-                  <option value="20">20</option>
-                  <option value="30">30</option>
-                </select>
-                <div className="text-ss-55 max-[820px]:text-ss-50">entries</div>
-              </div>
-            </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <div className="p-2 text-ss-65 border border-gray-200 rounded-sm aspect-square h-3/5 text-center flex items-center justify-center cursor-pointer" onClick={handleFirstPage}><IconPosCafe icon="dleft" color="black" size={12} /></div>
-                <div className="p-2 text-ss-65 border border-gray-200 rounded-sm aspect-square h-3/5 text-center flex items-center justify-center cursor-pointer" onClick={handlePreviousPage}><IconPosCafe icon="left" color="black" size={12} /></div>
-                {pageNumbers.map((page, index) => (
-                  <div
-                    key={index}
-                    className={`p-2 text-ss-65 border border-gray-200 rounded-sm aspect-square h-3/5 text-center flex items-center justify-center cursor-pointer ${page === currentPage ? 'bg-gpurple text-white' : ''
-                      } ${page === '...' ? 'cursor-default' : ''
-                      }`}
-                    onClick={() => handlePageChange(page)}
-                  >
-                    {page}
-                  </div>
-                ))}
-                <div className="p-2 text-ss-65 border border-gray-200 rounded-sm aspect-square h-3/5 text-center flex items-center justify-center cursor-pointer" onClick={handleNextPage}><IconPosCafe icon="right" color="black" size={12} /></div>
-                <div className="p-2 text-ss-65 border border-gray-200 rounded-sm aspect-square h-3/5 text-center flex items-center justify-center cursor-pointer" onClick={handleLastPage}><IconPosCafe icon="dright" color="black" size={12} /></div>
-              </div>
-            </div>
-            <div className="align-tshow flex items-center">
-              <div className="flex items-center">
-                <div className="text-ss-55 max-[820px]:text-ss-50">showing {startIndex + 1} to {Math.min(endIndex, saleslist.length)} of {saleslist.length} reports</div>
-              </div>
-            </div>
-          </div>
+          <Pagination
+            currentPage={currentPage}
+            itemsPerPage={itemsPerPage}
+            totalItems={saleslist.length}
+            itemLabel="reports"
+            setCurrentPage={setCurrentPage}
+            setItemsPerPage={setItemsPerPage}
+          />
         </div>
 
       </div>

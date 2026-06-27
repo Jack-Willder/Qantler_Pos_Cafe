@@ -1,13 +1,4 @@
-import type React from "react";
-
-interface cafepropstype {
-    icon?: string;
-    color?: string;
-    size?: number;
-}
-type pathstype = {
-    [key: string]: React.JSX.Element;
-};
+import type { pathstype, cafepropstype, iconlookuptype, colorlookuptype } from "../Types/Types";
 
 
 const paths: pathstype = {
@@ -73,10 +64,7 @@ const paths: pathstype = {
 
 
 export function IconPosCafe({ color = "white", icon = "cafe", size = 16 }: cafepropstype) {
-    type lookuptype = {
-        [key: string]: string;
-    };
-    const colorLookup: lookuptype = {
+    const colorLookup: iconlookuptype = {
         white: "white",
         black: "black",
         green: "#118e27",
@@ -84,7 +72,6 @@ export function IconPosCafe({ color = "white", icon = "cafe", size = 16 }: cafep
         purple: "#5d55bf",
         red: "#fb424c"
     };
-
     return (
         <svg xmlns="http://www.w3.org/2000/svg" height={`${size}px`} viewBox="0 -960 960 960" width={`${size}px`} fill={colorLookup[color]} vectorEffect="non-scaling-stroke" className="shrink-0">
             {paths[icon]}
@@ -93,10 +80,8 @@ export function IconPosCafe({ color = "white", icon = "cafe", size = 16 }: cafep
 
 
 export function BadgePosCafe({ color = "grey", icon = "cafe", size = 16 }: cafepropstype) {
-    type lookuptype = {
-        [key: string]: { [key: string]: string; };
-    };
-    const colorLookup: lookuptype = {
+
+    const colorLookup: colorlookuptype = {
         purple: { light: "bg-ipurple-light", dark: "#2b21f3" },
         green: { light: "bg-igreen-light", dark: "#3da081" },
         orange: { light: "bg-iorange-light", dark: "#fc9912" },
@@ -112,8 +97,7 @@ export function BadgePosCafe({ color = "grey", icon = "cafe", size = 16 }: cafep
         bg: colorLookup[color].light,
         size: size
     };
-
-
+    
     return (
         <div className={badgeprops.bg + " p-1.5 rounded-sm"}>
             <svg xmlns="http://www.w3.org/2000/svg" height={`${badgeprops.size}px`} viewBox="0 -960 960 960" width={`${badgeprops.size}px`} fill={badgeprops.color}>

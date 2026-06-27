@@ -1,37 +1,32 @@
-import { IconPosCafe } from "../icons";
-import { useEffect, useState } from "react";
+import { IconPosCafe } from "../Helper/icons";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import type { PopupProps } from "../Types/Types";
 
-type PopupProps = {
-    show: boolean;
-    navigateTo: string;
-    message?: string;
-    description?: string;
-    type: "confirm" | "error" | "delete";
-    onSubmit: () => void;
-    onCancel: () => void;
-};
 
 export default function Popup({ show, navigateTo, message, description, type, onSubmit, onCancel }: PopupProps) {
     const [currentMode, setCurrentMode] = useState<"confirm" | "success">("confirm");
     const navigate = useNavigate();
-     useEffect(() => {
-        if (show) {
-            setCurrentMode("confirm");
-        }
-    }, []);
 
     const handleSubmit = () => {
         switch (type) {
             case "confirm":
-                currentMode === "confirm" ? setCurrentMode("success") : (onSubmit(), navigate(navigateTo));
+                if (currentMode === "confirm") {
+                    setCurrentMode("success");
+                } else {
+                    onSubmit();
+                    setCurrentMode("confirm");
+                    navigate(navigateTo);
+                }
                 break;
             case "delete":
                 onSubmit();
+                setCurrentMode("confirm");
                 navigate(navigateTo);
                 break;
             case "error":
                 onSubmit();
+                setCurrentMode("confirm");
                 navigate(navigateTo);
                 break;
         
@@ -41,6 +36,7 @@ export default function Popup({ show, navigateTo, message, description, type, on
     };
     
     const handleCancel = () => {
+        setCurrentMode("confirm");
         onCancel();
     };
 

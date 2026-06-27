@@ -3,7 +3,7 @@
 
 * {@apply font-roboto select-none;}
 html, body, #root {@apply h-full;}
-#root {@apply flex w-full bg-gray-100;}
+#root {@apply flex w-full bg-gray-50;}
 .clex {@apply flex flex-col items-center justify-center}
 .rlex {@apply flex flex-row items-center justify-center}
 
@@ -14,14 +14,9 @@ html, body, #root {@apply h-full;}
         "three  four    five    five"
         "six    four    five    five"
         "seven  eight   eight   nine";
-    grid-template-rows: 5.5% 52.9% 26%;
-    grid-template-columns: 42.6% 13% 4.8%;
-    font-weight: 600;
-}
-
-.content {
     grid-template-rows: 4.3% 52% 25%;
     grid-template-columns: 42.6% 12% 4.8%;
+    font-weight: 600;
 }
 
 .one {grid-area: one;}
@@ -73,8 +68,8 @@ html, body, #root {@apply h-full;}
     --background-image-ggreen: linear-gradient(90deg, hsla(175, 59%, 42%, 1) 0%, hsla(175, 77%, 35%, 1) 100%);
     --background-image-gorange: linear-gradient(90deg, hsla(33, 100%, 66%, 1) 0%, hsla(30, 100%, 58%, 1) 100%);
     --background-image-gorange: linear-gradient(90deg, hsla(33, 100%, 66%, 1) 0%, hsla(30, 100%, 58%, 1) 100%);
-    --background-image-search: url(/public/assets/search.png);
-    --background-image-barcode: url(/public/assets/barcode.png);
+    --background-image-search: url(/assets/search.png);
+    --background-image-barcode: url(/assets/barcode.png);
 
     /* font */
     --font-roboto: "Roboto", sans-serif;

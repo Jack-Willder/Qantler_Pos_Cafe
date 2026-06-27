@@ -1,76 +1,96 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { IconPosCafe } from "../icons";
-import { FormAction } from "../App";
-import Popup from "./popup";
+import { IconPosCafe } from "../Helper/icons";
+import { FormAction } from "../Context/Context";
+import Popup from "../shared/popup";
+import type { datetype, requestitemlisttype, requestitemtype } from "../Types/Types";
+import { CreateRequest, DeleteRequest, GetRequest, GetRequestId, UpdateRequest } from "../api/ItemRequestApi";
 
-interface datetype {
-    date: {
-        date: string,
-        day: string,
-        time: string;
-    };
-}
 
-type requestitemtype = {
-    "requestid": string,
-    "subject": string,
-    "requestdate": string,
-    "requestedby": string,
-    "expectingdelivery": string,
-    "status": string,
-    "items": {
-        "itemname": string,
-        "quantity": number,
-        "expecteddate": string
-    }[];
-};
 export default function AddItem({ date }: datetype) {
     const { formAction } = useContext(FormAction);
     const navigate = useNavigate();
     const { state: item } = useLocation();
+    const location = useLocation();
     const [showPopup, setShowPopup] = useState(false);
     const [popupType, setPopupType] = useState<"confirm" | "delete" | "error">("error");
     const [popupDescription, setPopupDescription] = useState("");
     const [requestitem, setRequestItem] = useState<requestitemtype>(item ? item : {
-                  requestid: generate_requestid(),
-                  subject: "",
-                  requestdate: "",
-                  requestedby: "Admin",
-                  expectingdelivery: "",
-                  status: "Pending",
-                  items: [],
-              }
-    );
-    const [inventorylist, setInventoryList] = useState([
-        { itemname: "Coffee Beans Bag", quantity: 5, expecteddate: "2024-05-23" },
-        { itemname: "Milk 1L", quantity: 10, expecteddate: "2024-05-23" },
-        { itemname: "Sugar 1kg", quantity: 3, expecteddate: "2024-05-23" },
+        requestId: "notsetyet",
+        subject: "",
+        requestedDate: "",
+        requestedBy: "Admin",
+        expectingDate: "",
+        status: "Pending",
+        requestItems: [],
+    });
+    const [inventorylist, setInventoryList] = useState<requestitemlisttype>([
+        { itemName: "Coffee Beans Bag", quantity: 5, expectedDate: "2024-05-23" },
+        { itemName: "Milk 1L", quantity: 10, expectedDate: "2024-05-23" },
+        { itemName: "Sugar 1kg", quantity: 3, expectedDate: "2024-05-23" },
     ]);
+
+    useEffect(() => {
+        GetRequestId()
+        .then((response) => {
+            setRequestItem(
+                item ? item : {
+                    requestId: response,
+                    subject: "",
+                    requestedDate: "",
+                    requestedBy: "Admin",
+                    expectingDate: "",
+                    status: "Pending",
+                    requestItems: [],
+                }
+            )
+        })
+        .catch(() => {
+            setPopupType("error");
+            setPopupDescription("Cannot get RequestId");
+        })
+        if (item) {
+            GetRequest(requestitem.requestId)
+            .then((response) => {
+                setRequestItem({
+                    ...requestitem,
+                    requestItems: [
+                        ...response.requestItems
+                    ]
+                });
+                setInventoryList(response.requestItems);
+            })
+            .catch(() => {
+                setPopupType("error");
+                setPopupDescription("Cannot Get Request");
+                setShowPopup(true);
+            })
+        }
+    }, [location.pathname]);
 
     function handleChangeContent(path: string) {
         navigate(path);
     }
 
-    function generate_requestid(): string {
-        const data = localStorage.getItem("requestlist");
-        const request_content = data ? JSON.parse(data) : [];
-        let lastreq_number = request_content.length > 0 ? request_content[request_content.length - 1].requestid : "REQ-00000";
+    // function generate_requestid(): string {
+    //     const data = localStorage.getItem("requestlist");
+    //     const request_content = data ? JSON.parse(data) : [];
+    //     const lastreq_number = request_content.length > 0 ? request_content[request_content.length - 1].requestid : "REQ-00000";
 
-        let oldrequestcode: string | number = Number.parseInt(lastreq_number.replace("REQ-", ""));
+    //     let oldrequestcode: string | number = Number.parseInt(lastreq_number.replace("REQ-", ""));
 
-        oldrequestcode = oldrequestcode + 1;
-        oldrequestcode = "" + oldrequestcode;
+    //     oldrequestcode = oldrequestcode + 1;
+    //     oldrequestcode = "" + oldrequestcode;
 
-        let newrequestcode = oldrequestcode;
-        for (let index = 0; index < (6 - oldrequestcode.length); index++) {
-            newrequestcode = "0" + newrequestcode;
-        }
-        newrequestcode = "REQ-" + newrequestcode;
-        return newrequestcode;
-    }
+    //     let newrequestcode = oldrequestcode;
+    //     for (let index = 0; index < (6 - oldrequestcode.length); index++) {
+    //         newrequestcode = "0" + newrequestcode;
+    //     }
+    //     newrequestcode = "REQ-" + newrequestcode;
+    //     return newrequestcode;
+    // }
 
-    function handleFormChange(e: any) {
+    function handleFormChange(e: React.ChangeEvent<HTMLInputElement>) {
         const { name, value } = e.target;
         setRequestItem((prev: requestitemtype) => ({
             ...prev,
@@ -79,25 +99,25 @@ export default function AddItem({ date }: datetype) {
     }
 
     function handleEditContent() {
-        const data = localStorage.getItem("requestlist");
-        const requestlist: requestitemtype[] = data ? JSON.parse(data) : [];
+        // const data = localStorage.getItem("requestlist");
+        // const requestlist: requestitemtype[] = data ? JSON.parse(data) : [];
 
         if (formAction === "edit") {
-            const itemIndex = requestlist.findIndex((item) => item.requestid === requestitem.requestid);
-            if (itemIndex === -1) {
-                setPopupType("error");
-                setPopupDescription("Request not found!");
-                setShowPopup(true);
-                return;
-            }
-            const duplicateRequest = requestlist.find((item) => item.requestid !== requestitem.requestid && item.subject.toLowerCase() === requestitem.subject.toLowerCase());
-            if (duplicateRequest) {
-                setPopupType("error");
-                setPopupDescription("Subject Already Exists");
-                setShowPopup(true);
-                return;
-            }
-            const updatedRequest: requestitemtype = { ...requestitem, items: inventorylist };
+            // const itemIndex = requestlist.findIndex((item) => item.requestId === requestitem.requestId);
+            // if (itemIndex === -1) {
+            //     setPopupType("error");
+            //     setPopupDescription("Request not found!");
+            //     setShowPopup(true);
+            //     return;
+            // }
+            // const duplicateRequest = requestlist.find((item) => item.requestId !== requestitem.requestId && item.subject.toLowerCase() === requestitem.subject.toLowerCase());
+            // if (duplicateRequest) {
+                // setPopupType("error");
+                // setPopupDescription("Subject Already Exists");
+                // setShowPopup(true);
+                // return;
+            // }
+            const updatedRequest: requestitemtype = { ...requestitem, requestItems: inventorylist };
             setRequestItem(updatedRequest);
             setPopupType("confirm");
             setPopupDescription("Request Updated");
@@ -106,47 +126,52 @@ export default function AddItem({ date }: datetype) {
     }
 
     function confirmEdit() {
-        const requestlist: requestitemtype[] = JSON.parse(
-            localStorage.getItem("requestlist") || "[]"
-        );
+        // const requestlist: requestitemtype[] = JSON.parse(
+            // localStorage.getItem("requestlist") || "[]"
+        // );
 
-        const itemIndex = requestlist.findIndex(
-            (item) => item.requestid === requestitem.requestid
-        );
+        // const itemIndex = requestlist.findIndex(
+            // (item) => item.requestId === requestitem.requestId
+        // );
+// 
+        // if (itemIndex !== -1) {
+            // requestlist[itemIndex] = {
+                // ...requestitem,
+                // requestItems: inventorylist
+            // };
+// 
+            // localStorage.setItem(
+                // "requestlist",
+                // JSON.stringify(requestlist)
+            // );
+        // }
 
-        if (itemIndex !== -1) {
-            requestlist[itemIndex] = {
-                ...requestitem,
-                items: inventorylist
-            };
-
-            localStorage.setItem(
-                "requestlist",
-                JSON.stringify(requestlist)
-            );
-        }
-
-        setShowPopup(false);
+        UpdateRequest(requestitem)
+            .then(() => {
+                setShowPopup(false);
+            })
+            .catch(() => {
+                setPopupType("error");
+                setPopupDescription("Cannot Create Request");
+                setShowPopup(true);
+            });
     }
 
     function handleSaveContent() {
-        const data = localStorage.getItem("requestlist");
-        const requestlist = data ? JSON.parse(data) : [];
+        // const data = localStorage.getItem("requestlist");
+        // const requestlist = data ? JSON.parse(data) : [];
 
-        requestitem.requestdate = date.date;
-        requestitem.requestedby = "Admin";
-        requestitem.status = "Pending";
-        requestitem.items = inventorylist;
+
 
         const newrequest: requestitemtype = {
             ...requestitem,
-            requestid: requestitem.requestid,
+            requestedDate: date.date,
+            requestedBy: "Admin",
+            status: "Pending",
+            requestItems: inventorylist,
+            requestId: requestitem.requestId,
             subject: requestitem.subject,
-            requestdate: requestitem.requestdate,
-            requestedby: requestitem.requestedby,
-            expectingdelivery: requestitem.expectingdelivery,
-            status: requestitem.status,
-            items: requestitem.items,
+            expectingDate: requestitem.expectingDate,
         };
 
         const requestFormArray = Object.values(newrequest);
@@ -158,39 +183,42 @@ export default function AddItem({ date }: datetype) {
             return;
         }
 
-        if (requestlist.find((element: requestitemtype) => element.subject === requestitem.subject)) {
-            setPopupType("error");
-            setPopupDescription("Subject Already Exists");
-            setShowPopup(true);
-        } else {
+        // if (requestlist.find((element: requestitemtype) => element.subject === requestitem.subject)) {
+            // setPopupType("error");
+            // setPopupDescription("Subject Already Exists");
+            // setShowPopup(true);
+        // } else {
             setPopupType("confirm");
             setShowPopup(true);
-        }
+        // }
     }
 
     function confirmSave() {
-        const data = localStorage.getItem("requestlist");
-        const requestlist = data ? JSON.parse(data) : [];
-
-        requestitem.requestdate = date.date;
-        requestitem.requestedby = "Admin";
-        requestitem.status = "Pending";
-        requestitem.items = inventorylist;
+        // const data = localStorage.getItem("requestlist");
+        // const requestlist = data ? JSON.parse(data) : [];
 
         const newrequest: requestitemtype = {
             ...requestitem,
-            requestid: requestitem.requestid,
+            requestedDate: date.date,
+            requestedBy: "Admin",
+            status: "Pending",
+            requestItems: inventorylist,
+            requestId: requestitem.requestId,
             subject: requestitem.subject,
-            requestdate: requestitem.requestdate,
-            requestedby: requestitem.requestedby,
-            expectingdelivery: requestitem.expectingdelivery,
-            status: requestitem.status,
-            items: requestitem.items,
+            expectingDate: requestitem.expectingDate,
         };
+        CreateRequest(newrequest)
+        .then(() => {
+            setShowPopup(false);
+        })
+        .catch(()=>{
+            setPopupType("error");
+            setPopupDescription("Cannot Create Request");
+            setShowPopup(true);
+        });
 
-        requestlist.push(newrequest);
-        localStorage.setItem("requestlist", JSON.stringify(requestlist));
-        setShowPopup(false);
+        // requestlist.push(newrequest);
+        // localStorage.setItem("requestlist", JSON.stringify(requestlist));
     }
 
     function handleDeleteContent() {
@@ -199,17 +227,25 @@ export default function AddItem({ date }: datetype) {
     }
 
     function confirmDelete() {
-        const requestlist = JSON.parse(localStorage.getItem("requestlist") || "[]");
-        const itemIndex = requestlist.findIndex((item: requestitemtype) => item.requestid === requestitem.requestid);
-        if (itemIndex !== -1) {
-            requestlist.splice(itemIndex, 1);
-            localStorage.setItem("requestlist", JSON.stringify(requestlist));
-        }
-        setShowPopup(false);
+        // const requestlist = JSON.parse(localStorage.getItem("requestlist") || "[]");
+        // const itemIndex = requestlist.findIndex((item: requestitemtype) => item.requestid === requestitem.requestid);
+        // if (itemIndex !== -1) {
+        //     requestlist.splice(itemIndex, 1);
+        //     localStorage.setItem("requestlist", JSON.stringify(requestlist));
+        // }
+        DeleteRequest(requestitem.requestId)
+        .then(() => {
+            setShowPopup(false);
+        })
+        .catch(() => {
+            setShowPopup(true);
+            setPopupType("error");
+            setPopupDescription("Cannot Delete Request");
+        });
     }
 
     function handleAddItem() {
-        setInventoryList([...inventorylist, { itemname: "", quantity: 0, expecteddate: "" }]);
+        setInventoryList([...inventorylist, { itemName: "ItemName", quantity: 0, expectedDate: "2024-05-23" }]);
     }
 
     function handleRemoveItem(index: number) {
@@ -217,10 +253,28 @@ export default function AddItem({ date }: datetype) {
         setInventoryList(newInventoryList);
     }
 
-    function handleItemChange(index: number, field: string, value: any) {
+    function handleItemChange(index: number, field: string, value: string | number) {
         const newInventoryList = [...inventorylist];
         newInventoryList[index] = { ...newInventoryList[index], [field]: value };
         setInventoryList(newInventoryList);
+    }
+
+    function handlePopupSubmit() {
+        if (popupType === "confirm") {
+            if (formAction === "edit") {
+                confirmEdit();
+            } else {
+                confirmSave();
+            }
+            return;
+        }
+
+        if (popupType === "delete") {
+            confirmDelete();
+            return;
+        }
+
+        setShowPopup(false);
     }
     return (
         <div className="w-full p-4 relative">
@@ -229,33 +283,9 @@ export default function AddItem({ date }: datetype) {
             type={popupType}
             description={popupDescription}
             navigateTo={popupType === "error" ? "" : "/itemrequest"}
-            onSubmit={() => {setShowPopup(false), popupType === "confirm" ? ((formAction === "edit") ? confirmEdit() : confirmSave()) : popupType === "delete" ? confirmDelete() : setShowPopup(false)}} 
+            onSubmit={handlePopupSubmit} 
             onCancel={() => {setShowPopup(false)}} />
             <div className="flex flex-col w-full h-full gap-3">
-                <div className="flex">
-                    <div className="flex items-center justify-center gap-3">
-                        <IconPosCafe color="black" icon="menu" size={24} />
-                        <div className="text-md font-bold">{(formAction == "edit") ? "Edit  Item Request" : "Item Request"}</div>
-                    </div>
-                    <div className="two p-0 grow flex justify-end">
-                        <div className="flex bg-white h-full w-max p-2 gap-2 rounded-sm items-center justify-center">
-                            <div className="flex items-center justify-center gap-1">
-                                <IconPosCafe color="purple" icon="calendar" size={18} />
-                                <div className="">
-                                    <div className="flex flex-col ">
-                                        <span className="text-ss-50">{date.date}</span>
-                                        <span className="text-ss-40 text-gray-500">{date.day}</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="w-px h-full bg-gray-100 "></div>
-                            <div className="flex items-center justify-center gap-1">
-                                <IconPosCafe color="purple" icon="schedule" size={18} />
-                                <span className="text-ss-60">{date.time}</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
                 <div className="bg-white text-ss-55 h-fit p-3.5 px-6 flex flex-col justify-center items-center w-full gap-3 rounded-sm">
                     <div className="text-sm font-bold text-left w-full">Request Information</div>
                     <div className="grow w-full flex flex-col items-center">
@@ -263,7 +293,7 @@ export default function AddItem({ date }: datetype) {
                             <div className="grow flex flex-col gap-2">
                                 <div className="w-full flex flex-col gap-1">
                                     <div className="text-ss-55 font-bold after:content-['*'] after:text-ss-50 after:ml-1 after:text-transparent">Request ID</div>
-                                    <input type="text" className="border border-gray-200 rounded-sm p-1.5 w-full bg-gray-50" placeholder="ITM-000129" id="additem-form-itemcode" value={requestitem.requestid} disabled></input>
+                                    <input type="text" className="border border-gray-200 rounded-sm p-1.5 w-full bg-gray-50" placeholder="ITM-000129" id="additem-form-itemcode" value={requestitem.requestId} disabled></input>
                                     <div className="text-ss-45 text-gray-500">Auto-generated</div>
                                 </div>
                                 <div className="w-full flex flex-col gap-1">
@@ -280,14 +310,14 @@ export default function AddItem({ date }: datetype) {
                                 </div>
                                 <div className="w-full flex flex-col gap-1">
                                     <div className="text-ss-55 font-bold after:content-['*'] after:text-ss-50 after:ml-1 after:text-red-500">Expecting Delivery</div>
-                                    <input type="date" className="border border-gray-200 rounded-sm p-1.5 w-full" value={requestitem.expectingdelivery} name="expectingdelivery" onChange={handleFormChange} required></input>
+                                    <input type="date" className="border border-gray-200 rounded-sm p-1.5 w-full" value={requestitem.expectingDate} name="expectingDate" onChange={handleFormChange} required></input>
                                     <div className="text-ss-45 text-transparent">Auto-generated</div>
                                 </div>
                             </div>
                             <div className="grow flex flex-col gap-2">
                                 <div className="w-full flex flex-col gap-1">
                                     <div className="text-ss-55 font-bold after:content-['*'] after:text-ss-50 after:ml-1 after:text-transparent">Requesteed By</div>
-                                    <input type="text" className="border border-gray-200 rounded-sm p-1.5 w-full bg-gray-50" placeholder="Admin" id="additem-form-itemcode" value={requestitem.requestedby} disabled></input>
+                                    <input type="text" className="border border-gray-200 rounded-sm p-1.5 w-full bg-gray-50" placeholder="Admin" id="additem-form-itemcode" value={requestitem.requestedBy} disabled></input>
                                     <div className="text-ss-45 text-transparent">Auto-generated</div>
                                 </div>
                                 <div className="w-full flex flex-col gap-1">
@@ -324,9 +354,14 @@ export default function AddItem({ date }: datetype) {
                                 {
                                     inventorylist.map((item, index) => (
                                         <tr className="border border-gray-100" key={index}>
-                                            <td><div className="p-2 text-ss-50 text-left min-[780px]:text-ss-55"><select name="opg-select" id="opg-select-category" className="p-1 border border-gray-200 w-full rounded-sm" required value={item.itemname} onChange={(e) => handleItemChange(index, "itemname", e.target.value)}><option value="">Select Item</option><option value="Coffee Beans Bag">Coffee Beans Bag</option><option value="Milk 1L">Milk 1L</option><option value="Sugar 1kg">Sugar 1kg</option></select></div></td>
+                                            <td><div className="p-2 text-ss-50 text-left min-[780px]:text-ss-55"><select name="opg-select" id="opg-select-category" className="p-1 border border-gray-200 w-full rounded-sm" required value={item.itemName} onChange={(e) => handleItemChange(index, "itemName", e.target.value)}>
+                                                <option value="">Select Item</option>
+                                                <option value="Coffee Beans Bag">Coffee Beans Bag</option>
+                                                <option value="Milk 1L">Milk 1L</option>
+                                                <option value="Sugar 1kg">Sugar 1kg</option>
+                                                </select></div></td>
                                             <td><div className="p-2 text-ss-50 text-left min-[780px]:text-ss-55"><input className="border border-gray-200 rounded-md w-full p-2 max-[820px]:p-1 max-[820px]:text-ss-50" type="number" id="opg-select-dfrom" value={item.quantity} onChange={(e) => handleItemChange( index, "quantity", Number(e.target.value) ) } /></div></td>
-                                            <td><div className="p-2 text-ss-50 text-left min-[780px]:text-ss-55"><input className="border border-gray-200 rounded-md w-full p-2 max-[820px]:p-1 max-[820px]:text-ss-50" type="date" id="opg-select-dfrom" value={item.expecteddate} onChange={(e) => handleItemChange(index, "expecteddate", e.target.value)} /></div></td>
+                                            <td><div className="p-2 text-ss-50 text-left min-[780px]:text-ss-55"><input className="border border-gray-200 rounded-md w-full p-2 max-[820px]:p-1 max-[820px]:text-ss-50" type="date" id="opg-select-dfrom" value={item.expectedDate} onChange={(e) => handleItemChange(index, "expectedDate", e.target.value)} /></div></td>
                                             <td><div className="p-2 flex justify-start cursor-pointer" onClick={() => handleRemoveItem(index)}><IconPosCafe icon="delete" color="red" size={14} /></div></td>
                                         </tr>
                                     ))
@@ -359,17 +394,18 @@ export default function AddItem({ date }: datetype) {
                                     </div>
                                 ) : null
                             }
-                            <div className="p-2 bg-green-700 text-white rounded-sm flex items-center justify-center aspect-7/1 gap-1" id="additem-form-submitrequest" onClick={handleSaveContent}>
-                                <IconPosCafe icon="send" color="white" size={14} />
-                                <span className="text-ss-50">Submit Request</span>
-                            </div>
+                            {
+                                (formAction != "edit") ? (
+                                    <div className="p-2 bg-green-700 text-white rounded-sm flex items-center justify-center aspect-7/1 gap-1" id="additem-form-submitrequest" onClick={handleSaveContent}>
+                                        <IconPosCafe icon="send" color="white" size={14} />
+                                        <span className="text-ss-50">Submit Request</span>
+                                    </div>
+                                ) : null
+                            }
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-
-
-
     );
 }

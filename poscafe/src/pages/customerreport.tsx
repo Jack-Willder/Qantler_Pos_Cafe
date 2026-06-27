@@ -1,15 +1,8 @@
 import { useState } from "react";
-import { IconPosCafe } from "../icons";
+import { IconPosCafe } from "../Helper/icons";
 
-interface datetype {
-  date: {
-    date: string,
-    day: string,
-    time: string;
-  };
-}
-export default function Inventory({date}:datetype) {
-  const [currentPage, setCurrentPage] = useState(1);
+export default function Inventory() {
+  const [currentPage] = useState(1);
   const inventorylist = [
     { itemimage: <img src="https://static.vecteezy.com/system/resources/previews/060/818/430/non_2x/a-glass-of-creamy-nutritious-soy-milk-surrounded-by-soybeans-png.png" alt="coffee" srcSet="" className="w-4.5 h-4.5"></img>, itemname: "Soya Milk", category: "Beverage", price: "$3.00", unit: "Cup", purchased: "150", sold: "98", instock: "52", status: "In Stock", lastupdated: "20 May 2024, 10:30AM" },
     { itemimage: <img src="https://png.pngtree.com/png-vector/20250429/ourmid/pngtree-iced-black-tea-in-clear-plastic-cup-with-ice-cubes-png-image_16041290.png" alt="coffee" srcSet="" className="w-4.5 h-4.5"></img>, itemname: "Tea C", category: "Beverage", price: "$4.70", unit: "Cup", purchased: "200", sold: "150", instock: "50", status: "In Stock", lastupdated: "20 May 2024, 10:30AM" },
@@ -26,30 +19,6 @@ export default function Inventory({date}:datetype) {
   return (
     <div className="flex grow relative">
       <div className="flex flex-col gap-2 p-4 h-full w-full font-bold">
-        <div className="flex grow">
-          <div className="flex items-center justify-center gap-3">
-            <IconPosCafe color="black" icon="menu" size={24} />
-            <div className="text-md text-md">Customer Report</div>
-          </div>
-          <div className="two p-0 grow flex justify-end">
-            <div className="flex bg-white h-full w-max p-2 gap-2 rounded-sm items-center justify-center">
-              <div className="flex items-center justify-center gap-1">
-                <IconPosCafe color="purple" icon="calendar" size={18} />
-                <div className="">
-                  <div className="flex flex-col ">
-                    <span className="text-ss-50">{date.date}</span>
-                    <span className="text-ss-40 text-gray-500">{date.day}</span>
-                  </div>
-                </div>
-              </div>
-              <div className="w-px h-full bg-gray-100 "></div>
-              <div className="flex items-center justify-center gap-1">
-                <IconPosCafe color="purple" icon="schedule" size={18} />
-                <span className="text-ss-60">{date.time}</span>
-              </div>
-            </div>
-          </div>
-        </div>
         <div className="bg-white text-ss-55 rounded-sm shadow-sm shadow-gray-200 scrollbar-none flex items-center p-2 justify-between gap-2">
           <div className="border-0 w-full">
             <div className="text-ss-50 text-gray-500">Category</div>

@@ -1,14 +1,7 @@
 import { useState } from "react";
-import { IconPosCafe, BadgePosCafe } from "../icons";
+import { IconPosCafe, BadgePosCafe } from "../Helper/icons";
 
-interface datetype {
-  date: {
-    date: string,
-    day: string,
-    time: string;
-  };
-}
-export default function Billing({date}:datetype) {
+export default function Billing() {
   const [activeCategory, setActiveCategory] = useState("Beverage");
   const [activeView, setActiveView] = useState("grid");
   const handleCategory = (categoryname: string): void => { setActiveCategory(categoryname || "Beverage"); };

@@ -1,81 +1,36 @@
 import { useNavigate } from "react-router-dom";
 import { useState, useContext, useEffect } from "react";
-import { IconPosCafe } from "../icons";
-import { FormAction } from "../App";
+import { IconPosCafe } from "../Helper/icons";
+import { FormAction } from "../Context/Context";
+import { Pagination } from "../Helper/Pagination";
+import { getPaginatedItems } from "../Helper/PaginationUtils";
+import type { Request } from "../Types/Types";
+import { GetAllRequests } from "../api/ItemRequestApi";
 
 
-type datetype = {
-  date: {
-    date: string,
-    day: string,
-    time: string;
-  };
-}
-export default function Inventory({date}:datetype) {
+export default function Inventory() {
+  const {setFormAction} = useContext(FormAction);
+  const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
-  const navigate = useNavigate();
-  function handleChangeContent(path: string, item?: object) {
-    navigate(path, { state: item });
-  }  const {setFormAction} = useContext(FormAction);
-
-    function* generatepages(totalpages: number, currentpage: number) {
-      const maxpages = 5;
-      let start = Math.max(1, currentpage - Math.floor(maxpages / 2));
-      let end = Math.min(totalpages, start + maxpages - 1);
-      if (end - start < maxpages - 1) {
-        start = Math.max(1, end - maxpages + 1);
-      }
-      if (start > 1) {
-        yield 1;
-        if (start > 2) yield '...';
-      }
-      for (let i = start; i <= end; i++) {
-        yield i;
-      }
-      if (end < totalpages) {
-        if (end < totalpages - 1) yield '...';
-        yield totalpages;
-      }
-    }
-
-type Request = {
-  requestid: string,
-  subject: string,
-  requestedby: string,
-  requestdate: string,
-  expectingdelivery: string,
-  status: string
-}
-
-
-const requestlist: Request[] = [
-];
-  const [allRequest, setAllRequest] = useState<Request[]>(requestlist);
-  const [request, setRequest] = useState<Request[]>(requestlist);
+  const [allRequest, setAllRequest] = useState<Request[]>([]);
+  const [request, setRequest] = useState<Request[]>([]);
 
   useEffect(() => {
-    const data = localStorage.getItem("requestlist");
-    const requests = data ? JSON.parse(data) : requestlist;
-    setAllRequest(requests);
-    setRequest(requests);
+    GetAllRequests()
+    .then((response) => {
+      setAllRequest(response);
+      setRequest(response);
+    })
+    .catch();
   }, []);
 
-  const totalPages = Math.ceil(request.length / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-  const paginatedRequest = request.slice(startIndex, endIndex);
-  const pageNumbers = Array.from(generatepages(totalPages, currentPage));
 
-  function handlePageChange(page: number | string) {
-    if (typeof page === 'number') {
-      setCurrentPage(page);
-    }
+  function handleChangeContent(path: string, item?: object) {
+    navigate(path, { state: item });
   }
-  function handlePreviousPage() { if (currentPage > 1) { setCurrentPage(currentPage - 1); } }
-  function handleNextPage() { if (currentPage < totalPages) { setCurrentPage(currentPage + 1); } }
-  function handleFirstPage() { setCurrentPage(1); }
-  function handleLastPage() { setCurrentPage(totalPages); }
+
+  const paginatedRequest = getPaginatedItems(request, currentPage, itemsPerPage);
 
   const [filterData, setFilterData] = useState({
     requestid: "",
@@ -86,7 +41,7 @@ const requestlist: Request[] = [
     dateTo: ""
   });
 
-  const handleFilterChange = (e: any) => {
+  const handleFilterChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFilterData((prev) => ({
       ...prev,
@@ -96,11 +51,11 @@ const requestlist: Request[] = [
 
   function filter() {
     const filteredlist = allRequest.filter((item: Request) => {
-      const itemDate = item.requestdate ? new Date(item.requestdate) : null;
+      const itemDate = item.requestedDate ? new Date(item.requestedDate) : null;
       return (
-        (!filterData.requestid || item.requestid === filterData.requestid) &&
+        (!filterData.requestid || item.requestId === filterData.requestid) &&
         (!filterData.subject || item.subject.toLowerCase().includes(filterData.subject.toLowerCase())) &&
-        (!filterData.requestedby || item.requestedby === filterData.requestedby) &&
+        (!filterData.requestedby || item.requestedBy === filterData.requestedby) &&
         (!filterData.status || item.status === filterData.status) &&
         (!filterData.dateFrom || !itemDate || itemDate >= new Date(filterData.dateFrom)) &&
         (!filterData.dateTo || !itemDate || itemDate <= new Date(filterData.dateTo))
@@ -126,38 +81,14 @@ const requestlist: Request[] = [
 
   return (
     <div className="flex grow relative">
-      <div className="flex flex-col gap-2 p-4 h-full w-full font-bold">
-        <div className="flex">
-          <div className="flex items-center justify-center gap-3">
-            <IconPosCafe color="black" icon="menu" size={24} />
-            <div className="text-md text-md">Item Request</div>
-          </div>
-          <div className="two p-0 grow flex justify-end">
-            <div className="flex bg-white h-full w-max p-2 gap-2 rounded-sm items-center justify-center">
-              <div className="flex items-center justify-center gap-1">
-                <IconPosCafe color="purple" icon="calendar" size={18} />
-                <div className="">
-                  <div className="flex flex-col ">
-                    <span className="text-ss-50">{date.date}</span>
-                    <span className="text-ss-40 text-gray-500">{date.day}</span>
-                  </div>
-                </div>
-              </div>
-              <div className="w-px h-full bg-gray-100 "></div>
-              <div className="flex items-center justify-center gap-1">
-                <IconPosCafe color="purple" icon="schedule" size={18} />
-                <span className="text-ss-60">{date.time}</span>
-              </div>
-            </div>
-          </div>
-        </div>
+      <div className="flex flex-col gap-2 p-0 h-full w-full font-bold">
         <div className="bg-white text-ss-55 rounded-sm shadow-sm shadow-gray-200 scrollbar-none flex items-center p-2 justify-between gap-2">
           <div className="border-0 w-full">
             <div className="text-ss-50 text-gray-500">Request ID</div>
             <div className="flex items-center text-nowrap border rounded-sm justify-evenly p-2 grow w-full h-full border-gray-200">
               <select name="requestid" id="opg-select-category" className="opg-select w-full text-ss-50 lg:text-ss-55" value={filterData.requestid} onChange={handleFilterChange} required>
                 <option value="">Select Request ID</option>
-                {Array.from(new Set(Array.from(allRequest, item => item.requestid))).map((item, index) => (<option key={index} value={item}>{item}</option>))}
+                {Array.from(new Set(Array.from(allRequest, item => item.requestId))).map((item, index) => (<option key={index} value={item}>{item}</option>))}
               </select>
             </div>
           </div>
@@ -175,7 +106,7 @@ const requestlist: Request[] = [
             <div className="flex items-center text-nowrap border rounded-sm justify-evenly p-2 grow w-full h-full border-gray-200">
               <select name="requestedby" id="opg-select-status" className="opg-select w-full text-ss-50 lg:text-ss-55" value={filterData.requestedby} onChange={handleFilterChange}>
                 <option value="">Select requested by</option>
-                {Array.from(new Set(Array.from(allRequest, item => item.requestedby))).map((item, index) => (<option key={index} value={item}>{item}</option>))}
+                {Array.from(new Set(Array.from(allRequest, item => item.requestedBy))).map((item, index) => (<option key={index} value={item}>{item}</option>))}
               </select>
             </div>
           </div>
@@ -246,57 +177,26 @@ const requestlist: Request[] = [
             </thead>
             <tbody>
               {paginatedRequest.map((item, index) => (
-                <tr className="border border-gray-100" key={index} onClick={() => { setFormAction("edit"), handleChangeContent("/requestitem", item) }}>
-                  <td><div className="p-2 text-ss-50 text-center min-[780px]:text-ss-55">{item.requestid}</div></td>
+                <tr className="border border-gray-100" key={index} onClick={() => { setFormAction("edit"); handleChangeContent("/requestitem", item); }}>
+                  <td><div className="p-2 text-ss-50 text-center min-[780px]:text-ss-55">{item.requestId}</div></td>
                   <td><div className="p-2 text-left text-gray-500 text-ss-50 min-[780px]:text-ss-55">{item.subject}</div></td>
-                  <td><div className="p-2 text-left  text-ss-50 min-[780px]:text-ss-55">{item.requestedby}</div></td>
-                  <td><div className="p-2 text-left text-gray-500 text-ss-50 min-[780px]:text-ss-55">{item.requestdate}</div></td>
-                  <td><div className="p-2 text-left  text-ss-50 min-[780px]:text-ss-55">{item.expectingdelivery}</div></td>
+                  <td><div className="p-2 text-left  text-ss-50 min-[780px]:text-ss-55">{item.requestedBy}</div></td>
+                  <td><div className="p-2 text-left text-gray-500 text-ss-50 min-[780px]:text-ss-55">{item.requestedDate}</div></td>
+                  <td><div className="p-2 text-left  text-ss-50 min-[780px]:text-ss-55">{item.expectingDate}</div></td>
                   <td><div className={`p-1 px-2 text-left text-ss-50 min-[780px]:text-ss-55 ${(item.status == "Received") ? "text-green-500 bg-green-100" : (item.status == "Pending") ? "text-yellow-500 bg-yellow-100" : (item.status == "Canceled") ? "text-red-500 bg-red-100" : "text-blue-500 bg-blue-100"} rounded-sm flex items-center w-fit`}>{item.status}</div></td>
                   <td><div className="p-2 flex justify-center"><IconPosCafe icon="eye" color="purple" size={14}/></div></td>
                 </tr>
               ))}
             </tbody>
           </table>
-          <div className="w-full flex justify-between">
-            <div>
-              <div className="flex items-center">
-                <div className="text-ss-55">show</div>
-                <select id="entriescount" className="border border-gray-200 text-ss-65 p-1 rounded-sm mx-2" value={itemsPerPage} onChange={(e) => { setItemsPerPage(parseInt(e.target.value)); setCurrentPage(1); }}>
-                  <option value="10">10</option>
-                  <option value="20">20</option>
-                  <option value="30">30</option>
-                </select>
-                <div className="text-ss-55">entries</div>
-              </div>
-            </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <div className="p-2 text-ss-65 border border-gray-200 rounded-sm aspect-square h-3/5 text-center flex items-center justify-center cursor-pointer" onClick={handleFirstPage}><IconPosCafe icon="dleft" color="black" size={12} /></div>
-                <div className="p-2 text-ss-65 border border-gray-200 rounded-sm aspect-square h-3/5 text-center flex items-center justify-center cursor-pointer" onClick={handlePreviousPage}><IconPosCafe icon="left" color="black" size={12} /></div>
-                {pageNumbers.map((page, index) => (
-                  <div 
-                    key={index} 
-                    className={`p-2.5 text-ss-65 border border-gray-200 rounded-sm aspect-square h-3/5 text-center flex items-center justify-center cursor-pointer ${
-                      page === currentPage ? 'bg-gpurple text-white' : ''
-                    } ${
-                      page === '...' ? 'cursor-default' : ''
-                    }`}
-                    onClick={() => handlePageChange(page)}
-                  >
-                    {page}
-                  </div>
-                ))}
-                <div className="p-2 text-ss-65 border border-gray-200 rounded-sm aspect-square h-3/5 text-center flex items-center justify-center cursor-pointer" onClick={handleNextPage}><IconPosCafe icon="right" color="black" size={12} /></div>
-                <div className="p-2 text-ss-65 border border-gray-200 rounded-sm aspect-square h-3/5 text-center flex items-center justify-center cursor-pointer" onClick={handleLastPage}><IconPosCafe icon="dright" color="black" size={12} /></div>
-              </div>
-            </div>
-            <div className="align-tshow">
-              <div className="flex items-center">
-                <div className="text-ss-55">showing {startIndex + 1} to {Math.min(endIndex, request.length)} of {request.length} requests</div>
-              </div>
-            </div>
-          </div>
+          <Pagination
+            currentPage={currentPage}
+            itemsPerPage={itemsPerPage}
+            totalItems={request.length}
+            itemLabel="requests"
+            setCurrentPage={setCurrentPage}
+            setItemsPerPage={setItemsPerPage}
+          />
         </div>
       </div>
     </div>
