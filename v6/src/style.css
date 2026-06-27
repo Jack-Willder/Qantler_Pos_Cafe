@@ -605,7 +605,7 @@ span.delete-symbol {
     flex-direction: column;
     border-radius: 8px;
     align-items: center;
-    gap: 10px;
+    gap: 5px;
     padding: 8px;
     aspect-ratio: 1/0.9;
     border: 1px solid var(--cborder);
@@ -650,6 +650,7 @@ span.delete-symbol {
     top: 65px;
     width: 100%;
     background-color: var(--cwhite);
+    padding: 1px;
 }
 
 .option-item > .opname-chinese {

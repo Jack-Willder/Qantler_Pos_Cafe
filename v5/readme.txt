@@ -1,1 +1,0 @@
-completed the sidebar and grid layouts with unmatched fonts
