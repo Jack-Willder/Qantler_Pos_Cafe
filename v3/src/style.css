@@ -30,7 +30,9 @@
     --big-font: clamp(0.5rem, 1vw, 0.9rem);
     --small-font: clamp(0.5rem, 1vw, 0.75rem);
     --tiny-font: clamp(0.9rem, var(--small-font), 0.65rem);
-    --fh2: clamp(0.5rem, 1vw, 0.55rem);
+    --fh1: clamp(0.85rem, 0.9vw, 1.25rem);
+    --fh2: clamp(0.75rem, 0.82vw, 1.25rem);
+    --fh3: clamp(0.5rem, 1vw, 0.62rem);
     --p1: 8px;
     --p2: 16px;
     --p3: 32px;
@@ -56,24 +58,14 @@ body {
     display: flex;
 }
 
-body>* {
-    font-family: "Poppins", sans-serif;
-    font-optical-sizing: auto;
-    font-weight: 500;
-    font-style: normal;
-    color: var(--cblack);
-    font-size: var(--small-font);
-    user-select: none;
-}
 
-/* 
 body>* {
     font-family: "Roboto", sans-serif;
     font-optical-sizing: auto;
     font-weight: 500;
     font-style: normal;
     font-variation-settings: "wdth" 100;
-} */
+}
 
 .overlay {
     position: absolute;
@@ -99,6 +91,10 @@ body>* {
     display: flex;
     flex-direction: column;
     gap: 10px;
+}
+
+.menu > * {
+    font-size: var(--fh1);
 }
 
 .names {
@@ -128,7 +124,6 @@ body>* {
 
 .appname {
     color: white;
-    font-size: var(--small-font);
 }
 
 .appname.userrole {
@@ -161,6 +156,14 @@ body>* {
     justify-content: center;
 }
 
+.userprof .names .appname {
+    font-size: var(--fh2);
+}
+
+.userprof .names .appname.userrole {
+    font-size: var(--fh3);
+}
+
 .bar {
     /* background: transparent; */
     width: 100%;
@@ -185,7 +188,11 @@ body>* {
     overflow-y: scroll;
     scrollbar-width: none;
     color: var(--cgrey);
-    padding-top: 17px;
+    padding-top: 12.5%;
+}
+
+.options > .option > .opname {
+    font-size: var(--fh2);
 }
 
 .option-select {
