@@ -1,0 +1,1 @@
+completed and made a pixel perfect version of the sidebar and grid layouts with mostly matching fonts

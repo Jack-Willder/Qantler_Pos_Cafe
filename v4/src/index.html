@@ -12,7 +12,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Nunito:ital,wght@0,200..1000;1,200..1000&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Nunito:ital,wght@0,200..1000;1,200..1000&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
 
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=app_registration,cancel,delete,description,edit_calendar,grid_view,group,info,keyboard_arrow_down,list,list_alt_check,local_cafe,order_approve,payment_card,person,rebase,receipt,settings,trip,work" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=app_registration,cancel,delete,description,edit_calendar,grid_view,group,info,keyboard_arrow_down,list,list_alt_check,local_cafe,more_vert,order_approve,payment_card,person,rebase,receipt,settings,trip,work" />
     <title>POS</title>
 </head>
 
@@ -80,10 +80,12 @@
     <div class="content">
         <div class="card one">
             <div class="grid-total">
-                <div class="billtitle">Current Bill</div>
+                <div class="billtitle">Current Bill<span class="material-symbols-outlined more-symbol">more_vert</span></div>
                 <div class="totalamount">
-                    <div class="amounttitle">Total Amount</div>
-                    <div class="amount">$146.30</div>
+                    <div class="aligntotal">
+                        <div class="amounttitle">Total Amount</div>
+                        <div class="amount">$146.30</div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -106,7 +108,7 @@
             <table>
                 <thead>
                     <tr>
-                        <td>Item</td>
+                        <td><div class="alignnames alignhead">Item</div></td>
                         <td>Qty</td>
                         <td>Unit Price</td>
                         <td>Total</td>
@@ -115,57 +117,57 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td><span class="material-symbols-outlined item-symbol">local_cafe</span><div class="bill-itemname">Soya Milk</div></td>
-                        <td><input type="text" placeholder="2" class="bill-item-count" name="count" value="2"></td>
+                        <td><div class="alignnames"><span class="material-symbols-outlined item-symbol">local_cafe</span><div class="bill-itemname">Soya Milk</div></div></td>
+                        <td><div class="aligncount"><input type="text" placeholder="2" class="bill-item-count" name="count" value="2"></div></td>
                         <td><div class="bill-itemname">$16.50</div></td>
                         <td><div class="bill-itemname">$33.00</div></td>
                         <td><span class="material-symbols-outlined delete-symbol">delete</span></td>
                     </tr>
                     <tr>
-                        <td><span class="material-symbols-outlined item-symbol">local_cafe</span><div class="bill-itemname">Soya Milk</div></td>
-                        <td><input type="text" placeholder="2" class="bill-item-count" name="count" value="2"></td>
+                        <td><div class="alignnames"><span class="material-symbols-outlined item-symbol">local_cafe</span><div class="bill-itemname">Tea C</div></div></td>
+                        <td><div class="aligncount"><input type="text" placeholder="5" class="bill-item-count" name="count" value="5"></div></td>
                         <td><div class="bill-itemname">$16.50</div></td>
                         <td><div class="bill-itemname">$33.00</div></td>
                         <td><span class="material-symbols-outlined delete-symbol">delete</span></td>
                     </tr>
                     <tr>
-                        <td><span class="material-symbols-outlined item-symbol">local_cafe</span><div class="bill-itemname">Soya Milk</div></td>
-                        <td><input type="text" placeholder="2" class="bill-item-count" name="count" value="2"></td>
+                        <td><div class="alignnames"><span class="material-symbols-outlined item-symbol">local_cafe</span><div class="bill-itemname">Streamed Timsum</div></div></td>
+                        <td><div class="aligncount"><input type="text" placeholder="1" class="bill-item-count" name="count" value="1"></div></td>
                         <td><div class="bill-itemname">$16.50</div></td>
                         <td><div class="bill-itemname">$33.00</div></td>
                         <td><span class="material-symbols-outlined delete-symbol">delete</span></td>
                     </tr>
                     <tr>
-                        <td><span class="material-symbols-outlined item-symbol">local_cafe</span><div class="bill-itemname">Soya Milk</div></td>
-                        <td><input type="text" placeholder="2" class="bill-item-count" name="count" value="2"></td>
+                        <td><div class="alignnames"><span class="material-symbols-outlined item-symbol">local_cafe</span><div class="bill-itemname">Porridge</div></div></td>
+                        <td><div class="aligncount"><input type="text" placeholder="1" class="bill-item-count" name="count" value="1"></div></td>
                         <td><div class="bill-itemname">$16.50</div></td>
                         <td><div class="bill-itemname">$33.00</div></td>
                         <td><span class="material-symbols-outlined delete-symbol">delete</span></td>
                     </tr>
                     <tr>
-                        <td><span class="material-symbols-outlined item-symbol">local_cafe</span><div class="bill-itemname">Soya Milk</div></td>
-                        <td><input type="text" placeholder="2" class="bill-item-count" name="count" value="2"></td>
+                        <td><div class="alignnames"><span class="material-symbols-outlined item-symbol">local_cafe</span><div class="bill-itemname">Iced Tea</div></div></td>
+                        <td><div class="aligncount"><input type="text" placeholder="1" class="bill-item-count" name="count" value="1"></div></td>
                         <td><div class="bill-itemname">$16.50</div></td>
                         <td><div class="bill-itemname">$33.00</div></td>
                         <td><span class="material-symbols-outlined delete-symbol">delete</span></td>
                     </tr>
                     <tr>
-                        <td><span class="material-symbols-outlined item-symbol">local_cafe</span><div class="bill-itemname">Soya Milk</div></td>
-                        <td><input type="text" placeholder="2" class="bill-item-count" name="count" value="2"></td>
+                        <td><div class="alignnames"><span class="material-symbols-outlined item-symbol">local_cafe</span><div class="bill-itemname">Dumplings</div></div></td>
+                        <td><div class="aligncount"><input type="text" placeholder="1" class="bill-item-count" name="count" value="1"></div></td>
                         <td><div class="bill-itemname">$16.50</div></td>
                         <td><div class="bill-itemname">$33.00</div></td>
                         <td><span class="material-symbols-outlined delete-symbol">delete</span></td>
                     </tr>
                     <tr>
-                        <td><span class="material-symbols-outlined item-symbol">local_cafe</span><div class="bill-itemname">Soya Milk</div></td>
-                        <td><input type="text" placeholder="2" class="bill-item-count" name="count" value="2"></td>
+                        <td><div class="alignnames"><span class="material-symbols-outlined item-symbol">local_cafe</span><div class="bill-itemname">Iced Coffee</div></div></td>
+                        <td><div class="aligncount"><input type="text" placeholder="2" class="bill-item-count" name="count" value="2"></div></td>
                         <td><div class="bill-itemname">$16.50</div></td>
                         <td><div class="bill-itemname">$33.00</div></td>
                         <td><span class="material-symbols-outlined delete-symbol">delete</span></td>
                     </tr>
                     <tr>
-                        <td><span class="material-symbols-outlined item-symbol">local_cafe</span><div class="bill-itemname">Soya Milk</div></td>
-                        <td><input type="text" placeholder="2" class="bill-item-count" name="count" value="2"></td>
+                        <td><div class="alignnames"><img src="https://static.vecteezy.com/system/resources/thumbnails/041/643/200/small/ai-generated-a-cup-of-coffee-and-a-piece-of-coffee-bean-perfect-for-food-and-beverage-related-designs-or-promoting-cozy-moments-png.png" alt="coffee" srcset="" name="item" class="item-symbol"><div class="bill-itemname">Coffee C</div></div></td>
+                        <td><div class="aligncount"><input type="text" placeholder="1" class="bill-item-count" name="count" value="1"></div></td>
                         <td><div class="bill-itemname">$16.50</div></td>
                         <td><div class="bill-itemname">$33.00</div></td>
                         <td><span class="material-symbols-outlined delete-symbol">delete</span></td>
@@ -177,7 +179,7 @@
                     info
                 </span>
                 <div class="infotext">
-                    Click item to create billing entry. If item exists, quality will increase.<br>Cancel item removes the last billed item. Delete All clears local data.<br>Main menu will redirect to menu page.;
+                    Click item to create billing entry. If item alreadyexists, quantity will increase.<br>Cancel item removes the last billed item. Delete All clears local data.<br>Main menu will redirect to menu page.
                 </div>
             </div>
         </div>
