@@ -84,7 +84,7 @@ export function useBilling() {
     localStorage.setItem("inventory", JSON.stringify(updatedInventory));
   }
 
-  function updatequantity(itemcode: string, quantity: number) {
+  function updatequantity(itemcode: string, _quantity: number) {
     const inventoryItem = allInventory.find((item) => item.itemCode === itemcode);
     if (!inventoryItem) return;
 

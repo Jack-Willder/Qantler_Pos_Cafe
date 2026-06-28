@@ -169,7 +169,7 @@ export default function Inventory() {
     //   1
     // );
 
-    const filteredList = allSales.filter((item) => {
+    const filteredList = allSales.filter((_item) => {
       // Item name filter
       // const itemMatch =
       //   !filterData.itemname ||
