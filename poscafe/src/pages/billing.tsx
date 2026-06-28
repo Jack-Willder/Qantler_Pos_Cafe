@@ -27,7 +27,11 @@ export default function Billing() {
         onTenderChange={billing.handlechangetender}
       />
       <CategorySidebar activeCategory={billing.activeCategory} onCategoryChange={billing.handleCategory} />
-      <ProductGrid items={billing.inventorylist} onSelectItem={billing.addcheckout} />
+      <ProductGrid
+        items={billing.inventorylist}
+        activeView={billing.activeView}
+        onSelectItem={billing.addcheckout}
+      />
       <OrderEntryPanel />
       <BillingActionPanels
         onSaveBill={billing.saveBill}
