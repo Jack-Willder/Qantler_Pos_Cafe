@@ -1,5 +1,8 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { IconPosCafe } from "../Helper/icons";
+import { login, register } from "../api/AuthApi";
+import type { LoginRequest, RegisterRequest } from "../Types/Types";
+import { useState } from "react";
 
 type AuthField = {
     label: string;
@@ -58,7 +61,7 @@ function BrandPanel() {
 
     return (
         <aside className="relative hidden min-h-180 overflow-hidden bg-[#080827] text-white lg:flex lg:w-[52%]">
-            <img src="/assets/login.png" alt="" className="absolute inset-0 h-full w-full object-contain" />
+            <img src="/assets/login.png" alt="" className="absolute h-full w-full object-cover bottom-0" />
             <div className="absolute inset-0 bg-[linear-gradient(115deg,rgba(8,8,39,0.98)_0%,rgba(41,14,118,0.84)_30%,rgba(8,8,39,0.01)_50%)]" />
             <div className="relative z-10 flex h-full max-w-140 flex-col justify-start px-14 py-12 xl:px-16">
                 <div className="mb-2 flex h-14 w-14 items-center justify-center rounded-full bg-gpurple shadow-[0_18px_45px_rgba(91,49,246,0.35)]">
@@ -94,15 +97,56 @@ export default function Login() {
     const navigate = useNavigate();
     const isSignup = location.pathname.toLowerCase().includes("signup") || location.pathname.toLowerCase().includes("register");
     const fields = isSignup ? signupFields : loginFields;
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState<string>("");
 
-    function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
-        navigate("/billing");
+        setIsLoading(true);
+        setError("");
+
+        const formData = new FormData(event.currentTarget);
+        
+        try {
+            if (isSignup) {
+                const registerData: RegisterRequest = {
+                    fullName: formData.get("fullName") as string,
+                    username: formData.get("username") as string,
+                    email: formData.get("email") as string,
+                    password: formData.get("password") as string,
+                    confirmPassword: formData.get("confirmPassword") as string,
+                };
+                
+                const response = await register(registerData);
+                localStorage.setItem("token", response.token);
+                localStorage.setItem("refreshToken", response.refreshToken);
+                localStorage.setItem("user", JSON.stringify(response.user));
+                navigate("/billing");
+            } else {
+                const loginData: LoginRequest = {
+                    username: formData.get("username") as string,
+                    password: formData.get("password") as string,
+                };
+                
+                const response = await login(loginData);
+                localStorage.setItem("token", response.token);
+                localStorage.setItem("refreshToken", response.refreshToken);
+                localStorage.setItem("user", JSON.stringify(response.user));
+                navigate("/billing");
+            }
+        } catch (err) {
+            setError(isSignup ? "Registration failed. Please try again." : "Invalid username or password.");
+            console.error("Authentication error:", err);
+        } finally {
+            setIsLoading(false);
+        }
     }
 
     return (
-        <main className="h-full w-full bg-[#f5f4ff] p-2 sm:p-4">
-            <section className="mx-auto flex min-h-[calc(100vh-1rem)] w-full max-w-385 overflow-hidden rounded-2xl bg-white shadow-[0_18px_50px_rgba(27,24,74,0.12)] sm:min-h-[calc(100vh-2rem)] sm:h-11/12">
+        // <main className="h-full w-full bg-[#f5f4ff] p-2 sm:p-4">
+        <main className="h-full w-full bg-[#f5f4ff]">
+            {/* <section className="mx-auto flex min-h-[calc(100vh-1rem)] w-full max-w-385 overflow-hidden rounded-2xl bg-white shadow-[0_18px_50px_rgba(27,24,74,0.12)] sm:min-h-[calc(100vh-2rem)] sm:h-11/12"> */}
+            <section className="mx-auto flex min-h-[calc(100vh-1rem)] w-full max-w-385 overflow-hidden bg-white shadow-[0_18px_50px_rgba(27,24,74,0.12)] sm:min-h-[calc(100vh-2rem)] sm:h-full">
                 <BrandPanel />
                 <div className="relative flex flex-1 items-center justify-center overflow-hidden px-5 py-8 sm:px-8 lg:px-12">
                     {
@@ -132,6 +176,11 @@ export default function Login() {
                             {fields.map((field) => (
                                 <AuthInput field={field} key={field.name} />
                             ))}
+                            {error && (
+                                <div className="text-ss-55 font-semibold text-red-500">
+                                    {error}
+                                </div>
+                            )}
                         </div>
 
                         {isSignup ? (
@@ -152,9 +201,12 @@ export default function Login() {
                             </div>
                         )}
 
-                        <button className="mt-4 flex h-9 items-center justify-center gap-1 rounded-md bg-gpurple px-5 text-ss-70 font-extrabold text-white transition hover:brightness-105">
+                        <button 
+                            disabled={isLoading}
+                            className="mt-4 flex h-9 items-center justify-center gap-1 rounded-md bg-gpurple px-5 text-ss-70 font-extrabold text-white transition hover:brightness-105 disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
                             <IconPosCafe icon="lock" size={18} />
-                            {isSignup ? "Create Account" : "Sign In"}
+                            {isLoading ? "Processing..." : (isSignup ? "Create Account" : "Sign In")}
                         </button>
 
                         <div className="my-4 flex items-center gap-3 text-ss-65 font-bold text-[#8585ad]">

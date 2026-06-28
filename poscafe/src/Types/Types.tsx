@@ -154,3 +154,48 @@ export type requestitemtype = {
   status: string,
   requestItems: requestitemlisttype;
 };
+
+export type LoginRequest = {
+  username: string;
+  password: string;
+};
+
+export type RegisterRequest = {
+  fullName: string;
+  username: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+};
+
+export type AuthResponse = {
+  token: string;
+  refreshToken: string;
+  user: User;
+};
+
+export type User = {
+  userId: number;
+  fullName: string;
+  username: string;
+  email: string;
+  role: string;
+  isActive: boolean;
+  createdAt: string;
+};
+
+export type CreateUserRequest = {
+  fullName: string;
+  username: string;
+  email: string;
+  password: string;
+  role: string;
+};
+
+export type UpdateUserRequest = {
+  userId: number;
+  fullName?: string;
+  email?: string;
+  role?: string;
+  isActive?: boolean;
+};
