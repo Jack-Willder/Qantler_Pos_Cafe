@@ -7,6 +7,7 @@ import Settings from "./pages/settings";
 import Users from "./pages/users";
 import Login from "./pages/login";
 import CustomerReport from "./pages/customerreport";
+import Dashboard from "./pages/dashboard";
 import SideBar from "./shared/SideBar";
 import AddItem from "./pages/additem";
 import RequestItem from "./pages/requestitem";
@@ -29,8 +30,9 @@ function AppRoutes() {
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Login />} />
           <Route path="/register" element={<Login />} />
-          <Route path="/" element={<Billing />} />
+          <Route path="/" element={<Dashboard />} />
           <Route path="/billing" element={<Billing />} />
+          <Route path="/dashboard" element={<Dashboard />} />
           <Route element={<Header />}>
             <Route path="/inventory" element={<Inventory />} />
             <Route path="/itemrequest" element={<ItemRequest />} />

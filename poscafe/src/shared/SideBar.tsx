@@ -8,6 +8,7 @@ export default function SideBar() {
                 navigate(path);
         };
         const pages = [
+                { name: "Dashboard", icon: <IconPosCafe icon="home" size={12}/>, path: "/dashboard" },
                 { name: "Billing", icon: <IconPosCafe icon="billing" size={12}/>, path: "/billing" },
                 { name: "Inventory", icon: <IconPosCafe icon="inventory" size={12}/>, path: "/inventory" },
                 { name: "Item Request", icon: <IconPosCafe icon="itemrequest" size={12}/>, path: "/itemrequest" },
