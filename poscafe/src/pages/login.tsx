@@ -158,8 +158,8 @@ export default function Login() {
                             </div>
                         ) : null
                     }
-                    <div className="absolute -bottom-22 -right-18 h-48 w-48 rounded-full border-28 border-[#ede9ff]" />
-                    <div className="absolute -bottom-8 right-0 h-28 w-28 rounded-full bg-[#f1efff]" />
+                    {/* <div className="absolute -bottom-22 -right-18 h-48 w-48 rounded-full border-28 border-[#ede9ff]" /> */}
+                    {/* <div className="absolute -bottom-8 right-0 h-28 w-28 rounded-full bg-[#f1efff]" /> */}
 
                     <form onSubmit={handleSubmit} className="relative z-10 flex w-full max-w-147.5 flex-col">
                         <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-gpurple">

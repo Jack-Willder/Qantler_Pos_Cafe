@@ -72,38 +72,48 @@ export default function Dashboard() {
           ))}
         </section>
 
-        <section className="grid gap-3 xl:grid-cols-[1.35fr_1fr_1fr]">
-          <Panel className="min-h-72" title="Sales Overview" action="Daily">
-            <SalesChart />
-            <div className="mt-2 grid grid-cols-2 rounded-md bg-[#f4f1ff] p-2">
-              <div><p className="text-ss-55 text-[#666b88]">This Week Sales</p><p className="mt-0.5 text-ss-70 font-bold">{summary[0]}</p></div>
-              <div className="border-l border-[#dedbef] pl-3"><p className="text-ss-55 text-[#666b88]">Last Week Sales</p><p className="mt-0.5 text-ss-70 font-bold">{currency.format(Number.parseFloat(summary[0].replace(/[^0-9.]/g, "")) / 1.186 || 0)}</p></div>
-            </div>
-          </Panel>
-
-          <Panel title="Top Selling Items" action="This Week">
-            <div className="grid grid-cols-[1fr_auto_auto] gap-2 border-b border-[#eef0f5] pb-1.5 text-ss-55 text-[#737895]">
-              <span>Items</span><span>Qty Sold</span><span className="w-20 text-right">Revenue</span>
-            </div>
-            {topItems.map((item, index) => {
-              const product = inventory.find((entry) => entry.itemCode === item.itemCode);
-              return <div key={item.itemCode} className="grid grid-cols-[1fr_auto_auto] items-center gap-2 border-b border-[#f0f1f5] py-2 text-ss-55 lg:text-ss-60">
-                <div className="flex min-w-0 items-center gap-1.5"><span>{index + 1}.</span>{product?.itemImage ? <img src={product.itemImage} alt="" className="h-6 w-6 rounded-md object-contain" /> : <div className="flex h-6 w-6 items-center justify-center rounded-md bg-purple-50"><IconPosCafe icon="cafe" color="purple" size={14} /></div>}<span className="truncate font-semibold">{item.itemName}</span></div>
-                <span>{item.quantity}</span><span className="w-20 text-right font-medium">{currency.format(item.total)}</span>
-              </div>;
-            })}
-            <DashboardButton onClick={() => navigate("/inventory")}>View All Products</DashboardButton>
-          </Panel>
-
-          <Panel title="Recent Transactions" action="View All">
-            {sales.slice(0, 4).map((item, index) => (
-              <div key={`${item.billId}-${index}`} className="flex items-center gap-2 border-b border-[#f0f1f5] py-2">
-                <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-purple-50"><IconPosCafe icon="billing" color="purple" size={12} /></div>
-                <div className="min-w-0 flex-1"><p className="truncate text-ss-55 font-bold lg:text-ss-60">#INV-{String(item.billId).padStart(6, "0")}</p><p className="mt-0.5 text-ss-55 text-[#737895]">Today, {11 + index}:2{index} AM</p></div>
-                <div className="text-right"><p className="text-ss-55 font-bold lg:text-ss-60">{currency.format(item.total)}</p><span className="rounded-full bg-emerald-50 px-1.5 py-0.5 text-ss-45 text-emerald-600">Completed</span></div>
+        <section className="grid gap-3 xl:grid-cols-[1.35fr_1fr_1fr]" style={{ minHeight: 'calc(35vh)' }}>
+          <Panel className="h-full flex flex-col" title="Sales Overview" action="Daily">
+            <div className="flex-1 flex flex-col min-h-0">
+              <SalesChart />
+              <div className="mt-2 grid grid-cols-2 rounded-md bg-[#f4f1ff] p-2">
+                <div><p className="text-ss-55 text-[#666b88]">This Week Sales</p><p className="mt-0.5 text-ss-70 font-bold">{summary[0]}</p></div>
+                <div className="border-l border-[#dedbef] pl-3"><p className="text-ss-55 text-[#666b88]">Last Week Sales</p><p className="mt-0.5 text-ss-70 font-bold">{currency.format(Number.parseFloat(summary[0].replace(/[^0-9.]/g, "")) / 1.186 || 0)}</p></div>
               </div>
-            ))}
-            <DashboardButton onClick={() => navigate("/salesreport")}>View All Transactions</DashboardButton>
+            </div>
+          </Panel>
+
+          <Panel className="h-full flex flex-col" title="Top Selling Items" action="This Week">
+            <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
+              <div className="grid grid-cols-[1fr_auto_auto] gap-2 border-b border-[#eef0f5] pb-1.5 text-ss-55 text-[#737895] shrink-0">
+                <span>Items</span><span>Qty Sold</span><span className="w-20 text-right">Revenue</span>
+              </div>
+              <div className="flex-1 overflow-y-auto min-h-0">
+                {topItems.map((item, index) => {
+                  const product = inventory.find((entry) => entry.itemCode === item.itemCode);
+                  return <div key={item.itemCode} className="grid grid-cols-[1fr_auto_auto] items-center gap-2 border-b border-[#f0f1f5] py-2 text-ss-55 lg:text-ss-60">
+                    <div className="flex min-w-0 items-center gap-1.5"><span>{index + 1}.</span>{product?.itemImage ? <img src={product.itemImage} alt="" className="h-6 w-6 rounded-md object-contain" /> : <div className="flex h-6 w-6 items-center justify-center rounded-md bg-purple-50"><IconPosCafe icon="cafe" color="purple" size={14} /></div>}<span className="truncate font-semibold">{item.itemName}</span></div>
+                    <span>{item.quantity}</span><span className="w-20 text-right font-medium">{currency.format(item.total)}</span>
+                  </div>;
+                })}
+              </div>
+              <DashboardButton onClick={() => navigate("/inventory")} className="shrink-0">View All Products</DashboardButton>
+            </div>
+          </Panel>
+
+          <Panel className="h-full flex flex-col" title="Recent Transactions" action="View All">
+            <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
+              <div className="flex-1 overflow-y-auto min-h-0">
+                {sales.slice(0, 4).map((item, index) => (
+                  <div key={`${item.billId}-${index}`} className="flex items-center gap-2 border-b border-[#f0f1f5] py-2">
+                    <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-purple-50"><IconPosCafe icon="billing" color="purple" size={12} /></div>
+                    <div className="min-w-0 flex-1"><p className="truncate text-ss-55 font-bold lg:text-ss-60">#INV-{String(item.billId).padStart(6, "0")}</p><p className="mt-0.5 text-ss-55 text-[#737895]">Today, {11 + index}:2{index} AM</p></div>
+                    <div className="text-right"><p className="text-ss-55 font-bold lg:text-ss-60">{currency.format(item.total)}</p><span className="rounded-full bg-emerald-50 px-1.5 py-0.5 text-ss-45 text-emerald-600">Completed</span></div>
+                  </div>
+                ))}
+              </div>
+              <DashboardButton onClick={() => navigate("/salesreport")} className="shrink-0">View All Transactions</DashboardButton>
+            </div>
           </Panel>
         </section>
 
