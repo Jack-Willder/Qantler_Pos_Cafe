@@ -137,17 +137,6 @@ export default function Users() {
   return (
     <div className="flex flex-col gap-2">
       <div className="bg-white rounded-sm shadow-sm shadow-gray-200 p-4">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-bold text-gray-800">User Management</h2>
-          <button 
-            onClick={handleAddUser}
-            disabled={isAddingUser}
-            className="bg-gpurple text-white px-4 py-2 rounded-sm text-sm font-semibold hover:brightness-105 flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            <IconPosCafe icon="add" size={16} />
-            {isAddingUser ? "Adding..." : "Add User"}
-          </button>
-        </div>
 
         {addUserError && (
           <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-2 rounded-sm mb-4 text-sm">
@@ -155,72 +144,60 @@ export default function Users() {
           </div>
         )}
 
-        <div className="bg-gray-50 rounded-sm p-3 mb-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
-            <div className="flex flex-col">
-              <label className="text-ss-50 text-gray-500 mb-1">Full Name</label>
-              <div className="flex items-center border rounded-sm border-gray-200 bg-white">
-                <span className="flex h-8 w-8 items-center justify-center bg-[#f7f6ff]">
-                  <IconPosCafe icon="person" color="purple" size={14} />
-                </span>
-                <input
-                  type="text"
-                  name="fullName"
-                  value={newUser.fullName}
-                  onChange={handleInputChange}
-                  placeholder="Enter full name"
-                  className="h-8 min-w-0 flex-1 px-2 text-ss-55 outline-none placeholder:text-gray-400"
-                />
-              </div>
-            </div>
-            <div className="flex flex-col">
-              <label className="text-ss-50 text-gray-500 mb-1">Username</label>
-              <div className="flex items-center border rounded-sm border-gray-200 bg-white">
-                <span className="flex h-8 w-8 items-center justify-center bg-[#f7f6ff]">
-                  <IconPosCafe icon="person" color="purple" size={14} />
-                </span>
-                <input
-                  type="text"
-                  name="username"
-                  value={newUser.username}
-                  onChange={handleInputChange}
-                  placeholder="Enter username"
-                  className="h-8 min-w-0 flex-1 px-2 text-ss-55 outline-none placeholder:text-gray-400"
-                />
-              </div>
-            </div>
-            <div className="flex flex-col">
-              <label className="text-ss-50 text-gray-500 mb-1">Email</label>
-              <div className="flex items-center border rounded-sm border-gray-200 bg-white">
-                <span className="flex h-8 w-8 items-center justify-center bg-[#f7f6ff]">
-                  <IconPosCafe icon="mail" color="purple" size={14} />
-                </span>
-                <input
-                  type="email"
-                  name="email"
-                  value={newUser.email}
-                  onChange={handleInputChange}
-                  placeholder="Enter email address"
-                  className="h-8 min-w-0 flex-1 px-2 text-ss-55 outline-none placeholder:text-gray-400"
-                />
-              </div>
-            </div>
-            <div className="flex flex-col">
-              <label className="text-ss-50 text-gray-500 mb-1">Password</label>
-              <div className="flex items-center border rounded-sm border-gray-200 bg-white">
-                <span className="flex h-8 w-8 items-center justify-center bg-[#f7f6ff]">
-                  <IconPosCafe icon="lock" color="purple" size={14} />
-                </span>
-                <input
-                  type="password"
-                  name="password"
-                  value={newUser.password}
-                  onChange={handleInputChange}
-                  placeholder="Enter password"
-                  className="h-8 min-w-0 flex-1 px-2 text-ss-55 outline-none placeholder:text-gray-400"
-                />
-              </div>
-            </div>
+        <div className="bg-white text-ss-55 rounded-sm shadow-sm shadow-gray-200 scrollbar-none flex items-center p-2 justify-between gap-2 mb-4">
+          <div className="border-0 w-full">
+            <div className="text-ss-50 text-gray-500">Full Name</div>
+            <input
+              type="text"
+              name="fullName"
+              value={newUser.fullName}
+              onChange={handleInputChange}
+              placeholder="Enter full name"
+              className="border rounded-sm border-gray-200 p-2 w-full text-ss-50 lg:text-ss-55"
+            />
+          </div>
+          <div className="border-0 w-full">
+            <div className="text-ss-50 text-gray-500">Username</div>
+            <input
+              type="text"
+              name="username"
+              value={newUser.username}
+              onChange={handleInputChange}
+              placeholder="Enter username"
+              className="border rounded-sm border-gray-200 p-2 w-full text-ss-50 lg:text-ss-55"
+            />
+          </div>
+          <div className="border-0 w-full">
+            <div className="text-ss-50 text-gray-500">Email</div>
+            <input
+              type="email"
+              name="email"
+              value={newUser.email}
+              onChange={handleInputChange}
+              placeholder="Enter email address"
+              className="border rounded-sm border-gray-200 p-2 w-full text-ss-50 lg:text-ss-55"
+            />
+          </div>
+          <div className="border-0 w-full">
+            <div className="text-ss-50 text-gray-500">Password</div>
+            <input
+              type="password"
+              name="password"
+              value={newUser.password}
+              onChange={handleInputChange}
+              placeholder="Enter password"
+              className="border rounded-sm border-gray-200 p-2 w-full text-ss-50 lg:text-ss-55"
+            />
+          </div>
+          <div className="flex h-full items-end">
+            <button 
+              onClick={handleAddUser}
+              disabled={isAddingUser}
+              className="bg-gpurple flex p-4 rounded-md aspect-16/8 h-1/2 items-center justify-center border border-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <IconPosCafe color="white" icon="add" />
+              <span className="text-white">{isAddingUser ? "Adding..." : "Add User"}</span>
+            </button>
           </div>
         </div>
 
@@ -233,18 +210,18 @@ export default function Users() {
         {loading ? (
           <div className="text-center py-8 text-gray-500">Loading users...</div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full border-collapse">
+          <div className="overflow-x-hidden">
+            <table className="border-collapse w-full m-2.5 border border-gray-200 rounded-sm">
               <thead>
-                <tr className="bg-gray-50 border-b border-gray-200">
-                  <th className="text-left px-4 py-3 text-sm font-semibold text-gray-700">ID</th>
-                  <th className="text-left px-4 py-3 text-sm font-semibold text-gray-700">Full Name</th>
-                  <th className="text-left px-4 py-3 text-sm font-semibold text-gray-700">Username</th>
-                  <th className="text-left px-4 py-3 text-sm font-semibold text-gray-700">Email</th>
-                  <th className="text-left px-4 py-3 text-sm font-semibold text-gray-700">Role</th>
-                  <th className="text-left px-4 py-3 text-sm font-semibold text-gray-700">Status</th>
-                  <th className="text-left px-4 py-3 text-sm font-semibold text-gray-700">Created</th>
-                  <th className="text-center px-4 py-3 text-sm font-semibold text-gray-700">Actions</th>
+                <tr>
+                  <th className="bg-gray-100 p-2 text-ss-50 min-[780px]:text-ss-55 font-bold text-left">ID</th>
+                  <th className="bg-gray-100 p-2 text-ss-50 min-[780px]:text-ss-55 font-bold text-left">Full Name</th>
+                  <th className="bg-gray-100 p-2 text-ss-50 min-[780px]:text-ss-55 font-bold text-left">Username</th>
+                  <th className="bg-gray-100 p-2 text-ss-50 min-[780px]:text-ss-55 font-bold text-left">Email</th>
+                  <th className="bg-gray-100 p-2 text-ss-50 min-[780px]:text-ss-55 font-bold text-left">Role</th>
+                  <th className="bg-gray-100 p-2 text-ss-50 min-[780px]:text-ss-55 font-bold text-left">Status</th>
+                  <th className="bg-gray-100 p-2 text-ss-50 min-[780px]:text-ss-55 font-bold text-left">Created</th>
+                  <th className="bg-gray-100 p-2 text-ss-50 min-[780px]:text-ss-55 font-bold text-left">Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -256,48 +233,36 @@ export default function Users() {
                   </tr>
                 ) : (
                   users.map((user) => (
-                    <tr key={user.userId} className="border-b border-gray-100 hover:bg-gray-50">
-                      <td className="px-4 py-3 text-sm text-gray-600">{user.userId}</td>
-                      <td className="px-4 py-3 text-sm font-medium text-gray-800">{user.fullName}</td>
-                      <td className="px-4 py-3 text-sm text-gray-600">{user.username}</td>
-                      <td className="px-4 py-3 text-sm text-gray-600">{user.email}</td>
-                      <td className="px-4 py-3 text-sm text-gray-600">{user.role}</td>
-                      <td className="px-4 py-3">
-                        <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
-                          user.isActive 
-                            ? "bg-green-100 text-green-700" 
-                            : "bg-red-100 text-red-700"
-                        }`}>
-                          {user.isActive ? "Active" : "Inactive"}
-                        </span>
-                      </td>
-                      <td className="px-4 py-3 text-sm text-gray-600">
-                        {new Date(user.createdAt).toLocaleDateString()}
-                      </td>
-                      <td className="px-4 py-3">
-                        <div className="flex items-center justify-center gap-2">
-                          <button 
-                            className="p-1.5 hover:bg-gray-100 rounded-sm text-gray-600 hover:text-gray-800"
-                            title="Edit"
-                          >
-                            <IconPosCafe icon="edit" size={14} color="violet"/>
-                          </button>
-                          <button 
-                            onClick={() => handleToggleStatus(user.userId)}
-                            className="p-1.5 hover:bg-gray-100 rounded-sm text-gray-600 hover:text-gray-800"
-                            title={user.isActive ? "Deactivate" : "Activate"}
-                          >
-                            <IconPosCafe icon={user.isActive ? "disable" : "check"} size={14} color={user.isActive ? "red" : "green"}/>
-                          </button>
-                          <button 
-                            onClick={() => handleDeleteUser(user.userId)}
-                            className="p-1.5 hover:bg-red-50 rounded-sm text-gray-600 hover:text-red-600"
-                            title="Delete"
-                          >
-                            <IconPosCafe icon="delete" size={14} color="red"/>
-                          </button>
-                        </div>
-                      </td>
+                    <tr key={user.userId} className="border border-gray-100">
+                      <td><div className="p-2 text-ss-50 text-left min-[780px]:text-ss-55">{user.userId}</div></td>
+                      <td><div className="p-2 text-left text-gray-500 text-ss-50 min-[780px]:text-ss-55">{user.fullName}</div></td>
+                      <td><div className="p-2 text-left text-ss-50 min-[780px]:text-ss-55">{user.username}</div></td>
+                      <td><div className="p-2 text-left text-gray-500 text-ss-50 min-[780px]:text-ss-55">{user.email}</div></td>
+                      <td><div className="p-2 text-left text-ss-50 min-[780px]:text-ss-55">{user.role}</div></td>
+                      <td><div className={`p-1 px-2 text-left text-ss-50 min-[780px]:text-ss-55 ${user.isActive ? "text-green-500 bg-green-100" : "text-red-500 bg-red-100"} rounded-sm flex items-center w-fit`}>{user.isActive ? "Active" : "Inactive"}</div></td>
+                      <td><div className="p-2 text-left text-gray-500 text-ss-50 min-[780px]:text-ss-55">{new Date(user.createdAt).toLocaleDateString()}</div></td>
+                      <td><div className="p-2 flex gap-2">
+                        <button 
+                          className="p-1.5 hover:bg-gray-100 rounded-sm text-gray-600 hover:text-gray-800"
+                          title="Edit"
+                        >
+                          <IconPosCafe icon="edit" size={14} color="violet"/>
+                        </button>
+                        <button 
+                          onClick={() => handleToggleStatus(user.userId)}
+                          className="p-1.5 hover:bg-gray-100 rounded-sm text-gray-600 hover:text-gray-800"
+                          title={user.isActive ? "Deactivate" : "Activate"}
+                        >
+                          <IconPosCafe icon={user.isActive ? "disable" : "check"} size={14} color={user.isActive ? "red" : "green"}/>
+                        </button>
+                        <button 
+                          onClick={() => handleDeleteUser(user.userId)}
+                          className="p-1.5 hover:bg-red-50 rounded-sm text-gray-600 hover:text-red-600"
+                          title="Delete"
+                        >
+                          <IconPosCafe icon="delete" size={14} color="red"/>
+                        </button>
+                      </div></td>
                     </tr>
                   ))
                 )}
