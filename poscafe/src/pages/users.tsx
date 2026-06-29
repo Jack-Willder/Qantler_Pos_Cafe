@@ -1,12 +1,21 @@
 import { useEffect, useState } from "react";
 import { IconPosCafe } from "../Helper/icons";
-import { getAllUsers, deleteUser, toggleUserStatus } from "../api/UserManagementApi";
-import type { User } from "../Types/Types";
+import { getAllUsers, deleteUser, toggleUserStatus, createUser } from "../api/UserManagementApi";
+import type { User, CreateUserRequest } from "../Types/Types";
 
 export default function Users() {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [addUserError, setAddUserError] = useState("");
+  const [isAddingUser, setIsAddingUser] = useState(false);
+
+  const [newUser, setNewUser] = useState({
+    fullName: "",
+    username: "",
+    email: "",
+    password: ""
+  });
 
   useEffect(() => {
     fetchUsers();
@@ -48,15 +57,171 @@ export default function Users() {
     }
   };
 
+  const validateUserForm = () => {
+    if (!newUser.fullName.trim()) {
+      setAddUserError("Full name is required");
+      return false;
+    }
+    if (!newUser.username.trim()) {
+      setAddUserError("Username is required");
+      return false;
+    }
+    if (newUser.username.length < 3) {
+      setAddUserError("Username must be at least 3 characters");
+      return false;
+    }
+    if (!newUser.email.trim()) {
+      setAddUserError("Email is required");
+      return false;
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(newUser.email)) {
+      setAddUserError("Please enter a valid email address");
+      return false;
+    }
+    if (!newUser.password) {
+      setAddUserError("Password is required");
+      return false;
+    }
+    if (newUser.password.length < 6) {
+      setAddUserError("Password must be at least 6 characters");
+      return false;
+    }
+    setAddUserError("");
+    return true;
+  };
+
+  const handleAddUser = async () => {
+    if (!validateUserForm()) return;
+
+    setIsAddingUser(true);
+    try {
+      const userData: CreateUserRequest = {
+        fullName: newUser.fullName,
+        username: newUser.username,
+        email: newUser.email,
+        password: newUser.password
+      };
+
+      const createdUser = await createUser(userData);
+      setUsers([...users, createdUser]);
+      
+      // Reset form
+      setNewUser({
+        fullName: "",
+        username: "",
+        email: "",
+        password: ""
+      });
+      setAddUserError("");
+    } catch (err) {
+      setAddUserError("Failed to create user. Please try again.");
+      console.error("Error creating user:", err);
+    } finally {
+      setIsAddingUser(false);
+    }
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setNewUser(prev => ({
+      ...prev,
+      [name]: value
+    }));
+    // Clear error when user starts typing
+    if (addUserError) {
+      setAddUserError("");
+    }
+  };
+
   return (
     <div className="flex flex-col gap-2">
       <div className="bg-white rounded-sm shadow-sm shadow-gray-200 p-4">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-bold text-gray-800">User Management</h2>
-          <button className="bg-gpurple text-white px-4 py-2 rounded-sm text-sm font-semibold hover:brightness-105 flex items-center gap-2">
+          <button 
+            onClick={handleAddUser}
+            disabled={isAddingUser}
+            className="bg-gpurple text-white px-4 py-2 rounded-sm text-sm font-semibold hover:brightness-105 flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
             <IconPosCafe icon="add" size={16} />
-            Add User
+            {isAddingUser ? "Adding..." : "Add User"}
           </button>
+        </div>
+
+        {addUserError && (
+          <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-2 rounded-sm mb-4 text-sm">
+            {addUserError}
+          </div>
+        )}
+
+        <div className="bg-gray-50 rounded-sm p-3 mb-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
+            <div className="flex flex-col">
+              <label className="text-ss-50 text-gray-500 mb-1">Full Name</label>
+              <div className="flex items-center border rounded-sm border-gray-200 bg-white">
+                <span className="flex h-8 w-8 items-center justify-center bg-[#f7f6ff]">
+                  <IconPosCafe icon="person" color="purple" size={14} />
+                </span>
+                <input
+                  type="text"
+                  name="fullName"
+                  value={newUser.fullName}
+                  onChange={handleInputChange}
+                  placeholder="Enter full name"
+                  className="h-8 min-w-0 flex-1 px-2 text-ss-55 outline-none placeholder:text-gray-400"
+                />
+              </div>
+            </div>
+            <div className="flex flex-col">
+              <label className="text-ss-50 text-gray-500 mb-1">Username</label>
+              <div className="flex items-center border rounded-sm border-gray-200 bg-white">
+                <span className="flex h-8 w-8 items-center justify-center bg-[#f7f6ff]">
+                  <IconPosCafe icon="person" color="purple" size={14} />
+                </span>
+                <input
+                  type="text"
+                  name="username"
+                  value={newUser.username}
+                  onChange={handleInputChange}
+                  placeholder="Enter username"
+                  className="h-8 min-w-0 flex-1 px-2 text-ss-55 outline-none placeholder:text-gray-400"
+                />
+              </div>
+            </div>
+            <div className="flex flex-col">
+              <label className="text-ss-50 text-gray-500 mb-1">Email</label>
+              <div className="flex items-center border rounded-sm border-gray-200 bg-white">
+                <span className="flex h-8 w-8 items-center justify-center bg-[#f7f6ff]">
+                  <IconPosCafe icon="mail" color="purple" size={14} />
+                </span>
+                <input
+                  type="email"
+                  name="email"
+                  value={newUser.email}
+                  onChange={handleInputChange}
+                  placeholder="Enter email address"
+                  className="h-8 min-w-0 flex-1 px-2 text-ss-55 outline-none placeholder:text-gray-400"
+                />
+              </div>
+            </div>
+            <div className="flex flex-col">
+              <label className="text-ss-50 text-gray-500 mb-1">Password</label>
+              <div className="flex items-center border rounded-sm border-gray-200 bg-white">
+                <span className="flex h-8 w-8 items-center justify-center bg-[#f7f6ff]">
+                  <IconPosCafe icon="lock" color="purple" size={14} />
+                </span>
+                <input
+                  type="password"
+                  name="password"
+                  value={newUser.password}
+                  onChange={handleInputChange}
+                  placeholder="Enter password"
+                  className="h-8 min-w-0 flex-1 px-2 text-ss-55 outline-none placeholder:text-gray-400"
+                />
+              </div>
+            </div>
+          </div>
         </div>
 
         {error && (
