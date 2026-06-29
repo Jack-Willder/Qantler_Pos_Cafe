@@ -115,21 +115,21 @@ export default function Users() {
                             className="p-1.5 hover:bg-gray-100 rounded-sm text-gray-600 hover:text-gray-800"
                             title="Edit"
                           >
-                            <IconPosCafe icon="edit" size={14} />
+                            <IconPosCafe icon="edit" size={14} color="violet"/>
                           </button>
                           <button 
                             onClick={() => handleToggleStatus(user.userId)}
                             className="p-1.5 hover:bg-gray-100 rounded-sm text-gray-600 hover:text-gray-800"
                             title={user.isActive ? "Deactivate" : "Activate"}
                           >
-                            <IconPosCafe icon={user.isActive ? "disable" : "check"} size={14} />
+                            <IconPosCafe icon={user.isActive ? "disable" : "check"} size={14} color={user.isActive ? "red" : "green"}/>
                           </button>
                           <button 
                             onClick={() => handleDeleteUser(user.userId)}
                             className="p-1.5 hover:bg-red-50 rounded-sm text-gray-600 hover:text-red-600"
                             title="Delete"
                           >
-                            <IconPosCafe icon="delete" size={14} />
+                            <IconPosCafe icon="delete" size={14} color="red"/>
                           </button>
                         </div>
                       </td>

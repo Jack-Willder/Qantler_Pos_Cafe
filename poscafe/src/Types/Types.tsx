@@ -191,11 +191,3 @@ export type CreateUserRequest = {
   password: string;
   role: string;
 };
-
-export type UpdateUserRequest = {
-  userId: number;
-  fullName?: string;
-  email?: string;
-  role?: string;
-  isActive?: boolean;
-};

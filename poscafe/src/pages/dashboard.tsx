@@ -56,7 +56,7 @@ export default function Dashboard() {
   return (
     <main className="h-full min-h-0 min-w-0 flex-1 overflow-y-auto bg-[#f7f8fc] text-[#11152f]">
       <DashboardTopBar />
-      <div className="mx-auto flex max-w-400 flex-col gap-2 p-2 sm:p-3 lg:p-4">
+      <div className="mx-auto flex max-w-400 flex-col gap-2 p-2 sm:p-3 lg:p-2 lg:px-4">
         <section className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-5">
           {metricCards.map((metric, index) => (
             <article key={metric.label} className="flex min-h-20 items-center gap-2 rounded-md border border-[#e9eaf2] bg-white p-3 shadow-sm">
@@ -97,7 +97,7 @@ export default function Dashboard() {
                   </div>;
                 })}
               </div>
-              <DashboardButton onClick={() => navigate("/inventory")} className="shrink-0">View All Products</DashboardButton>
+              <DashboardButton onClick={() => navigate("/inventory")}>View All Products</DashboardButton>
             </div>
           </Panel>
 
@@ -112,7 +112,7 @@ export default function Dashboard() {
                   </div>
                 ))}
               </div>
-              <DashboardButton onClick={() => navigate("/salesreport")} className="shrink-0">View All Transactions</DashboardButton>
+              <DashboardButton onClick={() => navigate("/salesreport")}>View All Transactions</DashboardButton>
             </div>
           </Panel>
         </section>
