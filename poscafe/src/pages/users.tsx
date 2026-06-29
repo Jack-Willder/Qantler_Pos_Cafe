@@ -259,12 +259,12 @@ export default function Users() {
                       <td><div className={`p-1 px-2 text-left text-ss-50 min-[780px]:text-ss-55 ${user.isActive ? "text-green-500 bg-green-100" : "text-red-500 bg-red-100"} rounded-sm flex items-center w-fit`}>{user.isActive ? "Active" : "Inactive"}</div></td>
                       <td><div className="p-2 text-left text-gray-500 text-ss-50 min-[780px]:text-ss-55">{new Date(user.createdAt).toLocaleDateString()}</div></td>
                       <td><div className="p-2 flex gap-2">
-                        <button 
+                        {/* <button 
                           className="p-1.5 hover:bg-gray-100 rounded-sm text-gray-600 hover:text-gray-800"
                           title="Edit"
                         >
                           <IconPosCafe icon="edit" size={14} color="violet"/>
-                        </button>
+                        </button> */}
                         <button 
                           onClick={() => handleToggleStatus(user.userId)}
                           className="p-1.5 hover:bg-gray-100 rounded-sm text-gray-600 hover:text-gray-800"
