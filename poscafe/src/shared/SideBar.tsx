@@ -14,8 +14,8 @@ export default function SideBar() {
                 { name: "Item Request", icon: <IconPosCafe icon="itemrequest" size={12}/>, path: "/itemrequest" },
                 { name: "Sales Report", icon: <IconPosCafe icon="salesreport" size={12}/>, path: "/salesreport" },
                 // { name: "Customer", icon: <IconPosCafe icon="customerreport" size={12}/>, path: "/customerreport" },
-                { name: "Settings", icon: <IconPosCafe icon="settings" size={12}/>, path: "/settings" },
-                { name: "Users", icon: <IconPosCafe icon="users" size={12}/>, path: "/users" }
+                { name: "Users", icon: <IconPosCafe icon="settings" size={12}/>, path: "/users" },
+                { name: "Settings", icon: <IconPosCafe icon="users" size={12}/>, path: "/settings" }
         ];
         return (
                 <div className="h-full w-max px-1.5 py-4 flex flex-col gap-2.5 bg-menu max-[700px]:absolute z-20 max-[700px]:-z-20 md:w-max lg:text-2xl">
