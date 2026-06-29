@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { IconPosCafe } from "../Helper/icons";
 import { getAllUsers, deleteUser, toggleUserStatus, createUser } from "../api/UserManagementApi";
 import type { User, CreateUserRequest } from "../Types/Types";
+import Popup from "../shared/popup";
 
 export default function Users() {
   const [users, setUsers] = useState<User[]>([]);
@@ -9,6 +10,8 @@ export default function Users() {
   const [error, setError] = useState("");
   const [addUserError, setAddUserError] = useState("");
   const [isAddingUser, setIsAddingUser] = useState(false);
+  const [showDeletePopup, setShowDeletePopup] = useState(false);
+  const [userToDelete, setUserToDelete] = useState<number | null>(null);
 
   const [newUser, setNewUser] = useState({
     fullName: "",
@@ -36,15 +39,29 @@ export default function Users() {
   };
 
   const handleDeleteUser = async (userId: number) => {
-    if (window.confirm("Are you sure you want to delete this user?")) {
+    setUserToDelete(userId);
+    setShowDeletePopup(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (userToDelete !== null) {
       try {
-        await deleteUser(userId);
-        setUsers(users.filter(user => user.userId !== userId));
+        await deleteUser(userToDelete);
+        setUsers(users.filter(user => user.userId !== userToDelete));
+        setShowDeletePopup(false);
+        setUserToDelete(null);
       } catch (err) {
         setError("Failed to delete user");
         console.error("Error deleting user:", err);
+        setShowDeletePopup(false);
+        setUserToDelete(null);
       }
     }
+  };
+
+  const handleCancelDelete = () => {
+    setShowDeletePopup(false);
+    setUserToDelete(null);
   };
 
   const handleToggleStatus = async (userId: number) => {
@@ -193,7 +210,7 @@ export default function Users() {
             <button 
               onClick={handleAddUser}
               disabled={isAddingUser}
-              className="bg-gpurple flex p-4 rounded-md aspect-16/8 h-1/2 items-center justify-center border border-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="bg-gpurple flex p-4 rounded-md aspect-16/6 h-1/2 items-center justify-center border border-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <IconPosCafe color="white" icon="add" />
               <span className="text-white">{isAddingUser ? "Adding..." : "Add User"}</span>
@@ -271,6 +288,15 @@ export default function Users() {
           </div>
         )}
       </div>
+
+      <Popup
+        show={showDeletePopup}
+        navigateTo="/users"
+        message="user"
+        type="delete"
+        onSubmit={handleConfirmDelete}
+        onCancel={handleCancelDelete}
+      />
     </div>
   );
 }
