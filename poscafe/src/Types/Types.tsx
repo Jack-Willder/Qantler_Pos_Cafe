@@ -3,6 +3,20 @@ export type formActionType = {
   setFormAction: CallableFunction
 }
 
+export type settingsType = {
+  setting: {
+    cafeName: string,
+    cafeTagline: string,
+    currency: string,
+    taxRate: number,
+    enableReceipt: boolean,
+    enableNotifications: boolean,
+    language: string,
+    theme: string;
+  },
+  setSetting: CallableFunction
+}
+
 export type datetype = {
   date: {
     date: string,

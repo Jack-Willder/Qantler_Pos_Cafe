@@ -81,20 +81,33 @@ export function useBilling() {
     );
     setAllInventory(updatedInventory);
     syncVisibleInventory(updatedInventory);
-    localStorage.setItem("inventory", JSON.stringify(updatedInventory));
+    // localStorage.setItem("inventory", JSON.stringify(updatedInventory));
   }
 
   function updatequantity(itemcode: string, _quantity: number) {
     const inventoryItem = allInventory.find((item) => item.itemCode === itemcode);
     if (!inventoryItem) return;
-
     // const newQuantity = Math.max(1, Math.min(quantity, inventoryItem.oldstock));
+    const instock = inventorylist.find(item => item.itemCode == itemcode)?.inStock as number ?? 0;
+    setInventorylist(
+      inventorylist.map((item) => (item.itemCode == itemcode) ? { ...item, inStock: instock - _quantity } : item)
+    );
     setCheckoutlist(
-      checkoutlist.map((item) =>
+      checkoutlist.map((item) => {
         // item.itemcode === itemcode ? { ...item, quantity: newQuantity, total: newQuantity * item.price } : item
-        item.itemcode === itemcode ? { ...item } : item
+        if (item.itemcode === itemcode) {
+          console.log(_quantity);
+          if (instock >= _quantity && _quantity > 0) {
+            return { ...item, quantity: _quantity }
+          } else if (_quantity < 1) {
+            return { ...item, quantity: 1}
+          } else return { ...item, quantity: instock }
+        } else return item
+      }
       )
     );
+
+
 
     const updatedInventory = allInventory.map((item) =>
       // item.itemCode === itemcode ? { ...item, instock: item.oldstock - newQuantity } : item
@@ -102,7 +115,7 @@ export function useBilling() {
     );
     setAllInventory(updatedInventory);
     syncVisibleInventory(updatedInventory);
-    localStorage.setItem("inventory", JSON.stringify(updatedInventory));
+    // localStorage.setItem("inventory", JSON.stringify(updatedInventory));
   }
 
   function deletefromcheckout(itemcode: string) {
