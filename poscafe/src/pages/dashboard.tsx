@@ -56,7 +56,7 @@ export default function Dashboard() {
   return (
     <main className="h-full min-h-0 min-w-0 flex-1 overflow-y-auto bg-[#f7f8fc] text-[#11152f]">
       <DashboardTopBar />
-      <div className="mx-auto flex max-w-400 flex-col gap-2 p-2 sm:p-3 lg:p-2 lg:px-4">
+      <div className="mx-auto flex grow max-w-400 flex-col gap-2 p-2 sm:p-3 lg:p-2 lg:px-4">
         <section className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-5">
           {metricCards.map((metric, index) => (
             <article key={metric.label} className="flex min-h-20 items-center gap-2 rounded-md border border-[#e9eaf2] bg-white p-3 shadow-sm">
@@ -163,11 +163,11 @@ function DashboardTopBar() {
   </header>;
 }
 
-function Panel({ title, action, warning, className = "", children }: { title: string; action?: string; warning?: boolean; className?: string; children: React.ReactNode }) {
+function Panel({ title, action, warning, className = "", children }: { title: string; action?: string; warning?: boolean; className?: string; children: React.ReactNode; }) {
   return <article className={`rounded-md border border-[#e7e9f0] bg-white p-3 shadow-sm ${className}`}><div className="mb-2 flex items-center justify-between gap-2"><h2 className="flex items-center gap-1.5 text-ss-55 font-bold lg:text-ss-60">{warning && <IconPosCafe icon="error" color="red" size={14} />}{title}</h2>{action && <button className={`shrink-0 text-ss-55 font-semibold ${action.includes("View") ? "text-violet-600" : "rounded-md border border-[#dfe2eb] px-2 py-1 text-[#313650]"}`}>{action}{action.includes("View") && "  ›"}</button>}</div>{children}</article>;
 }
 
-function DashboardButton({ children, onClick }: { children: React.ReactNode; onClick: () => void }) {
+function DashboardButton({ children, onClick }: { children: React.ReactNode; onClick: () => void; }) {
   return <button onClick={onClick} className="mt-2 w-full rounded-md border border-[#e1e3ec] py-1.5 text-ss-55 font-semibold text-violet-600 transition hover:bg-violet-50">{children}　›</button>;
 }
 

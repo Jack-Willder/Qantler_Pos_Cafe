@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Billing from "./pages/billing";
 import Inventory from "./pages/inventory";
 import ItemRequest from "./pages/itemrequest";
@@ -21,10 +21,18 @@ function AppRoutes() {
   const [formAction, setFormAction] = useState("add");
   const location = useLocation();
   const isLogin = ["/login", "/signup", "/register"].includes(location.pathname.toLowerCase());
+  const isAuthenticated = !!localStorage.getItem("user");
+
+  useEffect(() => {
+    if (!isAuthenticated && !isLogin) {
+      window.location.href = "/login";
+    }
+  }, [isAuthenticated, isLogin]);
 
   return (
     <>
       {!isLogin ? <SideBar /> : null}
+
       <FormAction.Provider value={{ formAction, setFormAction }}>
         <Routes>
           <Route path="/login" element={<Login />} />

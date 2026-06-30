@@ -156,22 +156,23 @@ export type requestitemtype = {
 };
 
 export type LoginRequest = {
-  username: string;
-  password: string;
+  Name: string;
+  Password: string;
 };
 
 export type RegisterRequest = {
-  fullName: string;
-  username: string;
+  name: string;
   email: string;
   password: string;
-  confirmPassword: string;
 };
 
 export type AuthResponse = {
-  token: string;
-  refreshToken: string;
-  user: User;
+  userId: string,
+  name: string,
+  email: string,
+  token: string,
+  refreshToken: string,
+  expiresAt: string;
 };
 
 export type User = {
@@ -182,6 +183,7 @@ export type User = {
   role: string;
   isActive: boolean;
   createdAt: string;
+  password?: string;
 };
 
 export type CreateUserRequest = {

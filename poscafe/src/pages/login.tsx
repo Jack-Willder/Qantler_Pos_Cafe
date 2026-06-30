@@ -1,7 +1,7 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { IconPosCafe } from "../Helper/icons";
 import { login, register } from "../api/AuthApi";
-import type { LoginRequest, RegisterRequest } from "../Types/Types";
+import type { RegisterRequest, LoginRequest } from "../Types/Types";
 import { useState } from "react";
 
 type AuthField = {
@@ -30,10 +30,10 @@ function AuthInput({ field }: { field: AuthField; }) {
     const location = useLocation();
     const isSignup = location.pathname.toLowerCase().includes("signup") || location.pathname.toLowerCase().includes("register");
     return (
-        <label className={`flex flex-col gap-1 ${isSignup ? "text-ss-55" : "text-ss-65" } font-bold text-[#080a28]`}>
+        <label className={`flex flex-col gap-1 ${isSignup ? "text-ss-55" : "text-ss-65"} font-bold text-[#080a28]`}>
             {field.label}
-            <div className={`flex ${isSignup ? "h-8" : "h-10" } items-center overflow-hidden rounded-md border border-[#d8d9ea] bg-white focus-within:border-[#6334f6]`}>
-                <span className={`flex h-full ${isSignup ? "w-8" : "w-10" } items-center justify-center bg-[#f7f6ff]`}>
+            <div className={`flex ${isSignup ? "h-8" : "h-10"} items-center overflow-hidden rounded-md border border-[#d8d9ea] bg-white focus-within:border-[#6334f6]`}>
+                <span className={`flex h-full ${isSignup ? "w-8" : "w-10"} items-center justify-center bg-[#f7f6ff]`}>
                     <IconPosCafe icon={field.icon} color="purple" size={14} />
                 </span>
                 <input
@@ -106,33 +106,35 @@ export default function Login() {
         setError("");
 
         const formData = new FormData(event.currentTarget);
-        
+
         try {
             if (isSignup) {
-                const registerData: RegisterRequest = {
-                    fullName: formData.get("fullName") as string,
-                    username: formData.get("username") as string,
+                const userData: RegisterRequest = {
+                    name: formData.get("username") as string,
                     email: formData.get("email") as string,
                     password: formData.get("password") as string,
-                    confirmPassword: formData.get("confirmPassword") as string,
                 };
-                
-                const response = await register(registerData);
-                localStorage.setItem("token", response.token);
-                localStorage.setItem("refreshToken", response.refreshToken);
-                localStorage.setItem("user", JSON.stringify(response.user));
-                navigate("/billing");
+
+                const user = await register(userData);
+                if (user.token != "") {
+                    // localStorage.setItem("user", JSON.stringify(user));
+                    navigate("/login");
+                } else {
+                    throw new Error("Registeration Failed");
+                }
             } else {
-                const loginData: LoginRequest = {
-                    username: formData.get("username") as string,
-                    password: formData.get("password") as string,
+                const userData: LoginRequest = {
+                    Name: formData.get("username") as string,
+                    Password: formData.get("password") as string,
                 };
-                
-                const response = await login(loginData);
-                localStorage.setItem("token", response.token);
-                localStorage.setItem("refreshToken", response.refreshToken);
-                localStorage.setItem("user", JSON.stringify(response.user));
-                navigate("/billing");
+
+                const user = await login(userData);
+                if (user.token != "") {
+                    localStorage.setItem("user", JSON.stringify(user));
+                    navigate("/billing");
+                } else {
+                    throw new Error("Invalid username or password");
+                }
             }
         } catch (err) {
             setError(isSignup ? "Registration failed. Please try again." : "Invalid username or password.");
@@ -172,7 +174,7 @@ export default function Login() {
                             {isSignup ? "Join POS Cafe and start managing your business smarter." : "Sign in to continue to POS Cafe"}
                         </p>
 
-                        <div className={`mt-8 flex flex-col ${isSignup ? "gap-3" : "gap-5" } sm:mt-4`}>
+                        <div className={`mt-8 flex flex-col ${isSignup ? "gap-3" : "gap-5"} sm:mt-4`}>
                             {fields.map((field) => (
                                 <AuthInput field={field} key={field.name} />
                             ))}
@@ -201,7 +203,7 @@ export default function Login() {
                             </div>
                         )}
 
-                        <button 
+                        <button
                             disabled={isLoading}
                             className="mt-4 flex h-9 items-center justify-center gap-1 rounded-md bg-gpurple px-5 text-ss-70 font-extrabold text-white transition hover:brightness-105 disabled:opacity-50 disabled:cursor-not-allowed"
                         >
