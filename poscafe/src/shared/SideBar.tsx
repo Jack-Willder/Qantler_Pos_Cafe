@@ -75,10 +75,10 @@ export default function SideBar() {
                                 </button>
                                 <div className="flex items-center justify-center gap-1">
                                         <div className="bg-violet-500 rounded-full h-full w-auto aspect-square text-center text-white text-sm font-thin p-0.5 lg:text-sm lg:p-1.5">
-                                                {user?.name?.charAt(0).toUpperCase() || "A"}
+                                                {user?.username?.charAt(0).toUpperCase() || "A"}
                                         </div>
                                         <div className="flex flex-col">
-                                                <span className="text-white font-medium text-ss-50 lg:text-xs">{`${user?.name[0].toUpperCase()}${user?.name.slice(1, user?.name.length)}` || "Admin"}</span>
+                                                <span className="text-white font-medium text-ss-50 lg:text-xs">{`${user?.username[0].toUpperCase()}${user?.username.slice(1, user?.username.length)}` || "Admin"}</span>
                                                 {/* <span className="text-white font-medium text-ss-50 lg:text-xs">{user?.name || "Admin"}</span> */}
                                                 <span className="text-gray-300 font-thin text-ss-45 lg:text-ss-55 text-xs">{user?.email || "Administrator"}</span>
                                         </div>

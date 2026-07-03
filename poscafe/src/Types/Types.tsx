@@ -170,19 +170,20 @@ export type requestitemtype = {
 };
 
 export type LoginRequest = {
-  Name: string;
-  Password: string;
+  username: string;
+  password: string;
 };
 
 export type RegisterRequest = {
-  name: string;
+  username: string;
+  fullname: string;
   email: string;
   password: string;
 };
 
 export type AuthResponse = {
   userId: string,
-  name: string,
+  username: string,
   email: string,
   token: string,
   refreshToken: string,

@@ -3,6 +3,7 @@ import { IconPosCafe } from "../Helper/icons";
 import { login, register } from "../api/AuthApi";
 import type { RegisterRequest, LoginRequest } from "../Types/Types";
 import { useState } from "react";
+import axios from "axios";
 
 type AuthField = {
     label: string;
@@ -110,7 +111,8 @@ export default function Login() {
         try {
             if (isSignup) {
                 const userData: RegisterRequest = {
-                    name: formData.get("username") as string,
+                    username: formData.get("username") as string,
+                    fullname: formData.get("fullName") as string,
                     email: formData.get("email") as string,
                     password: formData.get("password") as string,
                 };
@@ -124,8 +126,8 @@ export default function Login() {
                 }
             } else {
                 const userData: LoginRequest = {
-                    Name: formData.get("username") as string,
-                    Password: formData.get("password") as string,
+                    username: formData.get("username") as string,
+                    password: formData.get("password") as string,
                 };
 
                 const user = await login(userData);
@@ -137,7 +139,15 @@ export default function Login() {
                 }
             }
         } catch (err) {
-            setError(isSignup ? "Registration failed. Please try again." : "Invalid username or password.");
+            // if (isSignup) {
+            //     if (axios.isAxiosError(err) && err.response?.status === 409) {
+            //         setError("User already exists.");
+            //     } else {
+                    // setError("Registration failed. Please try again.");
+                // }
+            // } else {
+                setError("Invalid username or password.");
+            // }
             console.error("Authentication error:", err);
         } finally {
             setIsLoading(false);
