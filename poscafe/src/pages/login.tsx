@@ -117,8 +117,8 @@ export default function Login() {
                     password: formData.get("password") as string,
                 };
 
-                const user = await register(userData);
-                if (user.token != "") {
+                const status = await register(userData);
+                if (status >= 200 && status < 300) {
                     // localStorage.setItem("user", JSON.stringify(user));
                     navigate("/login");
                 } else {
