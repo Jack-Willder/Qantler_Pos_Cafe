@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { GetAllBill } from "../api/BillingApi";
-import { GetAllInventory } from "../api/InventoryApi";
+import { GetAllBill, GetAllInventory } from "../api/api";
 import { IconPosCafe } from "../Helper/icons";
 import type { invitemtype, saleslisttype } from "../Types/Types";
 

@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { IconPosCafe } from "../Helper/icons";
-import { getAllUsers, deleteUser, toggleUserStatus, createUser } from "../api/UserManagementApi";
+import { getAllUsers, deleteUser, toggleUserStatus, createUser } from "../api/api";
 import type { User, CreateUserRequest } from "../Types/Types";
 import Popup from "../shared/popup";
+import TableComponent, { type Column } from "../shared/Table";
 
 export default function Users() {
   const [users, setUsers] = useState<User[]>([]);
@@ -151,6 +152,79 @@ export default function Users() {
     }
   };
 
+  const columns: Column<User>[] = [
+    {
+      header: "ID",
+      key: "userId",
+      sortable: true,
+      render: (user) => <div className="p-1">{user.userId}</div>,
+    },
+    {
+      header: "Full Name",
+      key: "fullName",
+      sortable: true,
+      className: "text-gray-500",
+      render: (user) => <div className="p-1">{user.fullName}</div>,
+    },
+    {
+      header: "Username",
+      key: "username",
+      sortable: true,
+      render: (user) => <div className="p-1">{user.username}</div>,
+    },
+    {
+      header: "Email",
+      key: "email",
+      sortable: true,
+      className: "text-gray-500",
+      render: (user) => <div className="p-1">{user.email}</div>,
+    },
+    {
+      header: "Role",
+      key: "role",
+      sortable: true,
+      render: (user) => <div className="p-1">{user.role}</div>,
+    },
+    {
+      header: "Status",
+      key: "isActive",
+      sortable: true,
+      render: (user) => (
+        <div className={`p-1 px-2 ${user.isActive ? "text-green-500 bg-green-100" : "text-red-500 bg-red-100"} rounded-sm flex items-center w-fit`}>
+          {user.isActive ? "Active" : "Inactive"}
+        </div>
+      ),
+    },
+    {
+      header: "Created",
+      key: "createdAt",
+      sortable: true,
+      className: "text-gray-500",
+      render: (user) => <div className="p-1">{new Date(user.createdAt).toLocaleDateString()}</div>,
+    },
+    {
+      header: "Actions",
+      render: (user) => (
+        <div className="p-1 flex gap-2">
+          <button 
+            onClick={(e) => { e.stopPropagation(); handleToggleStatus(user.userId); }}
+            className="p-1.5 hover:bg-gray-100 rounded-sm text-gray-600 hover:text-gray-800 cursor-pointer"
+            title={user.isActive ? "Deactivate" : "Activate"}
+          >
+            <IconPosCafe icon={user.isActive ? "disable" : "check"} size={14} color={user.isActive ? "red" : "green"}/>
+          </button>
+          <button 
+            onClick={(e) => { e.stopPropagation(); handleDeleteUser(user.userId); }}
+            className="p-1.5 hover:bg-red-50 rounded-sm text-gray-600 hover:text-red-600 cursor-pointer"
+            title="Delete"
+          >
+            <IconPosCafe icon="delete" size={14} color="red"/>
+          </button>
+        </div>
+      ),
+    },
+  ];
+
   return (
     <div className="flex flex-col gap-2">
       <div className="bg-white rounded-sm shadow-sm shadow-gray-200 p-4">
@@ -228,63 +302,12 @@ export default function Users() {
           <div className="text-center py-8 text-gray-500">Loading users...</div>
         ) : (
           <div className="overflow-x-hidden">
-            <table className="border-collapse w-full m-2.5 border border-gray-200 rounded-sm">
-              <thead>
-                <tr>
-                  <th className="bg-gray-100 p-2 text-ss-50 min-[780px]:text-ss-55 font-bold text-left">ID</th>
-                  <th className="bg-gray-100 p-2 text-ss-50 min-[780px]:text-ss-55 font-bold text-left">Full Name</th>
-                  <th className="bg-gray-100 p-2 text-ss-50 min-[780px]:text-ss-55 font-bold text-left">Username</th>
-                  <th className="bg-gray-100 p-2 text-ss-50 min-[780px]:text-ss-55 font-bold text-left">Email</th>
-                  <th className="bg-gray-100 p-2 text-ss-50 min-[780px]:text-ss-55 font-bold text-left">Role</th>
-                  <th className="bg-gray-100 p-2 text-ss-50 min-[780px]:text-ss-55 font-bold text-left">Status</th>
-                  <th className="bg-gray-100 p-2 text-ss-50 min-[780px]:text-ss-55 font-bold text-left">Created</th>
-                  <th className="bg-gray-100 p-2 text-ss-50 min-[780px]:text-ss-55 font-bold text-left">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {users.length === 0 ? (
-                  <tr>
-                    <td colSpan={8} className="text-center py-8 text-gray-500">
-                      No users found
-                    </td>
-                  </tr>
-                ) : (
-                  users.map((user) => (
-                    <tr key={user.userId} className="border border-gray-100">
-                      <td><div className="p-2 text-ss-50 text-left min-[780px]:text-ss-55">{user.userId}</div></td>
-                      <td><div className="p-2 text-left text-gray-500 text-ss-50 min-[780px]:text-ss-55">{user.fullName}</div></td>
-                      <td><div className="p-2 text-left text-ss-50 min-[780px]:text-ss-55">{user.username}</div></td>
-                      <td><div className="p-2 text-left text-gray-500 text-ss-50 min-[780px]:text-ss-55">{user.email}</div></td>
-                      <td><div className="p-2 text-left text-ss-50 min-[780px]:text-ss-55">{user.role}</div></td>
-                      <td><div className={`p-1 px-2 text-left text-ss-50 min-[780px]:text-ss-55 ${user.isActive ? "text-green-500 bg-green-100" : "text-red-500 bg-red-100"} rounded-sm flex items-center w-fit`}>{user.isActive ? "Active" : "Inactive"}</div></td>
-                      <td><div className="p-2 text-left text-gray-500 text-ss-50 min-[780px]:text-ss-55">{new Date(user.createdAt).toLocaleDateString()}</div></td>
-                      <td><div className="p-2 flex gap-2">
-                        {/* <button 
-                          className="p-1.5 hover:bg-gray-100 rounded-sm text-gray-600 hover:text-gray-800"
-                          title="Edit"
-                        >
-                          <IconPosCafe icon="edit" size={14} color="violet"/>
-                        </button> */}
-                        <button 
-                          onClick={() => handleToggleStatus(user.userId)}
-                          className="p-1.5 hover:bg-gray-100 rounded-sm text-gray-600 hover:text-gray-800"
-                          title={user.isActive ? "Deactivate" : "Activate"}
-                        >
-                          <IconPosCafe icon={user.isActive ? "disable" : "check"} size={14} color={user.isActive ? "red" : "green"}/>
-                        </button>
-                        <button 
-                          onClick={() => handleDeleteUser(user.userId)}
-                          className="p-1.5 hover:bg-red-50 rounded-sm text-gray-600 hover:text-red-600"
-                          title="Delete"
-                        >
-                          <IconPosCafe icon="delete" size={14} color="red"/>
-                        </button>
-                      </div></td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
+            <TableComponent
+              columns={columns}
+              data={users}
+              emptyMessage="No users found"
+              className="w-full"
+            />
           </div>
         )}
       </div>

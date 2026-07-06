@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { IconPosCafe } from "../Helper/icons";
+import TableComponent, { type Column } from "../shared/Table";
 
 export default function Inventory() {
   const [currentPage] = useState(1);
@@ -14,6 +15,75 @@ export default function Inventory() {
     { itemimage: <img src="https://png.pngtree.com/png-vector/20250429/ourmid/pngtree-iced-black-tea-in-clear-plastic-cup-with-ice-cubes-png-image_16041290.png" alt="coffee" srcSet="" className="w-4.5 h-4.5"></img>, itemname: "Tea C", category: "Beverage", price: "$4.70", unit: "Cup", purchased: "200", sold: "150", instock: "50", status: "In Stock", lastupdated: "20 May 2024, 10:30AM" },
     { itemimage: <img src="https://png.pngtree.com/png-vector/20250429/ourmid/pngtree-iced-black-tea-in-clear-plastic-cup-with-ice-cubes-png-image_16041290.png" alt="coffee" srcSet="" className="w-4.5 h-4.5"></img>, itemname: "Tea C", category: "Beverage", price: "$4.70", unit: "Cup", purchased: "200", sold: "150", instock: "50", status: "In Stock", lastupdated: "20 May 2024, 10:30AM" },
     { itemimage: <img src="https://png.pngtree.com/png-vector/20250429/ourmid/pngtree-iced-black-tea-in-clear-plastic-cup-with-ice-cubes-png-image_16041290.png" alt="coffee" srcSet="" className="w-4.5 h-4.5"></img>, itemname: "Tea C", category: "Beverage", price: "$4.70", unit: "Cup", purchased: "200", sold: "150", instock: "50", status: "In Stock", lastupdated: "20 May 2024, 10:30AM" },
+  ];
+
+  const columns: Column<typeof inventorylist[number]>[] = [
+    {
+      header: "Item Name",
+      key: "itemname",
+      sortable: true,
+      render: (item) => (
+        <div className="flex items-center gap-2">
+          {item.itemimage}
+          <div className="text-ss-55 text-center">{item.itemname}</div>
+        </div>
+      ),
+    },
+    {
+      header: "Category",
+      key: "category",
+      sortable: true,
+      align: "center",
+      className: "text-gray-500",
+    },
+    {
+      header: "Price",
+      key: "price",
+      sortable: true,
+      align: "center",
+    },
+    {
+      header: "Unit",
+      key: "unit",
+      sortable: true,
+      align: "center",
+      className: "text-gray-500",
+    },
+    {
+      header: "Purchased",
+      key: "purchased",
+      sortable: true,
+      align: "center",
+    },
+    {
+      header: "Sold",
+      key: "sold",
+      sortable: true,
+      align: "center",
+    },
+    {
+      header: "In Stock",
+      key: "instock",
+      sortable: true,
+      align: "center",
+      className: "text-green-500",
+    },
+    {
+      header: "Status",
+      key: "status",
+      align: "center",
+      render: (item) => (
+        <div className="text-green-500 bg-green-100 rounded-sm flex items-center justify-center justify-self-center w-fit p-0.5 px-2">
+          {item.status}
+        </div>
+      ),
+    },
+    {
+      header: "Last Updated",
+      key: "lastupdated",
+      sortable: true,
+      align: "center",
+    },
   ];
 
   return (
@@ -98,41 +168,11 @@ export default function Inventory() {
               </div>
             </div>
           </div>
-          <table className="border-collapse w-full m-2.5 border border-gray-200 rounded-sm">
-            <thead>
-              <tr>
-                <th className="bg-gray-100 p-1 text-ss-55 font-bold">Item Name</th>
-                <th className="bg-gray-100 p-1 text-ss-55 font-bold">Category</th>
-                <th className="bg-gray-100 p-1 text-ss-55 font-bold">Price</th>
-                <th className="bg-gray-100 p-1 text-ss-55 font-bold">Unit</th>
-                <th className="bg-gray-100 p-1 text-ss-55 font-bold">Purchased</th>
-                <th className="bg-gray-100 p-1 text-ss-55 font-bold">Sold</th>
-                <th className="bg-gray-100 p-1 text-ss-55 font-bold">In Stock</th>
-                <th className="bg-gray-100 p-1 text-ss-55 font-bold">Status</th>
-                <th className="bg-gray-100 p-1 text-ss-55 font-bold">Last Updated</th>
-              </tr>
-            </thead>
-            <tbody>
-              {inventorylist.map((item, index) => (
-                <tr className="border border-gray-100" key={index}>
-                  <td>
-                    <div className="flex p-2 items-center gap-2">
-                      {item.itemimage}
-                      <div className="text-ss-55 text-center">{item.itemname}</div>
-                    </div>
-                  </td>
-                  <td><div className="p-0.5 text-gray-500 text-ss-55 text-center">{item.category}</div></td>
-                  <td><div className="p-0.5 text-ss-55 text-center">{item.price}</div></td>
-                  <td><div className="p-0.5 text-gray-500 text-ss-55 text-center">{item.unit}</div></td>
-                  <td><div className="p-0.5 text-ss-55 text-center">{item.purchased}</div></td>
-                  <td><div className="p-0.5 text-ss-55 text-center">{item.sold}</div></td>
-                  <td><div className="p-0.5 text-ss-55 text-center text-green-500">{item.instock}</div></td>
-                  <td><div className="p-0.5 text-ss-55 text-center text-green-500 bg-green-100 rounded-sm flex items-center justify-center justify-self-center w-fit">{item.status}</div></td>
-                  <td><div className="p-0.5 text-ss-55 text-center">{item.lastupdated}</div></td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <TableComponent
+            columns={columns}
+            data={inventorylist}
+            className="w-full mt-2.5"
+          />
           <div className="w-full flex justify-between">
             <div>
               <div className="flex items-center">

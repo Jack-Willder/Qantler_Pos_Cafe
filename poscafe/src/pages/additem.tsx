@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { FormAction } from "../Context/Context";
 import { InventoryItemForm } from "../features/inventory/InventoryItemForm";
 import {hasDuplicateItemName,hasEmptyRequiredField,normalizeInventoryItem} from "../features/inventory/inventoryItemStorage";
-import { CreateInventory, UpdateInventory, DeleteInventory, GetAllInventory, GetItemCode } from "../api/InventoryApi";
+import { CreateInventory, UpdateInventory, DeleteInventory, GetAllInventory, GetItemCode } from "../api/api";
 import Popup from "../shared/popup";
 import type { invitemtype } from "../Types/Types";
 

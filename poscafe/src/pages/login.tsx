@@ -1,9 +1,8 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { IconPosCafe } from "../Helper/icons";
-import { login, register } from "../api/AuthApi";
+import { login, register } from "../api/api";
 import type { RegisterRequest, LoginRequest } from "../Types/Types";
 import { useState } from "react";
-import axios from "axios";
 
 type AuthField = {
     label: string;

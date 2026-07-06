@@ -2,67 +2,10 @@ import { useEffect, useState } from "react";
 import { IconPosCafe } from "../Helper/icons";
 import { Pagination } from "../Helper/Pagination";
 import { getPaginatedItems } from "../Helper/PaginationUtils";
-import { GetAllBill } from "../api/BillingApi";
+import { GetAllBill } from "../api/api";
 import { useLocation } from "react-router-dom";
 import type { saleslisttype } from "../Types/Types";
-
-// type mappedItemsType = {
-//   itemcode: string;
-//   itemname: string;
-//   quantity: number;
-//   total: number;
-//   price: number;
-// };
-
-
-
-// type BillItemWithDate = mappedItemsType & {
-//   date: string;
-// };
-
-// type BillListType = {
-//   date: string;
-//   items: mappedItemsType[];
-// };
-
-// function getSalesList(): saleslisttype[] {
-// const saleslist = localStorage.getItem("saleslist");
-// if (!saleslist) {
-//   localStorage.setItem("saleslist", JSON.stringify([{ itemname: "Espresso", quantity: 45, totalprice: 135 }]));
-// }
-
-// const data = localStorage.getItem("bills");
-// const bills: BillListType[] = data ? JSON.parse(data) : [];
-// const mergedBillList = bills.flatMap((bill) =>
-//   bill.items.map((item) => ({
-//     ...item,
-//     date: bill.date,
-//   }))
-// );
-
-// const updatedBillList = mergedBillList.map(({ total, ...items }: BillItemWithDate) => ({
-//   ...items,
-//   totalprice: total,
-// }));
-
-// const mappedItems: Record<string, saleslisttype> = {};
-
-// updatedBillList.forEach((item) => {
-//   if (mappedItems[item.itemcode]) {
-//     mappedItems[item.itemcode].quantity += item.quantity;
-//     mappedItems[item.itemcode].totalprice += item.totalprice;
-//   } else {
-//     mappedItems[item.itemcode] = {
-//       itemname: item.itemname,
-//       date: item.date,
-//       quantity: item.quantity,
-//       totalprice: item.totalprice,
-//     };
-//   }
-// });
-
-//   return Object.values(mappedItems);
-// }
+import TableComponent, { type Column } from "../shared/Table";
 
 export default function Inventory() {
   const [currentPage, setCurrentPage] = useState(1);
@@ -72,7 +15,6 @@ export default function Inventory() {
   const location = useLocation();
   const [allSales, setAllSales] = useState<saleslisttype[]>([]);
   const [saleslist, setSaleslist] = useState<saleslisttype[]>([]);
-
 
   const [filterData, setFilterData] = useState({
     itemname: "",
@@ -89,26 +31,8 @@ export default function Inventory() {
       });
   }, [location.pathname]);
 
-
-
-
-
-
-
-
-
-
-
   function handleResponseData(saleslist: saleslisttype[]) {
     const reports = saleslist;
-
-    // reports.forEach(report => {
-    //   report.bill.forEach(item => {
-    //     item.date = report.date;
-    //   });
-    // });
-    // let items_array = Array.from(reports, (element) => element.bill);
-    // items_array = items_array.flat();
     let items_array = reports;
     let mapped_items: Record<string, saleslisttype> = {};
     items_array.forEach(item => {
@@ -125,13 +49,12 @@ export default function Inventory() {
   }
 
   const newsaleslist = handleResponseData(saleslist);
-
   const paginatedSales = getPaginatedItems(newsaleslist, currentPage, itemsPerPage);
-
 
   function handleFilterDate(date: string) {
     setFilterDate(date);
   }
+  
   function handleCustomDate(e: React.ChangeEvent<HTMLInputElement>) {
     const { name, value } = e.target;
     setFilterData((prev) => ({
@@ -150,7 +73,6 @@ export default function Inventory() {
 
   function filter() {
     const today = new Date();
-
     const startOfToday = new Date(
       today.getFullYear(),
       today.getMonth(),
@@ -163,49 +85,18 @@ export default function Inventory() {
     const startOfWeek = new Date(startOfToday);
     startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay()); // Sunday
 
-    // const startOfMonth = new Date(
-    //   today.getFullYear(),
-    //   today.getMonth(),
-    //   1
-    // );
 
-    const filteredList = allSales.filter((_item) => {
+
+    const filteredList = allSales.filter((item) => {
       // Item name filter
-      // const itemMatch =
-      //   !filterData.itemname ||
-      //   item.itemName === filterData.itemname;
+      const itemMatch =
+        !filterData.itemname ||
+        item.itemName === filterData.itemname;
 
-      // if (!itemMatch) return false;
+      if (!itemMatch) return false;
 
-      // const saleDate = new Date(item.date);
-
-      // switch (filterDate) {
-      //   case "Today":
-      //     return saleDate >= startOfToday;
-
-      //   case "Yesterday":
-      //     return (
-      //       saleDate >= startOfYesterday &&
-      //       saleDate < startOfToday
-      //     );
-
-      //   case "This Week":
-      //     return saleDate >= startOfWeek;
-
-      //   case "This Month":
-      //     return saleDate >= startOfMonth;
-
-      //   case "Custom":
-      //     return (
-      //       filterData.dateFrom &&
-      //       filterData.dateTo &&
-      //       saleDate >= new Date(filterData.dateFrom) &&
-      //       saleDate <= new Date(filterData.dateTo)
-      //     );
-
-      //   default:
-      //     return true;
-      // }
+      // Note: Date filtering mock logic matches the original
+      return true;
     });
 
     setSaleslist(filteredList);
@@ -221,6 +112,30 @@ export default function Inventory() {
     setSaleslist(allSales);
   }
 
+  const columns: Column<saleslisttype>[] = [
+    {
+      header: "Item Name",
+      key: "itemName",
+      sortable: true,
+      className: "text-left font-bold text-gray-900",
+      render: (item) => <div className="p-1">{item.itemName}</div>
+    },
+    {
+      header: "Sold Quantity",
+      key: "quantity",
+      sortable: true,
+      className: "text-left text-gray-500",
+      render: (item) => <div className="p-1">{item.quantity}</div>
+    },
+    {
+      header: "Total Price",
+      key: "total",
+      sortable: true,
+      className: "text-left font-semibold",
+      render: (item) => <div className="p-1">{`$${item.total.toFixed(2)}`}</div>
+    }
+  ];
+
   return (
     <div className="flex grow relative">
       <div className="flex flex-col gap-2 p-4 pt-0 pb-0 w-full font-bold">
@@ -229,6 +144,7 @@ export default function Inventory() {
             <div className="text-ss-50 text-gray-500">Item</div>
             <div className="flex items-center text-nowrap border rounded-sm justify-evenly p-2 grow w-full h-full border-gray-200">
               <select name="itemname" id="opg-select-category" className="w-full" onChange={handleFilterChange} value={filterData.itemname} required>
+                <option value="">Select Item</option>
                 {
                   Array.from(new Set(Array.from(allSales, item => item.itemName))).map((item, index) => (<option key={index} value={item}>{item}</option>))
                 }
@@ -261,13 +177,13 @@ export default function Inventory() {
           <div className="flex flex-col h-9/12 items-start justify-start">
             <div className="text-ss-50 text-transparent">Reported Date</div>
             <div className="flex h-full items-start gap-2">
-              <div className="bg-gpurple flex p-4 rounded-md aspect-16/8 h-1/3 items-center justify-center border border-gray-200" id="inventory-action-filter" onClick={() => filter()}>
+              <div className="bg-gpurple flex p-4 rounded-md aspect-16/8 h-1/3 items-center justify-center border border-gray-200 cursor-pointer" id="inventory-action-filter" onClick={() => filter()}>
                 <IconPosCafe color="white" icon="filter" />
-                <span className="text-white text-ss-50">Filter</span>
+                <span className="text-white text-ss-50 ml-1">Filter</span>
               </div>
-              <div className="flex p-4 rounded-md aspect-16/8 h-1/3 items-center justify-center border border-gray-200" id="inventory-action-reset" onClick={() => reset()}>
+              <div className="flex p-4 rounded-md aspect-16/8 h-1/3 items-center justify-center border border-gray-200 cursor-pointer" id="inventory-action-reset" onClick={() => reset()}>
                 <IconPosCafe color="black" icon="reset" />
-                <span className="text-black text-ss-50">Reset</span>
+                <span className="text-black text-ss-50 ml-1">Reset</span>
               </div>
             </div>
           </div>
@@ -282,29 +198,16 @@ export default function Inventory() {
               <div className="flex gap-3">
                 <div className="flex items-center justify-center text-ss-55 rounded-sm p-1.5 px-5 border border-gray-200">
                   <IconPosCafe color="black" icon="book" />
-                  <span className="text-black">Export to Excel</span>
+                  <span className="text-black ml-1">Export to Excel</span>
                 </div>
               </div>
             </div>
           </div>
-          <table className="border-collapse w-full m-2.5 border border-gray-200 rounded-sm">
-            <thead>
-              <tr>
-                <th className="bg-gray-100 p-2 text-ss-55 font-bold text-left">Item Name</th>
-                <th className="bg-gray-100 p-2 text-ss-55 font-bold text-left">Sold Quantity</th>
-                <th className="bg-gray-100 p-2 text-ss-55 font-bold text-left">Total Price</th>
-              </tr>
-            </thead>
-            <tbody>
-              {paginatedSales.map((item, index) => (
-                <tr className="border border-gray-100" key={index}>
-                  <td><div className="p-2 text-ss-55 text-left">{item.itemName}</div></td>
-                  <td><div className="p-2 text-left text-gray-500 text-ss-55">{item.quantity}</div></td>
-                  <td><div className="p-2 text-left text-ss-55">{`$${item.total.toFixed(2)}`}</div></td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <TableComponent
+            columns={columns}
+            data={paginatedSales}
+            className="w-full mt-2.5"
+          />
           <Pagination
             currentPage={currentPage}
             itemsPerPage={itemsPerPage}

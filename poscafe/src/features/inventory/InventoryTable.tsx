@@ -1,5 +1,6 @@
 import { IconPosCafe } from "../../Helper/icons";
 import type { invitemtype } from "../../Types/Types";
+import TableComponent, { type Column } from "../../shared/Table";
 
 type InventoryTableProps = {
   items: invitemtype[];
@@ -10,6 +11,96 @@ type InventoryTableProps = {
 };
 
 export function InventoryTable({ items, totalItems, onAddItem, onRequestItem, onEditItem }: InventoryTableProps) {
+  const columns: Column<invitemtype>[] = [
+    {
+      header: "Item Name",
+      key: "itemName",
+      sortable: true,
+      render: (item) => (
+        <div className="flex items-center gap-3">
+          {item.itemImage ? (
+            <img 
+              src={item.itemImage} 
+              alt={item.itemName} 
+              className="w-5 h-5 rounded-sm object-contain bg-transparent" 
+            />
+          ) : (
+            <div className="w-5 h-5 rounded-sm bg-purple-50 flex items-center justify-center">
+              <IconPosCafe icon="cafe" color="purple" size={16} />
+            </div>
+          )}
+          <div className="text-ss-60 font-bold text-gray-900 group-hover:text-purple-600 transition-colors">
+            {item.itemName}
+          </div>
+        </div>
+      ),
+    },
+    {
+      header: "Category",
+      key: "category",
+      sortable: true,
+      align: "center",
+      className: "text-gray-500 font-medium",
+    },
+    {
+      header: "Price",
+      key: "price",
+      sortable: true,
+      align: "center",
+      className: "font-black text-gray-950",
+      render: (item) => `$${Number(item.price).toFixed(2)}`,
+    },
+    {
+      header: "Unit",
+      key: "unit",
+      sortable: true,
+      align: "center",
+      className: "text-gray-500 font-medium",
+    },
+    {
+      header: "Purchased",
+      key: "purchased",
+      align: "center",
+      className: "text-gray-500 font-medium",
+      render: (item) => ("purchased" in item ? String((item as any).purchased) : "0"),
+    },
+    {
+      header: "Sold",
+      key: "sold",
+      align: "center",
+      className: "text-gray-500 font-medium",
+      render: (item) => ("sold" in item ? String((item as any).sold) : "0"),
+    },
+    {
+      header: "In Stock",
+      key: "inStock",
+      sortable: true,
+      align: "center",
+      render: (item) => (
+        <span className={getStockTextClass(item.inStock)}>
+          {item.inStock}
+        </span>
+      ),
+    },
+    {
+      header: "Status",
+      key: "status",
+      align: "center",
+      render: (item) => (
+        <span className={`inline-flex items-center justify-center text-ss-50 font-bold px-2.5 py-1 rounded-sm ${getStatusBadgeClass(item.inStock)}`}>
+          {getStockStatus(item.inStock)}
+        </span>
+      ),
+    },
+    {
+      header: "Last Updated",
+      key: "lastupdated",
+      align: "center",
+      className: "text-gray-500 font-medium",
+      render: (item) => ("lastupdated" in item ? String((item as any).lastupdated) : "20 May 2024"),
+    },
+  ];
+
   return (
     <>
       <div className="flex items-center justify-between w-full">
@@ -23,41 +114,13 @@ export function InventoryTable({ items, totalItems, onAddItem, onRequestItem, on
           <InventoryToolbarButton icon="book" label="Export to Excel" />
         </div>
       </div>
-      <table className="border-collapse w-full m-2.5 border border-gray-200 rounded-sm">
-        <thead>
-          <tr>
-            {["Item Name", "Category", "Price", "Unit", "Purchased", "Sold", "In Stock", "Status", "Last Updated"].map((heading) => (
-              <th key={heading} className="bg-gray-100 p-1 text-ss-55 font-bold">
-                {heading}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {items.map((item) => (
-            <tr className="border border-gray-100" key={item.itemCode} onClick={() => onEditItem(item)}>
-              <td>
-                <div className="flex p-2 items-center gap-2">
-                  <img src={item.itemImage} alt="coffee" className="w-4.5 h-4.5" />
-                  <div className="text-ss-55 text-center">{item.itemName}</div>
-                </div>
-              </td>
-              <td><div className="p-0.5 text-gray-500 text-ss-55 text-center">{item.category}</div></td>
-              <td><div className="p-0.5 text-ss-55 text-center">${item.price}</div></td>
-              <td><div className="p-0.5 text-gray-500 text-ss-55 text-center">{item.unit}</div></td>
-              <td><div className="p-0.5 text-ss-55 text-center">{0}</div></td>
-              <td><div className="p-0.5 text-ss-55 text-center">{0}</div></td>
-              <td><div className={`p-0.5 text-ss-55 text-center ${getStockTextClass(item.inStock)}`}>{item.inStock}</div></td>
-              <td>
-                <div className={`text-ss-55 text-center rounded-sm flex items-center justify-center justify-self-center w-fit p-1 px-2 ${getStatusBadgeClass(item.inStock)}`}>
-                  {getStockStatus(item.inStock)}
-                </div>
-              </td>
-              <td><div className="p-0.5 text-ss-55 text-center">{"20 May 2024"}</div></td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      
+      <TableComponent
+        columns={columns}
+        data={items}
+        onRowClick={(item) => onEditItem(item)}
+        className="w-full mt-2.5"
+      />
     </>
   );
 }
@@ -74,12 +137,12 @@ function InventoryToolbarButton({ label, icon, id, variant = "default", onClick 
   const primary = variant === "primary";
   return (
     <div
-      className={`flex items-center justify-center text-ss-55 rounded-sm p-1.5 px-3 ${primary ? "bg-gpurple text-white" : "border border-gray-200"}`}
+      className={`flex items-center justify-center text-ss-55 rounded-sm p-1.5 px-3 cursor-pointer ${primary ? "bg-gpurple text-white" : "border border-gray-200 bg-white hover:bg-gray-50"}`}
       id={id}
       onClick={onClick}
     >
       <IconPosCafe color={primary ? "white" : icon === "add" ? "purple" : "black"} icon={icon} />
-      <span className={`${primary ? "text-white" : icon === "add" ? "text-bviolet1" : "text-black"} text-ss-50`}>{label}</span>
+      <span className={`${primary ? "text-white" : icon === "add" ? "text-bviolet1" : "text-black"} text-ss-50 ml-1`}>{label}</span>
     </div>
   );
 }

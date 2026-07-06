@@ -5,7 +5,7 @@ import { Pagination } from "../Helper/Pagination";
 import { getPaginatedItems } from "../Helper/PaginationUtils";
 import { InventoryFilterBar } from "../features/inventory/InventoryFilterBar";
 import { InventoryTable } from "../features/inventory/InventoryTable";
-import { GetAllInventory } from "../api/InventoryApi";
+import { GetAllInventory } from "../api/api";
 import type { invitemtype, InventoryFilterData } from "../Types/Types";
 
 export default function Inventory() {

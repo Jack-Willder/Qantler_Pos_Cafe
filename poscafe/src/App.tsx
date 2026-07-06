@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import ProtectedRoute from './shared/ProtectedRoutes';
 import Billing from "./pages/billing";
 import Inventory from "./pages/inventory";
 import ItemRequest from "./pages/itemrequest";
@@ -17,7 +16,7 @@ import { FormAction, SettingsConfig } from "./Context/Context";
 import useDateTime from "./Helper/useDateTime";
 import { Header } from "./shared/Content";
 
-function AppRoutes() {
+export function AppRoutes() {
   const date = useDateTime();
   const [formAction, setFormAction] = useState("add");
   const [setting, setSetting] = useState({
@@ -32,13 +31,13 @@ function AppRoutes() {
   });
   const location = useLocation();
   const isLogin = ["/login", "/signup", "/register"].includes(location.pathname.toLowerCase());
-  // const isAuthenticated = !!localStorage.getItem("user");
+  const isAuthenticated = !!localStorage.getItem("user");
 
-  // useEffect(() => {
-  //   if (!isAuthenticated && !isLogin) {
-  //     window.location.href = "/login";
-  //   }
-  // }, [isAuthenticated, isLogin]);
+  useEffect(() => {
+    if (!isAuthenticated && !isLogin) {
+      window.location.href = "/login";
+    }
+  }, [isAuthenticated, isLogin]);
 
   return (
     <>
@@ -50,13 +49,10 @@ function AppRoutes() {
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Login />} />
             <Route path="/register" element={<Login />} />
-              <Route path="/billing" element={<Billing />} />
-            <Route element={<ProtectedRoute/>}>
-              <Route path="/" element={<Dashboard />} />
-              <Route path="/dashboard" element={<Dashboard />} />
-            </Route>
-            <Route element={<ProtectedRoute roles={["Admin"]} />}>
-              <Route element={<Header />}>
+            <Route path="/" element={<Dashboard />} />
+            <Route path="/billing" element={<Billing />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route element={<Header />}>
               <Route path="/inventory" element={<Inventory />} />
               <Route path="/itemrequest" element={<ItemRequest />} />
               <Route path="/salesreport" element={<SalesReport />} />
@@ -66,8 +62,6 @@ function AppRoutes() {
               <Route path="/additem" element={<AddItem />} />
               <Route path="/requestitem" element={<RequestItem date={date} />} />
             </Route>
-          </Route>
-            
           </Routes>
         </FormAction.Provider>
       </SettingsConfig.Provider>
@@ -78,7 +72,7 @@ function AppRoutes() {
 export default function App() {
   return (
     <BrowserRouter>
-      <AppRoutes />
+    <AppRoutes />
     </BrowserRouter>
   );
 }

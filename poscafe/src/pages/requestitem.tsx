@@ -4,7 +4,8 @@ import { IconPosCafe } from "../Helper/icons";
 import { FormAction } from "../Context/Context";
 import Popup from "../shared/popup";
 import type { datetype, requestitemlisttype, requestitemtype } from "../Types/Types";
-import { CreateRequest, DeleteRequest, GetRequest, GetRequestId, UpdateRequest } from "../api/ItemRequestApi";
+import { CreateRequest, DeleteRequest, GetRequest, GetRequestId, UpdateRequest } from "../api/api";
+import TableComponent, { type Column } from "../shared/Table";
 
 
 export default function AddItem({ date }: datetype) {
@@ -276,6 +277,63 @@ export default function AddItem({ date }: datetype) {
 
         setShowPopup(false);
     }
+
+    const columns: Column<requestitemlisttype[number]>[] = [
+        {
+            header: <span>Item Name <span className="text-red-500">*</span></span>,
+            className: "w-1/3 min-w-[200px]",
+            render: (item, index) => (
+                <select
+                    name="opg-select"
+                    id="opg-select-category"
+                    className="p-1 border border-gray-200 w-full rounded-sm"
+                    required
+                    value={item.itemName}
+                    onChange={(e) => handleItemChange(index, "itemName", e.target.value)}
+                >
+                    <option value="">Select Item</option>
+                    <option value="Coffee Beans Bag">Coffee Beans Bag</option>
+                    <option value="Milk 1L">Milk 1L</option>
+                    <option value="Sugar 1kg">Sugar 1kg</option>
+                </select>
+            )
+        },
+        {
+            header: <span>Quantity <span className="text-red-500">*</span></span>,
+            className: "w-1/4",
+            render: (item, index) => (
+                <input
+                    className="border border-gray-200 rounded-md w-full p-2 max-[820px]:p-1 max-[820px]:text-ss-50"
+                    type="number"
+                    value={item.quantity}
+                    onChange={(e) => handleItemChange(index, "quantity", Number(e.target.value))}
+                />
+            )
+        },
+        {
+            header: <span>Expected Date <span className="text-red-500">*</span></span>,
+            className: "w-1/4",
+            render: (item, index) => (
+                <input
+                    className="border border-gray-200 rounded-md w-full p-2 max-[820px]:p-1 max-[820px]:text-ss-50"
+                    type="date"
+                    value={item.expectedDate}
+                    onChange={(e) => handleItemChange(index, "expectedDate", e.target.value)}
+                />
+            )
+        },
+        {
+            header: "Action",
+            align: "center",
+            className: "w-20",
+            render: (_, index) => (
+                <div className="flex justify-center cursor-pointer" onClick={() => handleRemoveItem(index)}>
+                    <IconPosCafe icon="delete" color="red" size={14} />
+                </div>
+            )
+        }
+    ];
+
     return (
         <div className="w-full p-4 relative">
             <Popup show={showPopup} 
@@ -341,33 +399,11 @@ export default function AddItem({ date }: datetype) {
                         </div>
                     </div>
                     <div className="w-full min-h-0 grow overflow-scroll scrollbar-none">
-                        <table className="border-collapse w-full border border-gray-200 rounded-sm m-0">
-                            <thead className="sticky top-0">
-                                <tr>
-                                    <th className="bg-gray-100 p-2 text-ss-50 min-[780px]:text-ss-55 font-bold text-left">Item Name</th>
-                                    <th className="bg-gray-100 p-2 text-ss-50 min-[780px]:text-ss-55 font-bold text-left after:content-['*'] after:text-ss-70 after:text-red-500 after:ml-1">Quantity</th>
-                                    <th className="bg-gray-100 p-2 text-ss-50 min-[780px]:text-ss-55 font-bold text-left after:content-['*'] after:text-ss-70 after:text-red-500 after:ml-1">Expected Date</th>
-                                    <th className="bg-gray-100 p-2 text-ss-50 min-[780px]:text-ss-55 font-bold text-left">Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {
-                                    inventorylist.map((item, index) => (
-                                        <tr className="border border-gray-100" key={index}>
-                                            <td><div className="p-2 text-ss-50 text-left min-[780px]:text-ss-55"><select name="opg-select" id="opg-select-category" className="p-1 border border-gray-200 w-full rounded-sm" required value={item.itemName} onChange={(e) => handleItemChange(index, "itemName", e.target.value)}>
-                                                <option value="">Select Item</option>
-                                                <option value="Coffee Beans Bag">Coffee Beans Bag</option>
-                                                <option value="Milk 1L">Milk 1L</option>
-                                                <option value="Sugar 1kg">Sugar 1kg</option>
-                                                </select></div></td>
-                                            <td><div className="p-2 text-ss-50 text-left min-[780px]:text-ss-55"><input className="border border-gray-200 rounded-md w-full p-2 max-[820px]:p-1 max-[820px]:text-ss-50" type="number" id="opg-select-dfrom" value={item.quantity} onChange={(e) => handleItemChange( index, "quantity", Number(e.target.value) ) } /></div></td>
-                                            <td><div className="p-2 text-ss-50 text-left min-[780px]:text-ss-55"><input className="border border-gray-200 rounded-md w-full p-2 max-[820px]:p-1 max-[820px]:text-ss-50" type="date" id="opg-select-dfrom" value={item.expectedDate} onChange={(e) => handleItemChange(index, "expectedDate", e.target.value)} /></div></td>
-                                            <td><div className="p-2 flex justify-start cursor-pointer" onClick={() => handleRemoveItem(index)}><IconPosCafe icon="delete" color="red" size={14} /></div></td>
-                                        </tr>
-                                    ))
-                                }
-                            </tbody>
-                        </table>
+                        <TableComponent
+                            columns={columns}
+                            data={inventorylist}
+                            className="w-full"
+                        />
                     </div>
                     <div className="w-full flex flex-col items-center">
                         <div className="flex w-full items-center justify-center gap-2 border-t border-gray-200 pt-4">

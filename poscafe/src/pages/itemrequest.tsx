@@ -5,7 +5,8 @@ import { FormAction } from "../Context/Context";
 import { Pagination } from "../Helper/Pagination";
 import { getPaginatedItems } from "../Helper/PaginationUtils";
 import type { Request } from "../Types/Types";
-import { GetAllRequests } from "../api/ItemRequestApi";
+import { GetAllRequests } from "../api/api";
+import TableComponent, { type Column } from "../shared/Table";
 
 
 export default function Inventory() {
@@ -76,8 +77,63 @@ export default function Inventory() {
     });
     setRequest(allRequest);
   }
-
-
+  const columns: Column<Request>[] = [
+    {
+      header: "Request ID",
+      key: "requestId",
+      sortable: true,
+      className: "text-center",
+      render: (item) => <div className="p-1">{item.requestId}</div>,
+    },
+    {
+      header: "Subject",
+      key: "subject",
+      sortable: true,
+      className: "text-left text-gray-500",
+      render: (item) => <div className="p-1">{item.subject}</div>,
+    },
+    {
+      header: "Requested By",
+      key: "requestedBy",
+      sortable: true,
+      className: "text-left",
+      render: (item) => <div className="p-1">{item.requestedBy}</div>,
+    },
+    {
+      header: "Requested Date",
+      key: "requestedDate",
+      sortable: true,
+      className: "text-left text-gray-500",
+      render: (item) => <div className="p-1">{item.requestedDate}</div>,
+    },
+    {
+      header: "Expecting Delivery",
+      key: "expectingDate",
+      sortable: true,
+      className: "text-left",
+      render: (item) => <div className="p-1">{item.expectingDate}</div>,
+    },
+    {
+      header: "Status",
+      key: "status",
+      sortable: true,
+      className: "text-left",
+      render: (item) => (
+        <div className={`p-1 px-2 ${(item.status == "Received") ? "text-green-500 bg-green-100" : (item.status == "Pending") ? "text-yellow-500 bg-yellow-100" : (item.status == "Canceled") ? "text-red-500 bg-red-100" : "text-blue-500 bg-blue-100"} rounded-sm flex items-center w-fit`}>
+          {item.status}
+        </div>
+      ),
+    },
+    {
+      header: "Action",
+      align: "center",
+      render: () => (
+        <div className="p-1 flex justify-center">
+          <IconPosCafe icon="eye" color="purple" size={14} />
+        </div>
+      ),
+    },
+  ];
 
   return (
     <div className="flex grow relative">
@@ -163,32 +219,15 @@ export default function Inventory() {
               </div>
             </div>
           </div>
-          <table className="border-collapse w-full m-2.5 border border-gray-200 rounded-sm">
-            <thead>
-              <tr>
-                <th className="bg-gray-100 p-2 text-ss-50 min-[780px]:text-ss-55 font-bold text-left">Request ID</th>
-                <th className="bg-gray-100 p-2 text-ss-50 min-[780px]:text-ss-55 font-bold text-left">Subject</th>
-                <th className="bg-gray-100 p-2 text-ss-50 min-[780px]:text-ss-55 font-bold text-left">Requested By</th>
-                <th className="bg-gray-100 p-2 text-ss-50 min-[780px]:text-ss-55 font-bold text-left">Requested Date</th>
-                <th className="bg-gray-100 p-2 text-ss-50 min-[780px]:text-ss-55 font-bold text-left">Expecting Delivery</th>
-                <th className="bg-gray-100 p-2 text-ss-50 min-[780px]:text-ss-55 font-bold text-left">Status</th>
-                <th className="bg-gray-100 p-2 text-ss-50 min-[780px]:text-ss-55 font-bold text-left">Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {paginatedRequest.map((item, index) => (
-                <tr className="border border-gray-100" key={index} onClick={() => { setFormAction("edit"); handleChangeContent("/requestitem", item); }}>
-                  <td><div className="p-2 text-ss-50 text-center min-[780px]:text-ss-55">{item.requestId}</div></td>
-                  <td><div className="p-2 text-left text-gray-500 text-ss-50 min-[780px]:text-ss-55">{item.subject}</div></td>
-                  <td><div className="p-2 text-left  text-ss-50 min-[780px]:text-ss-55">{item.requestedBy}</div></td>
-                  <td><div className="p-2 text-left text-gray-500 text-ss-50 min-[780px]:text-ss-55">{item.requestedDate}</div></td>
-                  <td><div className="p-2 text-left  text-ss-50 min-[780px]:text-ss-55">{item.expectingDate}</div></td>
-                  <td><div className={`p-1 px-2 text-left text-ss-50 min-[780px]:text-ss-55 ${(item.status == "Received") ? "text-green-500 bg-green-100" : (item.status == "Pending") ? "text-yellow-500 bg-yellow-100" : (item.status == "Canceled") ? "text-red-500 bg-red-100" : "text-blue-500 bg-blue-100"} rounded-sm flex items-center w-fit`}>{item.status}</div></td>
-                  <td><div className="p-2 flex justify-center"><IconPosCafe icon="eye" color="purple" size={14}/></div></td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <TableComponent
+            columns={columns}
+            data={paginatedRequest}
+            onRowClick={(item) => {
+              setFormAction("edit");
+              handleChangeContent("/requestitem", item);
+            }}
+            className="w-full mt-2.5"
+          />
           <Pagination
             currentPage={currentPage}
             itemsPerPage={itemsPerPage}
